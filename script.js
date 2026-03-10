@@ -167,25 +167,30 @@ function generateBracket(){
 
 // fungsi heat prioritas 4
 function buatHeatPrioritas4(pesertaList){
-    const total = pesertaList.length;
     const heats = [];
     let index = 0;
+    const total = pesertaList.length;
 
     while(index < total){
         let sisa = total - index;
-        let size = 4; // prioritas 4
+        let size = 4; // default prioritas 4
 
-        if(sisa === 3 || sisa === 5) size = sisa; // sisa 3 atau 5 jadi satu heat
-        else if(sisa < 3 && heats.length > 0){
-            // gabung sisa <3 ke heat sebelumnya
-            heats[heats.length-1] = heats[heats.length-1].concat(pesertaList.slice(index,total));
-            break;
-        }
+        // kalo sisa 3 atau 5, bikin satu heat
+        if(sisa === 3 || sisa === 5) size = sisa;
+        // kalo sisa 6, bikin 3 + 3, supaya max 5 tetap terjaga
+        else if(sisa === 6) size = 3;
+        // kalo sisa 7, bikin 4 + 3
+        else if(sisa === 7) size = 4;
+        // kalo sisa 8, bikin 4 + 4
+        else if(sisa === 8) size = 4;
 
-        heats.push(pesertaList.slice(index, index + size));
+        // ambil slice peserta untuk heat ini
+        const heat = pesertaList.slice(index, index + size);
+        heats.push(heat);
         index += size;
     }
 
     return heats;
 }
+
 
