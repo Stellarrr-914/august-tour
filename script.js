@@ -127,7 +127,7 @@ function tampilkanPesertaBracket(){
     div.innerHTML = html;
 }
 
-// generate heat pakai yang dicentang
+// generate heat pakai yang dicentang & level seimbang
 function generateBracket(){
     const lomba = document.getElementById("lombaSelect").value;
     const kategori = document.getElementById("kategoriSelect").value;
@@ -145,17 +145,15 @@ function generateBracket(){
 
     if(pesertaDipakai.length === 0) return alert("Tidak ada peserta yang ikut brok!");
 
-    // ranking
     const ranking = { "A+":8,"A":7,"A-":6, "B+":5,"B":4,"B-":3, "C+":2,"C":1 };
-    
-    // urut level rendah ke tinggi biar heat awal = lemah
+
+    // urut dari lemah ke kuat biar heat seimbang
     pesertaDipakai.sort((a,b)=> ranking[a.level] - ranking[b.level]);
 
     const hasil = document.getElementById("hasilBracket");
     hasil.innerHTML = "";
 
-
-    // buat heat prioritas 4, 3–5 peserta
+    // buat heat prioritas 4
     const heats = buatHeatPrioritas4(pesertaDipakai);
 
     heats.forEach((heat,index)=>{
@@ -189,5 +187,5 @@ function buatHeatPrioritas4(pesertaList){
     }
 
     return heats;
-
 }
+
