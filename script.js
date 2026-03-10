@@ -145,8 +145,15 @@ function generateBracket(){
 
     if(pesertaDipakai.length === 0) return alert("Tidak ada peserta yang ikut brok!");
 
+    // ranking
+    const ranking = { "A+":8,"A":7,"A-":6, "B+":5,"B":4,"B-":3, "C+":2,"C":1 };
+    
+    // urut level rendah ke tinggi biar heat awal = lemah
+    pesertaDipakai.sort((a,b)=> ranking[a.level] - ranking[b.level]);
+
     const hasil = document.getElementById("hasilBracket");
     hasil.innerHTML = "";
+
 
     // buat heat prioritas 4, 3–5 peserta
     const heats = buatHeatPrioritas4(pesertaDipakai);
@@ -182,4 +189,5 @@ function buatHeatPrioritas4(pesertaList){
     }
 
     return heats;
+
 }
