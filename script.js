@@ -153,8 +153,8 @@ function generateBracket(){
     const hasil = document.getElementById("hasilBracket");
     hasil.innerHTML = "";
 
-    // buat heat prioritas 4
-    const heats = buatHeatPrioritas4(pesertaDipakai);
+    // buat heat prioritas 4 versi stabil
+    const heats = buatHeatPrioritas4Stabil(pesertaDipakai);
 
     heats.forEach((heat,index)=>{
         hasil.innerHTML += `<b>Heat ${index+1}</b><br>`;
@@ -165,8 +165,8 @@ function generateBracket(){
     });
 }
 
-// fungsi heat prioritas 4
-function buatHeatPrioritas4(pesertaList){
+// fungsi heat prioritas 4 versi stabil
+function buatHeatPrioritas4Stabil(pesertaList){
     const heats = [];
     let index = 0;
     const total = pesertaList.length;
@@ -175,16 +175,12 @@ function buatHeatPrioritas4(pesertaList){
         let sisa = total - index;
         let size = 4; // default prioritas 4
 
-        // kalo sisa 3 atau 5, bikin satu heat
+        // atur agar heat 3–5 peserta, tetap prioritas 4
         if(sisa === 3 || sisa === 5) size = sisa;
-        // kalo sisa 6, bikin 3 + 3, supaya max 5 tetap terjaga
         else if(sisa === 6) size = 3;
-        // kalo sisa 7, bikin 4 + 3
         else if(sisa === 7) size = 4;
-        // kalo sisa 8, bikin 4 + 4
         else if(sisa === 8) size = 4;
 
-        // ambil slice peserta untuk heat ini
         const heat = pesertaList.slice(index, index + size);
         heats.push(heat);
         index += size;
