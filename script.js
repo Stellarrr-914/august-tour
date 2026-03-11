@@ -15,7 +15,7 @@ async function loadDataFromSheet(){
 
     try{
 
-        const response = await fetch(sheetCSV);
+        const response = await fetch(sheetCSV + "&t=" + new Date().getTime());
         const text = await response.text();
 
         parseCSV(text);
@@ -67,6 +67,8 @@ function login(){
 
     if(u === admin.username && p === admin.password){
 
+        localStorage.setItem("sudahLogin","true");
+
         document.getElementById("loginPage").classList.add("hidden");
         document.getElementById("mainMenu").classList.remove("hidden");
 
@@ -108,7 +110,12 @@ function backToMenu(){
 
 }
 
+function logout(){
 
+    localStorage.removeItem("sudahLogin");
+    location.reload();
+
+}
 
 // ======= DATABASE ANAK =======
 function tambahAnak(){
@@ -403,4 +410,14 @@ window.onload = function(){
 
     loadDataFromSheet();
 
+    const loginStatus = localStorage.getItem("sudahLogin");
+
+    if(loginStatus === "true"){
+
+        document.getElementById("loginPage").classList.add("hidden");
+        document.getElementById("mainMenu").classList.remove("hidden");
+
+    }
+
 };
+
