@@ -17,7 +17,6 @@ async function loadDataFromSheet(){
 
         const response = await fetch(sheetCSV + "&t=" + new Date().getTime());
         const text = await response.text();
-        level: r.Level.toUpperCase()
 
         parseCSV(text);
         tampilAnak();
@@ -490,6 +489,7 @@ window.onload = function(){
     }
 
 };
+
 
 
 
