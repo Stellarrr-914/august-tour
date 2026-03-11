@@ -162,14 +162,27 @@ async function tambahPeserta(){
 
 function cariPeserta(){
 
-    const keyword = document
+    const input = document
         .getElementById("inputPeserta")
         .value
-        .toLowerCase();
+        .toLowerCase()
+        .trim();
 
-    const hasil = databaseAnak.filter(a =>
-        a.nama.toLowerCase().includes(keyword)
-    );
+    const kata = input.split(" ");
+
+    const hasil = databaseAnak.filter(p=>{
+
+        return kata.every(k=>{
+
+            return (
+                p.nama.toLowerCase().includes(k) ||
+                String(p.kategori) === k ||
+                p.level.toLowerCase() === k
+            );
+
+        });
+
+    });
 
     const tabel = document.getElementById("tabelAnak");
 
@@ -458,6 +471,7 @@ window.onload = function(){
     }
 
 };
+
 
 
 
