@@ -161,48 +161,42 @@ async function tambahPeserta(){
 
 function cariPeserta(){
 
-    const keyword = document
+    const input = document
         .getElementById("inputPeserta")
         .value
         .trim();
 
-    const tabel = document.getElementById("tabelAnak");
-
-    if(keyword === ""){
+    if(input === ""){
         tampilAnak();
         return;
     }
 
-    let hasil = [];
+    const kata = input.split(" ");
 
-    const k = keyword.toUpperCase();
+    const hasil = databaseAnak.filter(p=>{
 
-    // cari kategori
-    if(!isNaN(keyword)){
+        return kata.every(k=>{
 
-        hasil = databaseAnak.filter(p => 
-            p.kategori == keyword
-        );
+            const key = k.toUpperCase();
 
-    }
+            // kategori
+            if(!isNaN(k)){
+                return p.kategori == k;
+            }
 
-    // cari level
-    else if(["A+","A","A-","B+","B","B-","C+","C"].includes(k)){
+            // level
+            if(["A+","A","A-","B+","B","B-","C+","C"].includes(key)){
+                return p.level === key;
+            }
 
-        hasil = databaseAnak.filter(p => 
-            p.level === k
-        );
+            // nama
+            return p.nama.toLowerCase().includes(k.toLowerCase());
 
-    }
+        });
 
-    // cari nama
-    else{
+    });
 
-        hasil = databaseAnak.filter(p => 
-            p.nama.toLowerCase().includes(keyword.toLowerCase())
-        );
-
-    }
+    const tabel = document.getElementById("tabelAnak");
 
     tabel.innerHTML = "";
 
@@ -489,6 +483,7 @@ window.onload = function(){
     }
 
 };
+
 
 
 
