@@ -118,37 +118,68 @@ function logout(){
 }
 
 // ======= DATABASE ANAK =======
-function tambahAnak(){
+async function tambahPeserta(){
 
-    const nama = document.getElementById("namaAnak").value.trim();
-    if(!nama) return;
+    const input = document
+        .getElementById("inputPeserta")
+        .value;
 
-    const ada = databaseAnak.find(a => a.nama.toLowerCase() === nama.toLowerCase());
-    if(ada){
-        alert(nama + " sudah ada di database!");
+    const parts = input.split(",");
+
+    if(parts.length !== 3){
+
+        alert("Format: Nama,Kategori,Level");
+
         return;
+
     }
 
-    const kategori = parseInt(prompt("Kategori anak (1-4)?"));
-    if(!kategori || kategori<1 || kategori>4){
-        alert("Kategori harus 1-4");
-        return;
-    }
+    const nama = parts[0].trim();
+    const kategori = parts[1].trim();
+    const level = parts[2].trim();
 
-    const validLevel = ["A+","A","A-","B+","B","B-","C+","C"];
+    const urlAPI = "https://script.google.com/macros/s/AKfycbwpp18nPBME5NaMZwKGwOsn1Bj5uJT7a6OH9XpOkeHaqHZdX7gsxZvqA1MVGmnZNMAz/exec";
 
-    const level = prompt("Level anak (A+, A, A-, B+, B, B-, C+, C)?").toUpperCase();
+    await fetch(urlAPI,{
+        method:"POST",
+        body: JSON.stringify({
+            nama:nama,
+            kategori:kategori,
+            level:level
+        })
+    });
 
-    if(!validLevel.includes(level)){
-        alert("Level tidak valid");
-        return;
-    }
+    alert("Peserta berhasil ditambah!");
 
-    databaseAnak.push({nama,kategori,level});
+}
 
-    document.getElementById("namaAnak").value = "";
+function cariPeserta(){
 
-    tampilAnak();
+    const keyword = document
+        .getElementById("inputPeserta")
+        .value
+        .toLowerCase();
+
+    const hasil = databaseAnak.filter(a =>
+        a.nama.toLowerCase().includes(keyword)
+    );
+
+    const tabel = document.getElementById("tabelAnak");
+
+    tabel.innerHTML = "";
+
+    hasil.forEach((anak,i)=>{
+
+        tabel.innerHTML += `
+        <tr>
+        <td>${i+1}</td>
+        <td>${anak.nama}</td>
+        <td>${anak.kategori}</td>
+        <td>${anak.level}</td>
+        </tr>
+        `;
+
+    });
 
 }
 
@@ -420,4 +451,5 @@ window.onload = function(){
     }
 
 };
+
 
