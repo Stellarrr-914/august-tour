@@ -1,99 +1,234 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lomba RT Agustusan - Login</title>
+<title>Lomba RT Agustusan - Admin</title>
+
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
 <style>
-body{font-family:sans-serif;margin:20px;}
-h1,h2{margin-top:10px;}
-button{margin:5px 0;}
-.hidden{display:none;}
-table{border-collapse:collapse;width:100%;margin-top:10px;}
-th,td{border:1px solid #333;padding:5px;text-align:left;}
+
+body{
+font-family:sans-serif;
+margin:20px;
+}
+
+h1,h2,h3{
+margin-top:10px;
+}
+
+button{
+margin:5px 0;
+padding:5px 10px;
+cursor:pointer;
+}
+
+input,select{
+padding:5px;
+margin:5px 0;
+}
+
+.hidden{
+display:none;
+}
+
+table{
+border-collapse:collapse;
+width:100%;
+margin-top:10px;
+}
+
+th,td{
+border:1px solid #333;
+padding:5px;
+text-align:left;
+}
+
+#hasilBracket{
+margin-top:20px;
+padding:10px;
+border:1px solid #333;
+}
+
 </style>
+
 </head>
+
 <body>
-<script src="https://unpkg.com/tabletop@1.5.1/src/tabletop.js"></script>
-<!-- ======= Login Page ======= -->
+
+
+<!-- ================= LOGIN PAGE ================= -->
+
 <div id="loginPage">
-    <h1>Login Admin</h1>
-    <input type="text" id="username" placeholder="Username"><br>
-    <input type="password" id="password" placeholder="Password"><br>
-    <button onclick="login()">Login</button>
+
+<h1>Login Admin</h1>
+
+<input type="text" id="username" placeholder="Username"><br>
+
+<input type="password" id="password" placeholder="Password"><br>
+
+<button onclick="login()">Login</button>
+
+<p id="loginError" style="color:red;"></p>
+
 </div>
 
-<!-- ======= Menu Utama ======= -->
+
+<!-- ================= MENU UTAMA ================= -->
+
 <div id="mainMenu" class="hidden">
-    <h1>Menu Utama</h1>
-    <button onclick="showDatabase()">Update Database</button>
-    <button onclick="showBracket()">Bracket / Heat</button>
+
+<h1>Menu Utama</h1>
+
+<button onclick="showDatabase()">Update Database</button>
+
+<button onclick="showBracket()">Bracket / Heat</button>
+
 </div>
 
-<!-- ======= Update Database Page ======= -->
+
+<!-- ================= DATABASE PAGE ================= -->
+
 <div id="databasePage" class="hidden">
-    <h2>Update Database</h2>
-    <button onclick="backToMenu()">Kembali ke Menu</button>
-    <div>
-        <h3>Tambah Peserta</h3>
-        <input type="text" id="namaAnak" placeholder="Nama Anak">
-        <button onclick="tambahAnak()">Tambah Anak</button>
-        <table>
-            <thead>
-                <tr><th>No</th><th>Nama</th><th>Kategori</th><th>Level</th><th>Aksi</th></tr>
-            </thead>
-            <tbody id="tabelAnak"></tbody>
-        </table>
-    </div>
 
-    <div>
-        <h3>Tambah Lomba</h3>
-        <input type="text" id="namaLomba" placeholder="Nama Lomba">
-        <button onclick="tambahLomba()">Tambah Lomba</button>
-        <table>
-            <thead>
-                <tr><th>No</th><th>Nama Lomba</th><th>Aksi</th></tr>
-            </thead>
-            <tbody id="tabelLomba"></tbody>
-        </table>
-    </div>
+<h2>Update Database</h2>
+
+<button onclick="backToMenu()">Kembali ke Menu</button>
+
+
+<!-- ===== TAMBAH PESERTA ===== -->
+
+<div>
+
+<h3>Tambah Peserta</h3>
+
+<input type="text" id="namaAnak" placeholder="Nama Anak">
+
+<select id="kategoriAnak">
+<option value="">Kategori</option>
+<option value="1">Kategori 1</option>
+<option value="2">Kategori 2</option>
+<option value="3">Kategori 3</option>
+<option value="4">Kategori 4</option>
+</select>
+
+<input type="text" id="levelAnak" placeholder="Level (A,B,C dll)">
+
+<button onclick="tambahAnak()">Tambah Anak</button>
+
+<table>
+
+<thead>
+<tr>
+<th>No</th>
+<th>Nama</th>
+<th>Kategori</th>
+<th>Level</th>
+<th>Aksi</th>
+</tr>
+</thead>
+
+<tbody id="tabelAnak"></tbody>
+
+</table>
+
 </div>
 
-<!-- ======= Bracket Page ======= -->
+
+<!-- ===== TAMBAH LOMBA ===== -->
+
+<div>
+
+<h3>Tambah Lomba</h3>
+
+<input type="text" id="namaLomba" placeholder="Nama Lomba">
+
+<button onclick="tambahLomba()">Tambah Lomba</button>
+
+<table>
+
+<thead>
+<tr>
+<th>No</th>
+<th>Nama Lomba</th>
+<th>Aksi</th>
+</tr>
+</thead>
+
+<tbody id="tabelLomba"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+
+<!-- ================= BRACKET PAGE ================= -->
+
 <div id="bracketPage" class="hidden">
-    <h2>Bracket / Heat</h2>
-    <button onclick="backToMenu()">Kembali ke Menu</button>
-    <div>
-        <label>Pilih Lomba:</label>
-        <select id="lombaSelect">
-            <option value="">-- Pilih Lomba --</option>
-        </select>
 
-        <label>Pilih Kategori:</label>
-        <select id="kategoriSelect">
-            <option value="">-- Semua Kategori --</option>
-            <option value="1">Kategori 1</option>
-            <option value="2">Kategori 2</option>
-            <option value="3">Kategori 3</option>
-            <option value="4">Kategori 4</option>
-        </select>
+<h2>Bracket / Heat</h2>
 
-        <button onclick="tampilkanPesertaBracket()">Tampilkan Peserta</button>
+<button onclick="backToMenu()">Kembali ke Menu</button>
 
-        <div id="pesertaLomba" style="margin-top:10px;"></div>
+<div>
 
-        <button onclick="generateBracket()">Generate Heat</button>
+<label>Pilih Lomba:</label>
 
-        <div id="hasilBracket" style="margin-top:20px;"></div>
-    </div>
+<select id="lombaSelect">
+<option value="">-- Pilih Lomba --</option>
+</select>
+
+
+<label>Pilih Kategori:</label>
+
+<select id="kategoriSelect">
+
+<option value="">-- Semua Kategori --</option>
+<option value="1">Kategori 1</option>
+<option value="2">Kategori 2</option>
+<option value="3">Kategori 3</option>
+<option value="4">Kategori 4</option>
+
+</select>
+
+
+<button onclick="tampilkanPesertaBracket()">
+Tampilkan Peserta
+</button>
+
+
+<p id="loadingData" class="hidden">
+Loading data peserta...
+</p>
+
+
+<div id="pesertaLomba" style="margin-top:10px;"></div>
+
+
+<button onclick="generateBracket()">
+Generate Heat
+</button>
+
+
+<div id="hasilBracket"></div>
+
 </div>
- 
+
+</div>
+
+
+
+<!-- ================= SCRIPT ================= -->
+
 <script src="script.js"></script>
+
 </body>
-
 </html>
-
-
-
-
-
