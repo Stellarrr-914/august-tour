@@ -3,6 +3,21 @@ const admin = { username: "admin", password: "1234" };
 const databaseAnak = [];
 const databaseLomba = {};
 
+function loadDataFromSheet(sheetUrl){
+    Tabletop.init({
+        key: sheetUrl,
+        simpleSheet: true,
+        callback: function(data, tabletop) {
+            databaseAnak = data.map(r => ({
+                nama: r.Nama,
+                kategori: parseInt(r.Kategori),
+                level: r.Level
+            }));
+            tampilAnak(); // update tabel di database page
+        }
+    });
+}
+
 // ======= LOGIN =======
 function login(){
     const u = document.getElementById("username").value.trim();
@@ -189,4 +204,8 @@ function buatHeatPrioritas4Stabil(pesertaList){
     return heats;
 }
 
+window.onload = function(){
+    const sheetUrl = "LINK_SHEET_LOMBA_LO"; // ganti sama link sheet lo
+    loadDataFromSheet(sheetUrl);
+};
 
