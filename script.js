@@ -1,6 +1,6 @@
 // ======= DATA =======
 const admin = { username: "admin", password: "1234" };
-const databaseAnak = [];
+let databaseAnak = [];
 const databaseLomba = {};
 
 function loadDataFromSheet(sheetUrl){
@@ -205,7 +205,8 @@ function buatHeatPrioritas4Stabil(pesertaList){
 }
 
 window.onload = function(){
-    const sheetUrl = "LINK_SHEET_LOMBA_LO"; // ganti sama link sheet lo
+    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZwz2KR3s-srm3nj-9G1TAJLQg3NJO2_tU98j4KxniklmAnIS_q_kfkgOKGZQ07QYaeZuFWuh018XM/pubhtml"; // ganti sama link sheet lo
     loadDataFromSheet(sheetUrl);
 };
+
 
