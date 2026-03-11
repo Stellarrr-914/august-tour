@@ -17,6 +17,7 @@ async function loadDataFromSheet(){
 
         const response = await fetch(sheetCSV + "&t=" + new Date().getTime());
         const text = await response.text();
+        level: r.Level.toUpperCase()
 
         parseCSV(text);
         tampilAnak();
@@ -131,8 +132,7 @@ async function tambahPeserta(){
 
     const nama = parts[0].trim();
     const kategori = parseInt(parts[1].trim());
-    const level = parts[2].trim();
-
+    const level = parts[2].trim().toUpperCase();
     const urlAPI = "https://script.google.com/macros/s/AKfycbwpp18nPBME5NaMZwKGwOsn1Bj5uJT7a6OH9XpOkeHaqHZdX7gsxZvqA1MVGmnZNMAz/exec";
 
     await fetch(urlAPI,{
@@ -162,29 +162,48 @@ async function tambahPeserta(){
 
 function cariPeserta(){
 
-    const input = document
+    const keyword = document
         .getElementById("inputPeserta")
         .value
-        .toLowerCase()
         .trim();
 
-    const kata = input.split(" ");
-
-    const hasil = databaseAnak.filter(p=>{
-
-        return kata.every(k=>{
-
-            return (
-                p.nama.toLowerCase().includes(k) ||
-                String(p.kategori) === k ||
-                p.level.toLowerCase() === k
-            );
-
-        });
-
-    });
-
     const tabel = document.getElementById("tabelAnak");
+
+    if(keyword === ""){
+        tampilAnak();
+        return;
+    }
+
+    let hasil = [];
+
+    const k = keyword.toUpperCase();
+
+    // cari kategori
+    if(!isNaN(keyword)){
+
+        hasil = databaseAnak.filter(p => 
+            p.kategori == keyword
+        );
+
+    }
+
+    // cari level
+    else if(["A+","A","A-","B+","B","B-","C+","C"].includes(k)){
+
+        hasil = databaseAnak.filter(p => 
+            p.level === k
+        );
+
+    }
+
+    // cari nama
+    else{
+
+        hasil = databaseAnak.filter(p => 
+            p.nama.toLowerCase().includes(keyword.toLowerCase())
+        );
+
+    }
 
     tabel.innerHTML = "";
 
@@ -471,6 +490,7 @@ window.onload = function(){
     }
 
 };
+
 
 
 
