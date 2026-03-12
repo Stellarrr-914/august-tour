@@ -366,12 +366,17 @@ function generateBracket(){
         return;
     }
 
-    let peserta = databaseAnak.filter(p => {
+    const kat = parseInt(kategori);
 
-        if(kategori && p.kategori !== kategori) return false;
-
+    let peserta = databaseAnak.filter(p=>{
+        if(kat && p.kategori !== kat) return false;
         return true;
+    });
 
+    // ambil checkbox yang dicentang
+    peserta = peserta.filter((p,i)=>{
+        const cb = document.getElementById(`ikut${i}`);
+        return cb && cb.checked;
     });
 
     if(peserta.length < 3){
@@ -380,89 +385,40 @@ function generateBracket(){
     }
 
     const rankingLevel = {
-        "C-":1,
-        "C":2,
-        "C+":3,
-        "B-":4,
-        "B":5,
-        "B+":6,
-        "A-":7,
-        "A":8,
-        "A+":9
+        "C-":1,"C":2,"C+":3,
+        "B-":4,"B":5,"B+":6,
+        "A-":7,"A":8,"A+":9
     };
 
-    peserta.sort((a,b)=>rankingLevel[a.level]-rankingLevel[b.level]);
+    peserta.sort((a,b)=>
+        (rankingLevel[a.level]||99) -
+        (rankingLevel[b.level]||99)
+    );
 
     const total = peserta.length;
 
-    let jumlahHeat = Math.round(total/4);
+    // hitung heat dari max 5
+    let jumlahHeat = Math.ceil(total/5);
 
-    if(jumlahHeat < 1) jumlahHeat = 1;
+    let heats = Array.from({length:jumlahHeat},()=>[]);
 
-    let size = Math.ceil(total / jumlahHeat);
+    // distribusi
+    peserta.forEach((p,i)=>{
+        heats[i % jumlahHeat].push(p);
+    });
 
-    if(size > 5){
-        jumlahHeat = Math.ceil(total/5);
-        size = Math.ceil(total/jumlahHeat);
-    }
-
-    if(size < 3){
-        jumlahHeat = Math.floor(total/3);
-        size = Math.ceil(total/jumlahHeat);
-    }
-
-    let heats = [];
-
-    for(let i=0;i<peserta.length;i+=size){
-
-        heats.push(peserta.slice(i,i+size));
-
-    }
-
+    // shuffle dalam heat
     function shuffle(arr){
-
         for(let i=arr.length-1;i>0;i--){
-
-            const j = Math.floor(Math.random()*(i+1));
-
+            const j=Math.floor(Math.random()*(i+1));
             [arr[i],arr[j]]=[arr[j],arr[i]];
-
         }
-
         return arr;
-
     }
 
     heats = heats.map(h=>shuffle(h));
 
     tampilkanHeat(heats);
-
-}
-
-function tampilkanHeat(heats){
-
-    const hasil = document.getElementById("hasilBracket");
-
-    hasil.innerHTML = "";
-
-    heats.forEach((heat,index)=>{
-
-        let html = `<h3>Heat ${index+1}</h3>`;
-
-        html += "<ul>";
-
-        heat.forEach(p=>{
-
-            html += `<li>${p.nama} (Level ${p.level})</li>`;
-
-        });
-
-        html += "</ul>";
-
-        hasil.innerHTML += html;
-
-    });
-
 }
 
 function tampilkanHeat(heats){
@@ -507,12 +463,3 @@ window.onload = function(){
     }
 
 };
-
-
-
-
-
-
-
-
-
