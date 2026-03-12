@@ -404,16 +404,16 @@ function generateBracket(){
 
     // distribusi
     // hitung heat dari max 5
-let jumlahHeat = Math.ceil(total / 5);
+    let jumlahHeat = Math.ceil(total / 5);
 
-// ukuran dasar
-let baseSize = Math.floor(total / jumlahHeat);
-let sisa = total % jumlahHeat;
+    // ukuran dasar
+    let baseSize = Math.floor(total / jumlahHeat);
+    let sisa = total % jumlahHeat;
 
-let heats = [];
-let index = 0;
+    let heats = [];
+    let index = 0;
 
-for(let i=0;i<jumlahHeat;i++){
+    for(let i=0;i<jumlahHeat;i++){
 
     let size = baseSize;
 
@@ -426,7 +426,7 @@ for(let i=0;i<jumlahHeat;i++){
 
     index += size;
 
-}
+    }
     
     // shuffle dalam heat
     function shuffle(arr){
@@ -440,7 +440,7 @@ for(let i=0;i<jumlahHeat;i++){
     heats = heats.map(h=>shuffle(h));
 
     tampilkanHeat(heats);
-}
+    }
 
 function tampilkanHeat(heats){
 
@@ -484,4 +484,5 @@ window.onload = function(){
     }
 
 };
+
 
