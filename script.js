@@ -399,16 +399,22 @@ function generateBracket(){
 
     // distribusi
     // hitung heat dari max 5
-    let jumlahHeat = Math.ceil(total / 5);
+    // ===== DISTRIBUSI HEAT IDEAL =====
 
-    // ukuran dasar
-    let baseSize = Math.floor(total / jumlahHeat);
-    let sisa = total % jumlahHeat;
+let heats = [];
 
-    let heats = [];
-    let index = 0;
+// jumlah heat dengan target 4 orang
+let jumlahHeat = Math.round(total / 4);
 
-    for(let i=0;i<jumlahHeat;i++){
+if(jumlahHeat < 1) jumlahHeat = 1;
+
+// ukuran dasar
+let baseSize = Math.floor(total / jumlahHeat);
+let sisa = total % jumlahHeat;
+
+let index = 0;
+
+for(let i=0;i<jumlahHeat;i++){
 
     let size = baseSize;
 
@@ -417,11 +423,15 @@ function generateBracket(){
         sisa--;
     }
 
-    heats.push(peserta.slice(index,index+size));
+    // pastikan min 3 max 5
+    if(size < 3) size = 3;
+    if(size > 5) size = 5;
+
+    heats.push(peserta.slice(index, index + size));
 
     index += size;
 
-    }
+}
     
     // shuffle dalam heat
     function shuffle(arr){
@@ -479,6 +489,7 @@ window.onload = function(){
     }
 
 };
+
 
 
 
