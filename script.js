@@ -397,11 +397,6 @@ function generateBracket(){
 
     const total = peserta.length;
 
-    // hitung heat dari max 5
-    let jumlahHeat = Math.ceil(total/5);
-
-    let heats = Array.from({length:jumlahHeat},()=>[]);
-
     // distribusi
     // hitung heat dari max 5
     let jumlahHeat = Math.ceil(total / 5);
@@ -484,5 +479,6 @@ window.onload = function(){
     }
 
 };
+
 
 
