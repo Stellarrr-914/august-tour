@@ -403,10 +403,31 @@ function generateBracket(){
     let heats = Array.from({length:jumlahHeat},()=>[]);
 
     // distribusi
-    peserta.forEach((p,i)=>{
-        heats[i % jumlahHeat].push(p);
-    });
+    // hitung heat dari max 5
+let jumlahHeat = Math.ceil(total / 5);
 
+// ukuran dasar
+let baseSize = Math.floor(total / jumlahHeat);
+let sisa = total % jumlahHeat;
+
+let heats = [];
+let index = 0;
+
+for(let i=0;i<jumlahHeat;i++){
+
+    let size = baseSize;
+
+    if(sisa > 0){
+        size++;
+        sisa--;
+    }
+
+    heats.push(peserta.slice(index,index+size));
+
+    index += size;
+
+}
+    
     // shuffle dalam heat
     function shuffle(arr){
         for(let i=arr.length-1;i>0;i--){
@@ -463,3 +484,4 @@ window.onload = function(){
     }
 
 };
+
