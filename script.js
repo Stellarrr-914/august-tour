@@ -231,7 +231,6 @@ function tampilAnak(){
         <td>${anak.nama}</td>
         <td>${anak.kategori}</td>
         <td>${anak.level}</td>
-        <td>edit / hapus</td>
         </tr>
         `;
 
@@ -483,6 +482,7 @@ window.onload = function(){
     }
 
 };
+
 
 
 
