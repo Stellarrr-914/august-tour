@@ -1,6 +1,6 @@
 window.onload = function() {
     if (typeof loadDataFromSheet === "function") {
-        loadDataFromSheet();
+        loadDataFromSheet()
     const loginStatus = localStorage.getItem("sudahLogin");
 
     const loginPage = document.getElementById("loginPage");
