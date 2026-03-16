@@ -50,7 +50,6 @@ function tampilAnak() {
     });
 }
 
-// ======= CARI PESERTA (nama/kategori/level) =======
 function cariPeserta() {
     const keyword = document.getElementById("inputPeserta").value.trim().toUpperCase();
     if (!keyword) {
@@ -58,11 +57,22 @@ function cariPeserta() {
         return;
     }
 
-    const hasil = databaseAnak.filter(anak =>
-        anak.nama.toUpperCase().includes(keyword) || // cari berdasarkan nama
-        anak.kategori === keyword ||                 // cari berdasarkan kategori
-        anak.level === keyword                       // cari berdasarkan level
-    );
+    let hasil = [];
+
+    // 1. Cek kategori persis
+    hasil = databaseAnak.filter(anak => anak.kategori === keyword);
+
+    // 2. Kalau nggak ada, cek level persis
+    if (hasil.length === 0) {
+        hasil = databaseAnak.filter(anak => anak.level === keyword);
+    }
+
+    // 3. Kalau masih kosong, baru cek nama (pakai includes)
+    if (hasil.length === 0) {
+        hasil = databaseAnak.filter(anak =>
+            anak.nama.toUpperCase().includes(keyword)
+        );
+    }
 
     const tbody = document.getElementById("tabelAnak");
     tbody.innerHTML = "";
