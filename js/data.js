@@ -21,7 +21,10 @@ async function loadDataFromSheet(){
         const text = await response.text();
 
         parseCSV(text);
-        tampilAnak();
+
+if (typeof tampilAnak === "function") {
+    tampilAnak();
+}
 
     }catch(err){
 
