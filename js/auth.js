@@ -7,8 +7,8 @@ function login(){
 
         localStorage.setItem("sudahLogin","true");
 
-        document.getElementById("loginPage").classList.add("hidden");
-        document.getElementById("mainMenu").classList.remove("hidden");
+        // pindah ke halaman menu
+        window.location.href = "menu.html";
 
     }else{
 
