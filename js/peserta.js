@@ -59,19 +59,16 @@ function cariPeserta() {
 
     let hasil = [];
 
-    // daftar kategori valid (A, B, C, dst)
-    const kategoriValid = ["A","B","C","D","E","F"];
-    // daftar level valid (+, -, B+, C-, dst)
-    const levelValid = ["+","-","A+","A-","B+","B-","C+","C-"];
+    // cek kategori persis (A, B, C, dst)
+    hasil = databaseAnak.filter(anak => anak.kategori.toUpperCase() === keyword);
 
-    if (kategoriValid.includes(keyword)) {
-        // cari berdasarkan kategori persis
-        hasil = databaseAnak.filter(anak => anak.kategori === keyword);
-    } else if (levelValid.includes(keyword)) {
-        // cari berdasarkan level persis
-        hasil = databaseAnak.filter(anak => anak.level === keyword);
-    } else {
-        // kalau bukan kategori/level, baru cari nama
+    // kalau kosong, cek level persis (+, -, A+, B-, dst)
+    if (hasil.length === 0) {
+        hasil = databaseAnak.filter(anak => anak.level.toUpperCase() === keyword);
+    }
+
+    // kalau masih kosong, baru fallback ke nama (pakai includes)
+    if (hasil.length === 0) {
         hasil = databaseAnak.filter(anak =>
             anak.nama.toUpperCase().includes(keyword)
         );
@@ -98,4 +95,5 @@ function cariPeserta() {
         tbody.appendChild(row);
     });
 }
+
 
