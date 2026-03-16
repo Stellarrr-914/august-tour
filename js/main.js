@@ -4,10 +4,13 @@ window.onload = function(){
 
     const loginStatus = localStorage.getItem("sudahLogin");
 
+    const loginPage = document.getElementById("loginPage");
+    const mainMenu = document.getElementById("mainMenu");
+
     if(loginStatus === "true"){
 
-        document.getElementById("loginPage").classList.add("hidden");
-        document.getElementById("mainMenu").classList.remove("hidden");
+        if(loginPage) loginPage.classList.add("hidden");
+        if(mainMenu) mainMenu.classList.remove("hidden");
 
     }
 
