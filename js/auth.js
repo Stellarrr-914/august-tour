@@ -22,6 +22,7 @@ function login(){
 function logout(){
 
     localStorage.removeItem("sudahLogin");
-    location.reload();
+
+    window.location.href = "index.html";
 
 }
