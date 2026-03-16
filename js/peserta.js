@@ -50,50 +50,60 @@ function tampilAnak() {
     });
 }
 
-function cariPeserta() {
-    const keyword = document.getElementById("inputPeserta").value.trim().toUpperCase();
-    if (!keyword) {
-        alert("Masukkan nama, kategori, atau level di textbox untuk cari.");
+function cariPeserta(){
+
+    const input = document
+        .getElementById("inputPeserta")
+        .value
+        .trim();
+
+    if(input === ""){
+        tampilAnak();
         return;
     }
 
-    let hasil = [];
+    const kata = input.split(" ");
 
-    // cek kategori persis (A, B, C, dst)
-    hasil = databaseAnak.filter(anak => anak.kategori.toUpperCase() === keyword);
+    const hasil = databaseAnak.filter(p=>{
 
-    // kalau kosong, cek level persis (+, -, A+, B-, dst)
-    if (hasil.length === 0) {
-        hasil = databaseAnak.filter(anak => anak.level.toUpperCase() === keyword);
-    }
+        return kata.every(k=>{
 
-    // kalau masih kosong, baru fallback ke nama (pakai includes)
-    if (hasil.length === 0) {
-        hasil = databaseAnak.filter(anak =>
-            anak.nama.toUpperCase().includes(keyword)
-        );
-    }
+            const key = k.toUpperCase();
 
-    const tbody = document.getElementById("tabelAnak");
-    tbody.innerHTML = "";
+            // kategori
+            if(!isNaN(k)){
+                return p.kategori == k;
+            }
 
-    if (hasil.length === 0) {
-        const row = document.createElement("tr");
-        row.innerHTML = `<td colspan="4">Peserta tidak ditemukan</td>`;
-        tbody.appendChild(row);
-        return;
-    }
+            // level
+            if(["A+","A","A-","B+","B","B-","C+","C"].includes(key)){
+                return p.level === key;
+            }
 
-    hasil.forEach((anak, i) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${i+1}</td>
-            <td>${anak.nama}</td>
-            <td>${anak.kategori}</td>
-            <td>${anak.level}</td>
-        `;
-        tbody.appendChild(row);
+            // nama
+            return p.nama.toLowerCase().includes(k.toLowerCase());
+
+        });
+
     });
+
+    const tabel = document.getElementById("tabelAnak");
+
+    tabel.innerHTML = "";
+
+    hasil.forEach((anak,i)=>{
+
+        tabel.innerHTML += `
+        <tr>
+        <td>${i+1}</td>
+        <td>${anak.nama}</td>
+        <td>${anak.kategori}</td>
+        <td>${anak.level}</td>
+        </tr>
+        `;
+
+    });
+
 }
 
 
