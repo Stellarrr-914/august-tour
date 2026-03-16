@@ -16,11 +16,7 @@ async function tambahPeserta() {
 
     await fetch(urlAPI, {
         method: "POST",
-        body: JSON.stringify({
-            nama: nama,
-            kategori: kategori,
-            level: level
-        })
+        body: JSON.stringify({ nama, kategori, level })
     });
 
     databaseAnak.push({ nama, kategori, level });
