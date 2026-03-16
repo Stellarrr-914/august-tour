@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bracket Lomba</title>
+
+</head>
+
+<body>
+
+<h2>Bracket / Heat</h2>
+
+<button onclick="location.href='menu.html'">
+Kembali ke Menu
+</button>
+
+<br><br>
+
+<label>Pilih Lomba:</label>
+
+<select id="lombaSelect">
+<option value="">-- Pilih Lomba --</option>
+</select>
+
+
+<label>Pilih Kategori:</label>
+
+<select id="kategoriSelect">
+
+<option value="">-- Semua Kategori --</option>
+<option value="1">Kategori 1</option>
+<option value="2">Kategori 2</option>
+<option value="3">Kategori 3</option>
+<option value="4">Kategori 4</option>
+
+</select>
+
+
+<button onclick="tampilkanPesertaBracket()">
+Tampilkan Peserta
+</button>
+
+
+<p id="loadingData" style="display:none;">
+Loading data peserta...
+</p>
+
+
+<div id="pesertaLomba"></div>
+
+
+<button onclick="generateBracket()">
+Generate Heat
+</button>
+
+
+<div id="hasilBracket"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
