@@ -7,7 +7,7 @@ let databaseAnak = [];
 let databaseLomba = JSON.parse(localStorage.getItem("databaseLomba")) || {};
 
 // LINK CSV GOOGLE SHEET
-const sheetCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZwz2KR3s-srm3nj-9G1TAJLQg3NJO2_tU98j4KxniklmAnIS_q_kfkgOKGZQ07QYaeZuFWuh018XM/pub?output=csv";
+const sheetCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZwz2KR3s-srm3nj-9G1TAJLQg3NJO2_tU98j4KxniklmAnIS_q_kfkgOKGZQ07QYaeZuFWuh018XM/pub?gid=0&single=true&output=csv";
 
 // Link Sheet 2 (Lomba)
 const sheetLombaCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZwz2KR3s-srm3nj-9G1TAJLQg3NJO2_tU98j4KxniklmAnIS_q_kfkgOKGZQ07QYaeZuFWuh018XM/pub?gid=1443453687&single=true&output=csv"; 
