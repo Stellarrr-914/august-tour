@@ -42,7 +42,7 @@ async function tambahLomba() {
 
 
 
-    const urlAPI = "https://script.google.com/macros/s/AKfycbyB9aHWSYYe23Er4nz15Mh_x9nO18IbSMDU1fp2YInIPtgi7jsd9PgcZciqHob42B13/exec"; 
+    const urlAPI = "https://script.google.com/macros/s/AKfycbwDTST0zknCALaYFju9wMSvD2zHIi9xBJr-0Kuq23ALGXChSgbUl0WFo8a8MoVsYQmD/exec"; 
 
 
 
