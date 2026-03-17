@@ -1,128 +1,7 @@
-async function tambahLomba() {
-
-    const inputField = document.getElementById("inputLomba");
-
-    const value = inputField.value.trim();
-
-
-
-    // 1. Pecah input berdasarkan koma
-
-    const parts = value.split(",");
-
-    if (parts.length < 2) {
-
-        alert("Format salah! Minimal: Nama Lomba, Kategori. \nContoh: Balap Kelereng, 1, 2");
-
-        return;
-
-    }
-
-
-
-    // 2. Ambil Nama Lomba (elemen pertama)
-
-    const nama = parts[0].trim();
-
-    
-
-    // 3. Ambil Kategori (sisanya) dan gabung jadi string "1, 2"
-
-    const daftarKategori = parts.slice(1).map(k => k.trim()).join(", ");
-
-
-
-    if (databaseLomba[nama]) {
-
-        alert("Lomba '" + nama + "' sudah ada!");
-
-        return;
-
-    }
-
-
-
-    const urlAPI = "https://script.google.com/macros/s/AKfycbwDTST0zknCALaYFju9wMSvD2zHIi9xBJr-0Kuq23ALGXChSgbUl0WFo8a8MoVsYQmD/exec"; 
-
-
-
-    try {
-
-        inputField.disabled = true;
-
-
-
-        await fetch(urlAPI, {
-
-            method: "POST",
-
-            body: JSON.stringify({
-
-                type: "tambahLomba",
-
-                namaLomba: nama,
-
-                kategoriLomba: daftarKategori,
-
-                status: "Open"
-
-            })
-
-        });
-
-
-
-        // Simpan ke database lokal
-
-        databaseLomba[nama] = {
-
-            kategori: daftarKategori,
-
-            status: "Open",
-
-            peserta: []
-
-        };
-
-        
-
-        localStorage.setItem("databaseLomba", JSON.stringify(databaseLomba));
-
-
-
-        // Reset
-
-        inputField.value = "";
-
-        inputField.disabled = false;
-
-        
-
-        tampilLomba();
-
-        updateLombaDropdown();
-
-        
-
-        alert("Lomba '" + nama + "' dengan kategori [" + daftarKategori + "] berhasil ditambah!");
-
-
-
-    } catch (error) {
-
-        console.error(error);
-
-        inputField.disabled = false;
-
-        alert("Gagal kirim data ke Google Sheets.");
-
-    }
-
-}
-
+// --- Fungsi Tampil Lomba di Tabel ---
 function tampilLomba() {
     const tabel = document.getElementById("tabelLomba");
-    if (!tabel) return; // Biar nggak error kalau elemennya nggak ada
+    if (!tabel) return;
 
     tabel.innerHTML = "";
     let i = 1;
@@ -131,27 +10,52 @@ function tampilLomba() {
         const lomba = databaseLomba[namaLomba];
         tabel.innerHTML += `
         <tr>
-            <td>${i}</td>
-            <td>${namaLomba}</td>
+            <td>${i++}</td>
+            <td><strong>${namaLomba}</strong></td>
             <td>${lomba.kategori || "-"}</td>
-            <td>${lomba.status || "Open"}</td>
+            <td><mark>${lomba.status || "Open"}</mark></td>
         </tr>
         `;
-        i++;
     }
 }
 
+// --- Update Dropdown Lomba ---
 function updateLombaDropdown() {
     const select = document.getElementById("lombaSelect");
     if (!select) return;
 
-    // Reset isi dropdown tapi sisakan opsi pertama
     select.innerHTML = `<option value="">-- Pilih Lomba --</option>`;
-
     for (const namaLomba in databaseLomba) {
         const opt = document.createElement("option");
         opt.value = namaLomba;
         opt.textContent = namaLomba;
         select.appendChild(opt);
     }
+}
+
+// --- FUNGSI BARU: Filter Peserta Berdasarkan Lomba ---
+// Panggil fungsi ini pas dropdown lomba berubah (onchange)
+function filterPesertaBerdasarkanLomba() {
+    const lombaTerpilih = document.getElementById("lombaSelect").value;
+    const selectPeserta = document.getElementById("pesertaSelect"); // Pastikan ID ini ada di HTML bracket
+    
+    if (!lombaTerpilih || !selectPeserta) return;
+
+    const dataLomba = databaseLomba[lombaTerpilih];
+    // Ambil kategori lomba (misal: "1, 2" atau "M")
+    const kategoriLomba = dataLomba.kategori.split(",").map(k => k.trim().toUpperCase());
+
+    selectPeserta.innerHTML = `<option value="">-- Pilih Peserta --</option>`;
+
+    // Filter databaseAnak berdasarkan kategori lomba
+    const pesertaCocok = databaseAnak.filter(anak => {
+        return kategoriLomba.includes(anak.kategori.toUpperCase());
+    });
+
+    pesertaCocok.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p.nama;
+        opt.textContent = `${p.nama} [Kat: ${p.kategori}] [Lev: ${p.level}]`;
+        selectPeserta.appendChild(opt);
+    });
 }
