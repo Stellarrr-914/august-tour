@@ -24,15 +24,21 @@ function updateKategoriBerdasarkanLomba() {
         return;
     }
 
+    // Ambil string kategori dari database lomba (hasil input titik koma)
     const kategoriString = databaseLomba[lombaTerpilih].kategori; 
-    const listKategori = kategoriString.split(",").map(k => k.trim().toUpperCase());
+    
+    // PERBAIKAN: Kita pecah pakai titik koma (;)
+    const listKategori = kategoriString.split(';').map(k => k.trim().toUpperCase());
 
-    kategoriSelect.innerHTML = "";
+    kategoriSelect.innerHTML = '<option value="">-- Pilih Kategori --</option>';
+
     listKategori.forEach(kat => {
-        const opt = document.createElement("option");
-        opt.value = kat;
-        opt.textContent = "Kategori " + kat;
-        kategoriSelect.appendChild(opt);
+        if (kat) { 
+            const opt = document.createElement("option");
+            opt.value = kat;
+            opt.textContent = "Kategori " + kat;
+            kategoriSelect.appendChild(opt);
+        }
     });
 }
 
