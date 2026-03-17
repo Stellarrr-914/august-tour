@@ -72,21 +72,26 @@ function tampilLomba() {
     if (!tabel) return;
 
     tabel.innerHTML = "";
-    let i = 1;
-
+    
     for (const namaLomba in databaseLomba) {
         const lomba = databaseLomba[namaLomba];
         tabel.innerHTML += `
         <tr>
-            <td>${i++}</td>
             <td><strong>${namaLomba}</strong></td>
-            <td>${lomba.kategori || "-"}</td>
-            <td><mark>${lomba.status || "Open"}</mark></td>
+            <td>${lomba.kategori}</td>
+            <td>
+                <select onchange="updateStatusLomba('${namaLomba}', '${lomba.kategori}', this.value)">
+                    <option value="Open" ${lomba.status === 'Open' ? 'selected' : ''}>Open</option>
+                    <option value="Penyisihan" ${lomba.status === 'Penyisihan' ? 'selected' : ''}>Penyisihan</option>
+                    <option value="Semifinal" ${lomba.status === 'Semifinal' ? 'selected' : ''}>Semifinal</option>
+                    <option value="Final" ${lomba.status === 'Final' ? 'selected' : ''}>Final</option>
+                    <option value="Selesai" ${lomba.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                </select>
+            </td>
         </tr>
         `;
     }
 }
-
 async function updateStatusLomba(namaLomba, kategori, statusBaru) {
     const urlAPI = "URL_WEB_APP_GOOGLE_SHEETS_LU"; // Samain sama yang di tambahLomba
 
