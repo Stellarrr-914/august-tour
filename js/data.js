@@ -33,6 +33,46 @@ async function loadDataFromSheet(){
     }
 }
 
+async function loadLombaFromSheet() {
+    try {
+        const response = await fetch(sheetLombaCSV + "&t=" + new Date().getTime());
+        const text = await response.text();
+        
+        const rows = text.split(/\r?\n/);
+        
+        // Kosongkan dulu biar gak double pas di-load ulang
+        databaseLomba = {}; 
+
+        for (let i = 1; i < rows.length; i++) {
+            const cols = rows[i].split(",");
+            if (cols.length < 3) continue;
+
+            const namaLomba = cols[0].trim();
+            const kategori = cols[1].trim();
+            const status = cols[2].trim();
+
+            databaseLomba[namaLomba] = {
+                kategori: kategori,
+                status: status,
+                peserta: []
+            };
+        }
+        
+        console.log("Data Lomba ter-update:", databaseLomba);
+        
+        // --- KUNCI BIAR MUNCUL PAS REFRESH ---
+        if (typeof tampilLomba === "function") {
+            tampilLomba(); 
+        }
+        if (typeof updateLombaDropdown === "function") {
+            updateLombaDropdown();
+        }
+
+    } catch (err) {
+        console.error("Gagal load sheet lomba:", err);
+    }
+}
+
 // ======= PARSE CSV =======
 function parseCSV(csv) {
     databaseAnak = [];
