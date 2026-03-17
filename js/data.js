@@ -13,26 +13,35 @@ const sheetCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZwz2KR3s-srm
 const sheetLombaCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZwz2KR3s-srm3nj-9G1TAJLQg3NJO2_tU98j4KxniklmAnIS_q_kfkgOKGZQ07QYaeZuFWuh018XM/pub?gid=1443453687&single=true&output=csv"; 
 
 // ======= LOAD DATA SHEET =======
-async function loadDataFromSheet(){
+async function loadDataFromSheet() {
     console.log("Loading Google Sheet...");
-    try{
+    try {
         const response = await fetch(sheetCSV + "&t=" + new Date().getTime());
         const text = await response.text();
 
-        parseCSV(text);
+        // Proses pecah data CSV
+        const rows = text.split(/\r?\n/);
+        databaseAnak = []; 
+        for (let i = 1; i < rows.length; i++) {
+            const cols = rows[i].split(",");
+            if (cols.length < 3) continue;
+            databaseAnak.push({
+                nama: cols[0].trim(),
+                kategori: cols[1].trim().toUpperCase(),
+                level: cols[2].trim().toUpperCase()
+            });
+        }
 
-        // --- GANTI BAGIAN INI ---
+        // Panggil fungsi tampil dari peserta.js
         if (typeof tampilSemuaTabel === "function") {
-            tampilSemuaTabel(); // Panggil fungsi baru yang menghandle dua tabel
+            tampilSemuaTabel();
         }
         
         console.log("Data peserta berhasil di-load:", databaseAnak);
-
-    } catch(err){
+    } catch (err) {
         console.error("Gagal load sheet:", err);
     }
 }
-
 async function loadLombaFromSheet() {
     try {
         const response = await fetch(sheetLombaCSV + "&t=" + new Date().getTime());
