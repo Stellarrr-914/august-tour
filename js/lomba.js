@@ -93,7 +93,7 @@ function tampilLomba() {
     }
 }
 async function updateStatusLomba(namaLomba, kategori, statusBaru) {
-    const urlAPI = "URL_WEB_APP_GOOGLE_SHEETS_LU"; // Samain sama yang di tambahLomba
+    const urlAPI = "https://script.google.com/macros/s/AKfycbwGecIXz6-sh5fIWGOxHQ8xo4WQcDoYTxCo8-cKDhrlLmLdGPUYT8SNaxrgHijiyLc/exec"; // Samain sama yang di tambahLomba
 
     try {
         await fetch(urlAPI, {
