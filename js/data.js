@@ -3,7 +3,6 @@
 const admin = { username: "admin", password: "1234" };
 
 let databaseAnak = [];
-const databaseLomba = {};
 
 // LINK CSV GOOGLE SHEET
 const sheetCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZwz2KR3s-srm3nj-9G1TAJLQg3NJO2_tU98j4KxniklmAnIS_q_kfkgOKGZQ07QYaeZuFWuh018XM/pub?output=csv";
