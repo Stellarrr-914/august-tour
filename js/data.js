@@ -21,9 +21,9 @@ async function loadDataFromSheet(){
 
         parseCSV(text);
 
-        // Update tampilan tabel kalau fungsinya tersedia
-        if (typeof tampilAnak === "function") {
-            tampilAnak();
+        // --- GANTI BAGIAN INI ---
+        if (typeof tampilSemuaTabel === "function") {
+            tampilSemuaTabel(); // Panggil fungsi baru yang menghandle dua tabel
         }
         
         console.log("Data peserta berhasil di-load:", databaseAnak);
