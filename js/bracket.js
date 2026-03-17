@@ -1,40 +1,124 @@
 async function tambahLomba() {
-    const nama = document.getElementById("namaLomba").value.trim();
-    if (!nama) return;
 
-    // Cek biar nggak dobel
-    if (databaseLomba[nama]) {
-        alert("Lomba sudah ada di daftar!");
+    const inputField = document.getElementById("inputLomba");
+
+    const value = inputField.value.trim();
+
+
+
+    // 1. Pecah input berdasarkan koma
+
+    const parts = value.split(",");
+
+    if (parts.length < 2) {
+
+        alert("Format salah! Minimal: Nama Lomba, Kategori. \nContoh: Balap Kelereng, 1, 2");
+
         return;
+
     }
 
-    // GANTI PAKE URL APPS SCRIPT LU YANG BARU DI-DEPLOY
+
+
+    // 2. Ambil Nama Lomba (elemen pertama)
+
+    const nama = parts[0].trim();
+
+    
+
+    // 3. Ambil Kategori (sisanya) dan gabung jadi string "1, 2"
+
+    const daftarKategori = parts.slice(1).map(k => k.trim()).join(", ");
+
+
+
+    if (databaseLomba[nama]) {
+
+        alert("Lomba '" + nama + "' sudah ada!");
+
+        return;
+
+    }
+
+
+
     const urlAPI = "https://script.google.com/macros/s/AKfycbyB9aHWSYYe23Er4nz15Mh_x9nO18IbSMDU1fp2YInIPtgi7jsd9PgcZciqHob42B13/exec"; 
 
+
+
     try {
+
+        inputField.disabled = true;
+
+
+
         await fetch(urlAPI, {
+
             method: "POST",
+
             body: JSON.stringify({
+
                 type: "tambahLomba",
+
                 namaLomba: nama,
+
+                kategoriLomba: daftarKategori,
+
                 status: "Open"
+
             })
+
         });
 
-        // Update lokal biar langsung muncul di tabel tanpa nunggu sheet
-        databaseLomba[nama] = { kategori: "", status: "Open", peserta: [] };
-        
-        document.getElementById("namaLomba").value = "";
-        tampilLomba();
-        updateLombaDropdown();
-        
-        alert("Lomba '" + nama + "' berhasil masuk database!");
-    } catch (e) {
-        console.error(e);
-        alert("Gagal konek ke server.");
-    }
-}
 
+
+        // Simpan ke database lokal
+
+        databaseLomba[nama] = {
+
+            kategori: daftarKategori,
+
+            status: "Open",
+
+            peserta: []
+
+        };
+
+        
+
+        localStorage.setItem("databaseLomba", JSON.stringify(databaseLomba));
+
+
+
+        // Reset
+
+        inputField.value = "";
+
+        inputField.disabled = false;
+
+        
+
+        tampilLomba();
+
+        updateLombaDropdown();
+
+        
+
+        alert("Lomba '" + nama + "' dengan kategori [" + daftarKategori + "] berhasil ditambah!");
+
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        inputField.disabled = false;
+
+        alert("Gagal kirim data ke Google Sheets.");
+
+    }
+
+}
 
 function tampilLomba() {
     const tabel = document.getElementById("tabelLomba");
