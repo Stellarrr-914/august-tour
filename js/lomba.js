@@ -1,6 +1,6 @@
 // ======= LOMBA.JS =======
 // URL API Google Apps Script lu
-const urlAPILomba = "https://script.google.com/macros/s/AKfycbwDTST0zknCALaYFju9wMSvD2zHIi9xBJr-0Kuq23ALGXChSgbUl0WFo8a8MoVsYQmD/exec";
+const urlAPILomba = "https://script.google.com/macros/s/AKfycbwGecIXz6-sh5fIWGOxHQ8xo4WQcDoYTxCo8-cKDhrlLmLdGPUYT8SNaxrgHijiyLc/exec";
 
 // 1. Fungsi Tambah Lomba (Support pemisah titik koma agar CSV aman)
 async function tambahLomba() {
