@@ -45,7 +45,6 @@
 <th>Nama</th>
 <th>Kategori</th>
 <th>Level</th>
-<th>Act</th>
 </tr>
 </thead>
 
@@ -58,27 +57,26 @@ Kembali ke Menu
 </button>
 
 <hr>
+<h3>Daftar Lomba (Sheet 2)</h3>
 
-<h3>Tambah Lomba</h3>
-
-<input type="text" id="namaLomba" placeholder="Nama Lomba">
-
+<input id="namaLomba" placeholder="Nama Lomba (misal: Balap Karung)">
 <button onclick="tambahLomba()">Tambah Lomba</button>
 
+<br><br>
+
 <table>
-
-<thead>
-<tr>
-<th>No</th>
-<th>Nama Lomba</th>
-<th>Aksi</th>
-</tr>
-</thead>
-
-<tbody id="tabelLomba"></tbody>
-
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Nama Lomba</th>
+            <th>Kategori</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody id="tabelLomba">
+        </tbody>
 </table>
-
+  
 <script src="js/data.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/navigation.js"></script>
