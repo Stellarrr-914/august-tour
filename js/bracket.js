@@ -195,7 +195,7 @@ function renderHeatBox(peserta, nomor, level) {
             margin-bottom: 20px; overflow: hidden;
         ">
             <div style="background: #f1c40f; color: #000; padding: 8px; text-align: center; font-weight: bold; border-bottom: 2px solid #000;">
-                HEAT ${nomor} - LEVEL ${level}
+                HEAT ${nomor}
             </div>
             <ul style="list-style: none; padding: 0; margin: 0;">${listHtml}</ul>
         </div>
