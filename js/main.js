@@ -19,7 +19,7 @@ window.onload = function() {
         if (loginPage) loginPage.classList.add("hidden");
         if (mainMenu) mainMenu.classList.remove("hidden");
     }
-};
+}
 
 // --- Fungsi logout ---
 function logout() {
