@@ -1,8 +1,14 @@
 window.onload = function() {
-    // --- Load data peserta kalau fungsi tersedia (hanya di database.html) ---
+    // Load Peserta
     if (typeof loadDataFromSheet === "function") {
-        loadDataFromSheet();
+        loadDataFromSheet(); 
     }
+
+    // Load Lomba dari Sheet 2
+    if (typeof loadLombaFromSheet === "function") {
+        loadLombaFromSheet();
+    }
+};
 
     // --- Cek status login ---
     const loginStatus = localStorage.getItem("sudahLogin");
