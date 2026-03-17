@@ -135,9 +135,6 @@ function tampilLomba() {
             <td>${namaLomba}</td>
             <td>${lomba.kategori || "-"}</td>
             <td>${lomba.status || "Open"}</td>
-            <td>
-                <button onclick="hapusLomba('${namaLomba}')">Hapus</button>
-            </td>
         </tr>
         `;
         i++;
