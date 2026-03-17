@@ -1,25 +1,6 @@
-// --- Fungsi Tampil Lomba di Tabel ---
-function tampilLomba() {
-    const tabel = document.getElementById("tabelLomba");
-    if (!tabel) return;
+// ======= BRACKET LOGIC =======
 
-    tabel.innerHTML = "";
-    let i = 1;
-
-    for (const namaLomba in databaseLomba) {
-        const lomba = databaseLomba[namaLomba];
-        tabel.innerHTML += `
-        <tr>
-            <td>${i++}</td>
-            <td><strong>${namaLomba}</strong></td>
-            <td>${lomba.kategori || "-"}</td>
-            <td><mark>${lomba.status || "Open"}</mark></td>
-        </tr>
-        `;
-    }
-}
-
-// --- Update Dropdown Lomba ---
+// 1. Update Dropdown Lomba (Dipanggil otomatis dari data.js saat load)
 function updateLombaDropdown() {
     const select = document.getElementById("lombaSelect");
     if (!select) return;
@@ -33,29 +14,98 @@ function updateLombaDropdown() {
     }
 }
 
-// --- FUNGSI BARU: Filter Peserta Berdasarkan Lomba ---
-// Panggil fungsi ini pas dropdown lomba berubah (onchange)
-function filterPesertaBerdasarkanLomba() {
+// 2. Filter Kategori pas Lomba dipilih
+function updateKategoriBerdasarkanLomba() {
     const lombaTerpilih = document.getElementById("lombaSelect").value;
-    const selectPeserta = document.getElementById("pesertaSelect"); // Pastikan ID ini ada di HTML bracket
+    const kategoriSelect = document.getElementById("kategoriSelect");
     
-    if (!lombaTerpilih || !selectPeserta) return;
+    if (!lombaTerpilih || !databaseLomba[lombaTerpilih]) {
+        kategoriSelect.innerHTML = `<option value="">-- Pilih Lomba Dulu --</option>`;
+        return;
+    }
 
-    const dataLomba = databaseLomba[lombaTerpilih];
-    // Ambil kategori lomba (misal: "1, 2" atau "M")
-    const kategoriLomba = dataLomba.kategori.split(",").map(k => k.trim().toUpperCase());
+    const kategoriString = databaseLomba[lombaTerpilih].kategori; 
+    const listKategori = kategoriString.split(",").map(k => k.trim().toUpperCase());
 
-    selectPeserta.innerHTML = `<option value="">-- Pilih Peserta --</option>`;
-
-    // Filter databaseAnak berdasarkan kategori lomba
-    const pesertaCocok = databaseAnak.filter(anak => {
-        return kategoriLomba.includes(anak.kategori.toUpperCase());
+    kategoriSelect.innerHTML = "";
+    listKategori.forEach(kat => {
+        const opt = document.createElement("option");
+        opt.value = kat;
+        opt.textContent = "Kategori " + kat;
+        kategoriSelect.appendChild(opt);
     });
+}
+
+// 3. Tampilkan Peserta dengan Checkbox
+function tampilkanPesertaBracket() {
+    const kategoriTerpilih = document.getElementById("kategoriSelect").value;
+    const container = document.getElementById("pesertaLomba");
+    const actionBtn = document.getElementById("actionGenerate");
+    
+    if (!kategoriTerpilih) {
+        alert("Pilih kategorinya dulu brok!");
+        return;
+    }
+
+    container.innerHTML = "";
+    
+    // Filter databaseAnak (Peserta) berdasarkan kategori yang dipilih
+    const pesertaCocok = databaseAnak.filter(p => p.kategori === kategoriTerpilih);
+
+    if (pesertaCocok.length === 0) {
+        container.innerHTML = "<p style='color:red;'>Gak ada peserta di kategori ini.</p>";
+        actionBtn.style.display = "none";
+        return;
+    }
 
     pesertaCocok.forEach(p => {
-        const opt = document.createElement("option");
-        opt.value = p.nama;
-        opt.textContent = `${p.nama} [Kat: ${p.kategori}] [Lev: ${p.level}]`;
-        selectPeserta.appendChild(opt);
+        container.innerHTML += `
+            <div class="peserta-item">
+                <input type="checkbox" class="peserta-check" value="${p.nama}" checked>
+                <label>${p.nama} <br><small>Lev: ${p.level}</small></label>
+            </div>
+        `;
     });
+
+    actionBtn.style.display = "block";
+}
+
+// 4. Generate Heat / Bagan
+function generateBracket() {
+    const checkboxes = document.querySelectorAll(".peserta-check:checked");
+    const limit = parseInt(document.getElementById("limitPerHeat").value) || 4;
+    const hasil = document.getElementById("hasilBracket");
+    
+    let daftarNama = [];
+    checkboxes.forEach(cb => daftarNama.push(cb.value));
+
+    if (daftarNama.length === 0) {
+        alert("Pilih minimal satu peserta!");
+        return;
+    }
+
+    // Acak Peserta (Shuffle)
+    daftarNama.sort(() => Math.random() - 0.5);
+
+    hasil.innerHTML = ""; // Reset tampilan
+
+    // Bagi peserta ke dalam box Heat
+    for (let i = 0; i < daftarNama.length; i += limit) {
+        const heatPeserta = daftarNama.slice(i, i + limit);
+        const heatNum = (i / limit) + 1;
+
+        let listHtml = "";
+        heatPeserta.forEach(nama => {
+            listHtml += `<li>${nama}</li>`;
+        });
+
+        hasil.innerHTML += `
+            <div class="heat-box">
+                <div class="heat-header">HEAT ${heatNum}</div>
+                <ul class="heat-list">
+                    ${listHtml}
+                </ul>
+            </div>
+        `;
+    }
 }
