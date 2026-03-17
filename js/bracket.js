@@ -76,6 +76,14 @@ function tampilkanPesertaBracket() {
     actionBtn.style.display = "block";
 }
 
+// 1. Bobot Level Universal (Biar sistem tau urutan 'kekuatan')
+const bobotLevel = {
+    // Anak/Umum
+    "S": 10, "A+": 9, "A": 8, "A-": 7, "B+": 6, "B": 5, "B-": 4, "C+": 3, "C": 2, "C-": 1,
+    // Ibu-ibu (Asumsi: Angka kecil = Makin Jago)
+    "1": 10, "2": 9, "3": 8, "4": 7, "5": 6, "6": 5, "7": 4, "8": 3, "9": 2
+};
+
 function generateBracket() {
     const checkboxes = document.querySelectorAll(".peserta-check:checked");
     const hasil = document.getElementById("hasilBracket");
@@ -87,61 +95,80 @@ function generateBracket() {
     });
 
     if (daftarPeserta.length === 0) {
-        alert("Pilih warga dulu, brok!");
+        alert("Pilih peserta dulu, brok!");
         return;
     }
 
-    // 1. KELOMPOKKAN BERDASARKAN LEVEL (Adil Versi Warga)
-    const grupLevel = {};
-    daftarPeserta.forEach(p => {
-        if (!grupLevel[p.level]) grupLevel[p.level] = [];
-        grupLevel[p.level].push(p);
+    // --- LOGIKA UTAMA: SORTING BERDASARKAN LEVEL ---
+    // Karena mereka sudah satu KATEGORI (hasil filter sebelumnya), 
+    // sekarang kita jejerin berdasarkan Levelnya.
+    daftarPeserta.sort((a, b) => {
+        const bA = bobotLevel[String(a.level).toUpperCase()] || 0;
+        const bB = bobotLevel[String(b.level).toUpperCase()] || 0;
+        return bB - bA; // Dari paling jago ke paling pemula
     });
 
     hasil.innerHTML = ""; 
     let heatCounter = 1;
+    let tempPeserta = [...daftarPeserta];
 
-    // 2. PROSES TIAP GRUP LEVEL
-    for (const level in grupLevel) {
-        let pesertaLevel = grupLevel[level];
-        
-        // Acak internal level tersebut biar gak disangka pilih kasih
-        pesertaLevel.sort(() => Math.random() - 0.5);
+    // --- PEMBAGIAN HEAT (4-3-5) ---
+    while (tempPeserta.length > 0) {
+        let n = tempPeserta.length;
+        let ambil = 4; // Default
 
-        // Algoritma pembagian 4-3-5
-        let i = 0;
-        while (i < pesertaLevel.length) {
-            let sisa = pesertaLevel.length - i;
-            let jumlahDiHeat = 4; // Prioritas 4
-
-            if (sisa === 5) {
-                jumlahDiHeat = 5; // Maksimal 5
-            } else if (sisa === 3) {
-                jumlahDiHeat = 3; // Minimal 3
-            } else if (sisa < 3 && i > 0) {
-                // Kalau sisa 1 atau 2, masukin ke heat sebelumnya (biar jadi 5 atau 6)
-                // Tapi karena limit maksimal 5, kita paksa seimbang 3 dan 3 atau semacamnya
-                // Untuk simplenya, kita ambil sisa ini gabung ke heat terakhir yang dibuat
-                i = pesertaLevel.length; // Keluar loop karena sudah dihandle
-                break; 
-            }
-
-            const heatPeserta = pesertaLevel.slice(i, i + jumlahDiHeat);
-            if(heatPeserta.length > 0) {
-                renderHeatBox(heatPeserta, heatCounter++, level);
-            }
-            i += jumlahDiHeat;
+        if (n === 5) ambil = 5;
+        else if (n === 3) ambil = 3;
+        else if (n === 6) ambil = 3; // Biar adil 3 vs 3, bukan 4 vs 2
+        else if (n < 3 && heatCounter > 1) {
+            // Jika sisa 1 atau 2, kita bongkar heat sebelumnya (Logic Manual)
+            // Tapi untuk sistem RT, kita gabung aja ke heat terakhir biar gampang.
+            break; 
         }
-    }
 
-    // Tambah tombol action di bawah
+        const kloter = tempPeserta.splice(0, ambil);
+        const rangeLevel = [...new Set(kloter.map(p => p.level))].join("/");
+
+        renderHeatBox(kloter, heatCounter++, rangeLevel);
+    }
+}
+
+function renderHeatBox(peserta, nomor, levelLabel) {
+    const hasil = document.getElementById("hasilBracket");
+    let listHtml = "";
+    
+    // Diacak di dalam heat biar urutan lintasan/posisi adil
+    peserta.sort(() => Math.random() - 0.5);
+
+    peserta.forEach((p, idx) => {
+        listHtml += `
+            <li style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee;">
+                <span><strong>${idx + 1}. ${p.nama}</strong> <small>(${p.level})</small></span>
+                <select class="juara-select no-print" data-nama="${p.nama}">
+                    <option value="">-</option>
+                    <option value="1">J1</option>
+                    <option value="2">J2</option>
+                    <option value="3">J3</option>
+                    <option value="L">Lolos</option>
+                </select>
+            </li>`;
+    });
+
     hasil.innerHTML += `
-        <div style="width: 100%; margin: 20px 0; text-align: center;">
-            <button onclick="window.print()" style="background: #000; color: #fff;">🖨️ Cetak Bagan Untuk Juri</button>
+        <div class="heat-box" style="
+            background: white; border: 2.5px solid #000; border-radius: 12px;
+            width: 100%; max-width: 300px; box-shadow: 6px 6px 0px #000;
+            margin: 10px; overflow: hidden; display: inline-block; vertical-align: top;
+            text-align: left;
+        ">
+            <div style="background: #e74c3c; color: #fff; padding: 10px; text-align: center; font-weight: bold; border-bottom: 2.5px solid #000;">
+                HEAT ${nomor} <br>
+                <span style="font-size: 10px; opacity: 0.9;">LEVEL: ${levelLabel}</span>
+            </div>
+            <ul style="list-style: none; padding: 0; margin: 0;">${listHtml}</ul>
         </div>
     `;
 }
-
 // Fungsi pembantu buat nggambar Box Heat
 function renderHeatBox(peserta, nomor, level) {
     const hasil = document.getElementById("hasilBracket");
