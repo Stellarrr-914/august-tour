@@ -86,3 +86,31 @@ function tampilLomba() {
         `;
     }
 }
+
+async function updateStatusLomba(namaLomba, kategori, statusBaru) {
+    const urlAPI = "URL_WEB_APP_GOOGLE_SHEETS_LU"; // Samain sama yang di tambahLomba
+
+    try {
+        await fetch(urlAPI, {
+            method: "POST",
+            mode: "no-cors", // Pakai no-cors biar gak kena masalah policy browser
+            body: JSON.stringify({
+                type: "updateStatus",
+                namaLomba: namaLomba,
+                kategoriLomba: kategori,
+                statusBaru: statusBaru
+            })
+        });
+
+        // Update juga di database lokal biar gak perlu refresh
+        if (databaseLomba[namaLomba]) {
+            databaseLomba[namaLomba].status = statusBaru;
+            localStorage.setItem("databaseLomba", JSON.stringify(databaseLomba));
+        }
+
+        alert("Status " + namaLomba + " (" + kategori + ") sekarang: " + statusBaru);
+        tampilLomba(); // Refresh tabel lomba
+    } catch (error) {
+        console.error("Gagal update status:", error);
+    }
+}
