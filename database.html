@@ -54,22 +54,22 @@
     
     <hr>
 
-    <h3>Database Lomba</h3>
-    <div class="form-group">
-        <input type="text" id="inputLomba" placeholder="Nama Lomba, Kat1, Kat2">
-        <button onclick="tambahLomba()">Tambah Lomba</button>
-    </div>
-    <table>
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Nama Lomba</th>
-                <th>Kategori</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody id="tabelLomba"></tbody>
-    </table>
+    <div class="section-title">Database Daftar Lomba</div>
+<div class="form-group">
+    <input type="text" id="inputLomba" placeholder="Nama Lomba, Kat1, Kat2 (Contoh: Tarik Tambang, 1, M)">
+    <button onclick="tambahLomba()">Tambah Lomba</button>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Nama Lomba</th>
+            <th>Kategori Target</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody id="tabelLomba"></tbody> </table>
 
     <script src="js/peserta.js"></script>  
     <script src="js/data.js"></script>
