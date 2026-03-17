@@ -1,90 +1,80 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Database Peserta</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Peserta</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        th, td { border: 1px solid #000; padding: 8px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .section-title { background: #333; color: #fff; padding: 10px; margin-top: 20px; }
+        .form-group { margin: 15px 0; }
+        input { padding: 8px; width: 250px; }
+        button { padding: 8px 15px; cursor: pointer; }
+    </style>
 </head>
-
 <body>
 
-<h2>Update Database</h2>
+    <h2>Update Database</h2>
 
-<h3>Input Peserta</h3>
+    <div class="form-group">
+        <h3>Input Peserta</h3>
+        <input id="inputPeserta" placeholder="Nama, Kategori, Level (Budi, 1, A+ / Susi, M, 1)">
+        <button onclick="tambahPeserta()">Tambah Peserta</button>
+        <button onclick="cariPeserta()">Cari Peserta</button>
+        <button onclick="location.href='menu.html'">Kembali ke Menu</button>
+    </div>
 
-<input id="inputPeserta" placeholder="Contoh: Budi,1,B+">
+    <div class="section-title">Daftar Peserta Anak-Anak</div>
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>Kategori</th>
+                <th>Level</th>
+            </tr>
+        </thead>
+        <tbody id="tabelAnak"></tbody>
+    </table>
 
-<button onclick="tambahPeserta()">Tambah Peserta</button>
-<button onclick="cariPeserta()">Cari Peserta</button>
+    <div class="section-title">Daftar Peserta Ibu-Ibu (M/I)</div>
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>Kategori</th>
+                <th>Level</th>
+            </tr>
+        </thead>
+        <tbody id="tabelIbu"></tbody>
+    </table>
+    
+    <hr>
 
-<br><br>
+    <h3>Database Lomba</h3>
+    <div class="form-group">
+        <input type="text" id="inputLomba" placeholder="Nama Lomba, Kat1, Kat2">
+        <button onclick="tambahLomba()">Tambah Lomba</button>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Nama Lomba</th>
+                <th>Kategori</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="tabelLomba"></tbody>
+    </table>
 
-<style>
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  th, td {
-    border: 1px solid #000;
-    padding: 6px;
-    text-align: center;
-  }
-  th {
-    background-color: #f2f2f2;
-  }
-</style>
-
-  
-<table>
-
-<thead>
-<tr>
-<th>No</th>
-<th>Nama</th>
-<th>Kategori</th>
-<th>Level</th>
-</tr>
-</thead>
-
-<tbody id="tabelAnak"></tbody>
-
-</table>
-
-<button onclick="location.href='menu.html'">
-Kembali ke Menu
-</button>
-
-<hr>
-<h3>Daftar Lomba </h3>
-  
-<div class="form-group">
-    <input type="text" id="inputLomba" placeholder="Format: Nama Lomba, Kat1, Kat2 (Contoh: Balap Kelereng, 1, 2)">
-    <button onclick="tambahLomba()">Tambah Lomba</button>
-</div>
-
-<br><br>
-
-<table>
-    <thead>
-        <tr>
-            <th>No</th>
-            <th>Nama Lomba</th>
-            <th>Kategori</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody id="tabelLomba">
-        </tbody>
-</table>
-  
-<script src="js/peserta.js"></script>  
-<script src="js/data.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/navigation.js"></script>
-<script src="js/lomba.js"></script>
-<script src="js/bracket.js"></script>
-<script src="js/main.js"></script>
+    <script src="js/peserta.js"></script>  
+    <script src="js/data.js"></script>
+    <script src="js/lomba.js"></script>
+    <script src="js/bracket.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
