@@ -1,16 +1,14 @@
 window.onload = function() {
-    // Load Peserta
+    // 1. Load data dari Google Sheets (Peserta & Lomba)
     if (typeof loadDataFromSheet === "function") {
         loadDataFromSheet(); 
     }
 
-    // Load Lomba dari Sheet 2
     if (typeof loadLombaFromSheet === "function") {
         loadLombaFromSheet();
     }
-}
 
-    // --- Cek status login ---
+    // 2. Cek status login
     const loginStatus = localStorage.getItem("sudahLogin");
     const loginPage = document.getElementById("loginPage");
     const mainMenu = document.getElementById("mainMenu");
@@ -19,7 +17,7 @@ window.onload = function() {
         if (loginPage) loginPage.classList.add("hidden");
         if (mainMenu) mainMenu.classList.remove("hidden");
     }
-}
+}; // Semicolon di sini menutup fungsi window.onload
 
 // --- Fungsi logout ---
 function logout() {
@@ -29,4 +27,7 @@ function logout() {
 
     if (loginPage) loginPage.classList.remove("hidden");
     if (mainMenu) mainMenu.classList.add("hidden");
+    
+    // Opsional: Balikin ke halaman utama kalau mau
+    location.reload(); 
 }
