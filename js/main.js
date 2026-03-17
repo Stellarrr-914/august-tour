@@ -8,7 +8,7 @@ window.onload = function() {
     if (typeof loadLombaFromSheet === "function") {
         loadLombaFromSheet();
     }
-};
+}
 
     // --- Cek status login ---
     const loginStatus = localStorage.getItem("sudahLogin");
