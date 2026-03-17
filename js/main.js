@@ -27,7 +27,7 @@ function logout() {
 
     if (loginPage) loginPage.classList.remove("hidden");
     if (mainMenu) mainMenu.classList.add("hidden");
-    
-    // Opsional: Balikin ke halaman utama kalau mau
-    location.reload(); 
+
+    // Jangan pakai location.reload() dulu, biar UI-nya ganti manual aja
+    // location.reload(); 
 }
