@@ -31,3 +31,8 @@ function logout() {
     // Jangan pakai location.reload() dulu, biar UI-nya ganti manual aja
     // location.reload(); 
 }
+document.addEventListener('click', function(e) {
+    if(e.target && e.target.id == 'tombolLogoutLu') { // Pastikan ID-nya sesuai
+        logout();
+    }
+});
