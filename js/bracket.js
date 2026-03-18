@@ -215,25 +215,13 @@ function simpanKeSheet(nama, selectElement) {
     const hasil = selectElement.value;
     const lomba = document.getElementById("lombaSelect").value;
     const kategori = document.getElementById("kategoriSelect").value;
-    
     if (!hasil) return;
 
-    console.log(`Mencoba simpan: ${nama} | ${lomba} | ${kategori} | ${hasil}`);
-
-    // CEK: Apakah kita sedang di Google Apps Script?
-    if (typeof google !== 'undefined' && google.script && google.script.run) {
-        // JALUR ASLI (Kalau sudah di-deploy)
-        google.script.run
-            .withSuccessHandler(function(res) {
-                console.log("Berhasil:", res);
-                selectElement.style.background = "#d4edda"; 
-            })
-            .withFailureHandler(err => alert("Gagal: " + err))
-            .simpanKelolosan(nama, lomba, kategori, hasil);
-    } else {
-        // JALUR SIMULASI (Kalau buka file lokal di Chrome)
-        console.warn("Google Script Run tidak deteksi. Simulasi simpan berhasil!");
-        alert(`[MODE SIMULASI]\nData ${nama} akan disimpan sebagai ${hasil}.\n(Ini muncul karena lu buka file lokal, bukan link deploy)`);
-        selectElement.style.background = "#fff3cd"; // Kuning tanda simulasi
-    }
+    // LANGSUNG TEMBAK TANPA IF-ELSE
+    google.script.run
+        .withSuccessHandler(function(res) {
+            alert(res);
+            selectElement.style.background = "#d4edda"; 
+        })
+        .simpanKelolosan(nama, lomba, kategori, hasil);
 }
