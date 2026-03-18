@@ -5,64 +5,55 @@ let dataPesertaCloud = [];
 let listLombaFull = []; // Simpen kategori di sini biar gak fetch bolak-balik
 
 function updateLombaDropdown() {
-    const select = document.getElementById("lombaSelect");
-    if (!select) return;
-
     fetch(`${scriptURL}?type=getLomba`)
         .then(res => res.json())
         .then(data => {
-            listLombaFull = data; // Simpen data lengkap (Lomba + Kategorinya)
-            select.innerHTML = `<option value="">-- Pilih Lomba --</option>`;
-            
+            listLombaFull = data;
+            const select = document.getElementById("lombaSelect");
+            if (!select) return;
+            select.innerHTML = '<option value="">-- Pilih Lomba --</option>';
             data.forEach(l => {
                 const opt = document.createElement("option");
-                opt.value = l.nama; // Ambil properti 'nama' (Kolom A)
+                opt.value = l.nama;
                 opt.textContent = l.nama;
                 select.appendChild(opt);
             });
-            console.log("Dropdown Lomba Fixed!");
-        })
-        .catch(err => console.error("Gagal tarik data:", err));
+        });
 }
 
-// 2. UPDATE KATEGORI (Pecah titik koma dari Sheet 2)
+// 2. LOAD KATEGORI BERDASARKAN LOMBA
 function updateKategoriBerdasarkanLomba() {
-    const lombaTerpilih = document.getElementById("lombaSelect").value;
-    const kategoriSelect = document.getElementById("kategoriSelect");
-    
-    const lombaData = listLombaFull.find(l => l.nama === lombaTerpilih);
+    const lombaVal = document.getElementById("lombaSelect").value;
+    const katSelect = document.getElementById("kategoriSelect");
+    const lombaData = listLombaFull.find(l => l.nama === lombaVal);
     if (!lombaData) return;
 
-    const listKategori = lombaData.kategori.split(';').map(k => k.trim().toUpperCase());
-    kategoriSelect.innerHTML = '<option value="">-- Pilih Kategori --</option>';
-    listKategori.forEach(kat => {
+    const kats = lombaData.kategori.split(';').map(k => k.trim().toUpperCase());
+    katSelect.innerHTML = '<option value="">-- Pilih Kategori --</option>';
+    kats.forEach(k => {
         const opt = document.createElement("option");
-        opt.value = kat;
-        opt.textContent = "Kategori " + kat;
-        kategoriSelect.appendChild(opt);
+        opt.value = k;
+        opt.textContent = "Kategori " + k;
+        katSelect.appendChild(opt);
     });
 }
 
+// 3. TAMPILKAN PESERTA (Dari Sheet 1)
 function tampilkanPesertaBracket() {
     const kat = document.getElementById("kategoriSelect").value;
     const container = document.getElementById("pesertaLomba");
     if (!kat) return alert("Pilih kategori dulu!");
 
     container.innerHTML = "Memuat peserta...";
-
     fetch(`${scriptURL}?type=getPesertaByKategori&kategori=${encodeURIComponent(kat)}`)
         .then(res => res.json())
         .then(data => {
-            // SIMPAN DATA KE VARIABEL GLOBAL
-            dataPesertaCloud = data; 
-            console.log("Data berhasil disimpan ke cloud variabel:", dataPesertaCloud);
-
+            dataPesertaCloud = data; // Simpan ke variabel global
             container.innerHTML = "";
             if (data.length === 0) {
                 container.innerHTML = "Gak ada peserta di kategori ini.";
                 return;
             }
-
             data.forEach(p => {
                 container.innerHTML += `
                 <div class="peserta-item">
@@ -70,31 +61,24 @@ function tampilkanPesertaBracket() {
                     <label><strong>${p.nama}</strong> (${p.level})</label>
                 </div>`;
             });
-            
-            // Munculkan tombol generate
             document.getElementById("actionGenerate").style.display = "block";
-        })
-        .catch(err => alert("Gagal narik data: " + err));
+        });
 }
 
+// 4. GENERATE HEAT (LOGIKA 4-3-5)
 function generateBracket() {
-    // 2. Ambil semua checkbox yang DICENTANG
     const checkboxes = document.querySelectorAll(".peserta-check:checked");
     const namaTerpilih = Array.from(checkboxes).map(cb => cb.value);
 
-    console.log("Nama yang dicentang:", namaTerpilih);
-
-    // 3. Filter dataPesertaCloud berdasarkan nama yang dicentang
+    // Filter dataPesertaCloud berdasarkan yang dicentang
     let pesertaFix = dataPesertaCloud.filter(p => namaTerpilih.includes(p.nama));
 
-    console.log("Data peserta yang siap tanding:", pesertaFix);
-
     if (pesertaFix.length === 0) {
-        alert("Pilih peserta dulu (centang box-nya)!");
+        alert("Pilih peserta dulu!");
         return;
     }
 
-    // --- LANJUT LOGIKA SORTING & PEMBAGIAN HEAT ---
+    // Sort berdasarkan Level (Unggulan di atas)
     const bobot = {"S":10,"A+":9,"A":8,"A-":7,"B+":6,"B":5,"B-":4,"C+":3,"C":2,"C-":1};
     pesertaFix.sort((a,b) => (bobot[b.level] || 0) - (bobot[a.level] || 0));
 
@@ -102,7 +86,7 @@ function generateBracket() {
     hasil.innerHTML = "";
     let heatNum = 1;
 
-    // Logika Heat 4-3-5
+    // Logika pembagian Heat
     while (pesertaFix.length > 0) {
         let n = pesertaFix.length;
         let ambil = 4;
@@ -113,29 +97,57 @@ function generateBracket() {
         renderHeatBox(kloter, heatNum++);
     }
 }
-// 3. SIMPAN KE SHEET 3 (Pake fetch, bukan google.script.run)
-function simpanKeSheet(nama, selectElement) {
-    const hasil = selectElement.value;
+
+// 5. RENDER BOX HEAT (Fungsi yang tadi ilang)
+function renderHeatBox(peserta, nomor) {
+    const container = document.getElementById("hasilBracket");
+    let list = "";
+    
+    // Acak posisi lintasan biar fair
+    peserta.sort(() => Math.random() - 0.5); 
+
+    peserta.forEach((p, i) => {
+        list += `
+        <li>
+            ${i+1}. ${p.nama} (${p.level})
+            <select onchange="simpanKeSheet('${p.nama}', this)">
+                <option value="">- Hasil -</option>
+                <option value="Lolos">Lolos</option>
+                <option value="J1">Juara 1</option>
+                <option value="J2">Juara 2</option>
+                <option value="J3">Juara 3</option>
+            </select>
+        </li>`;
+    });
+
+    container.innerHTML += `
+    <div class="heat-box" style="border:1px solid #ccc; padding:10px; margin:10px; border-radius:8px; background:#f9f9f9;">
+        <b style="color:#007bff;">HEAT ${nomor}</b>
+        <ul style="list-style:none; padding:0; margin-top:5px;">${list}</ul>
+    </div>`;
+}
+
+// 6. SIMPAN KE SHEET 3
+function simpanKeSheet(nama, el) {
     const lomba = document.getElementById("lombaSelect").value;
     const kategori = document.getElementById("kategoriSelect").value;
-    if (!hasil) return;
-
+    
     fetch(scriptURL, {
         method: 'POST',
         body: JSON.stringify({
             type: "simpanJuara",
-            namaLomba: lomba,
-            kategoriLomba: kategori,
-            namaPeserta: nama,
-            babakBaru: hasil
+            lomba: lomba,
+            kategori: kategori,
+            nama: nama,
+            status: el.value
         })
     })
-    .then(() => {
-        selectElement.style.background = "#d4edda";
-        alert("Berhasil simpan " + nama);
+    .then(() => { 
+        el.style.background = "#d4edda"; 
+        console.log(`Berhasil simpan: ${nama} sebagai ${el.value}`);
     })
-    .catch(err => alert("Gagal simpan ke cloud!"));
+    .catch(err => alert("Gagal simpan!"));
 }
 
-// Panggil saat halaman siap
+// Jalankan load dropdown pas halaman dibuka
 document.addEventListener("DOMContentLoaded", updateLombaDropdown);
