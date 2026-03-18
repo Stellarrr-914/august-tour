@@ -128,7 +128,7 @@ function renderHeatBox(peserta, nomor) {
     peserta.forEach((p, i) => {
         list += `
         <li>
-            ${i+1}. ${p.nama} (${p.level})
+            ${i+1}. ${p.nama}
             <select onchange="simpanKeSheet('${p.nama}', this)">
                 <option value="">- Hasil -</option>
                 <option value="Lolos">Lolos</option>
