@@ -1,64 +1,69 @@
-// URL Web App dari Deploy > Test Deployment / Manage Deployment (yang akhiran /exec)
+// URL Web App lu yang baru dari step di atas
 const scriptURL = "https://script.google.com/macros/s/AKfycbwozetGewXUnyT8RqZkwrYenD_Yt7gZFyb5JkCPAVRECg9Q-KwFMqOo0pPX0wUYvExK/exec"; 
 
-// 1. UPDATE DROPDOWN LOMBA (Ambil data Real-time dari Sheets)
+// 1. UPDATE DROPDOWN LOMBA (Narik Real-time)
+let listLombaFull = []; // Simpen kategori di sini biar gak fetch bolak-balik
+
 function updateLombaDropdown() {
-    console.log("Memulai tarik data lomba...");
     const select = document.getElementById("lombaSelect");
     if (!select) return;
 
-    // Pakai fetch GET ke Apps Script
     fetch(`${scriptURL}?type=getLomba`)
         .then(res => res.json())
-        .then(daftarLomba => {
+        .then(data => {
+            listLombaFull = data; 
             select.innerHTML = `<option value="">-- Pilih Lomba --</option>`;
-            daftarLomba.forEach(namaLomba => {
+            data.forEach(l => {
                 const opt = document.createElement("option");
-                opt.value = namaLomba;
-                opt.textContent = namaLomba;
+                opt.value = l.nama;
+                opt.textContent = l.nama;
                 select.appendChild(opt);
             });
-            console.log("Dropdown Lomba terupdate dari Sheets!");
         })
-        .catch(err => console.error("Gagal update dropdown:", err));
+        .catch(err => console.error("Gagal load lomba:", err));
 }
 
-// 2. SIMPAN HASIL KE SHEET 3 (Pakai POST)
+// 2. UPDATE KATEGORI (Pecah titik koma dari Sheet 2)
+function updateKategoriBerdasarkanLomba() {
+    const lombaTerpilih = document.getElementById("lombaSelect").value;
+    const kategoriSelect = document.getElementById("kategoriSelect");
+    
+    const lombaData = listLombaFull.find(l => l.nama === lombaTerpilih);
+    if (!lombaData) return;
+
+    const listKategori = lombaData.kategori.split(';').map(k => k.trim().toUpperCase());
+    kategoriSelect.innerHTML = '<option value="">-- Pilih Kategori --</option>';
+    listKategori.forEach(kat => {
+        const opt = document.createElement("option");
+        opt.value = kat;
+        opt.textContent = "Kategori " + kat;
+        kategoriSelect.appendChild(opt);
+    });
+}
+
+// 3. SIMPAN KE SHEET 3 (Pake fetch, bukan google.script.run)
 function simpanKeSheet(nama, selectElement) {
     const hasil = selectElement.value;
     const lomba = document.getElementById("lombaSelect").value;
     const kategori = document.getElementById("kategoriSelect").value;
-    
     if (!hasil) return;
 
-    // Bungkus data dalam JSON
-    const payload = {
-        type: "simpanJuara",
-        namaLomba: lomba,
-        kategoriLomba: kategori,
-        namaPeserta: nama,
-        babakBaru: hasil
-    };
-
-    // Tembak pake POST
     fetch(scriptURL, {
         method: 'POST',
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+            type: "simpanJuara",
+            namaLomba: lomba,
+            kategoriLomba: kategori,
+            namaPeserta: nama,
+            babakBaru: hasil
+        })
     })
-    .then(res => res.json())
-    .then(response => {
-        if(response.result === "success") {
-            alert("✅ " + response.message);
-            selectElement.style.background = "#d4edda"; // Ijo kalau sukses
-        } else {
-            alert("❌ Gagal: " + response.message);
-        }
+    .then(() => {
+        selectElement.style.background = "#d4edda";
+        alert("Berhasil simpan " + nama);
     })
-    .catch(error => {
-        console.error('Error!', error);
-        alert("Waduh, koneksi ke Sheets putus brok!");
-    });
+    .catch(err => alert("Gagal simpan ke cloud!"));
 }
 
-// Pastikan dropdown jalan pas halaman dibuka
+// Panggil saat halaman siap
 document.addEventListener("DOMContentLoaded", updateLombaDropdown);
