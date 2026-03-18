@@ -46,22 +46,20 @@ function updateKategoriBerdasarkanLomba() {
 function tampilkanPesertaBracket() {
     const kat = document.getElementById("kategoriSelect").value;
     const container = document.getElementById("pesertaLomba");
-    const btn = document.getElementById("actionGenerate");
-
     if (!kat) return alert("Pilih kategori dulu!");
 
     container.innerHTML = "Memuat peserta...";
-    
+
     fetch(`${scriptURL}?type=getPesertaByKategori&kategori=${encodeURIComponent(kat)}`)
         .then(res => res.json())
         .then(data => {
-            container.innerHTML = "";
-            // Simpan ke global biar bisa diakses generateBracket()
-            window.semuaPesertaKategori = data; 
+            // SIMPAN DATA KE VARIABEL GLOBAL
+            dataPesertaCloud = data; 
+            console.log("Data berhasil disimpan ke cloud variabel:", dataPesertaCloud);
 
+            container.innerHTML = "";
             if (data.length === 0) {
-                container.innerHTML = "Gak ada orang di kategori ini.";
-                btn.style.display = "none";
+                container.innerHTML = "Gak ada peserta di kategori ini.";
                 return;
             }
 
@@ -69,50 +67,52 @@ function tampilkanPesertaBracket() {
                 container.innerHTML += `
                 <div class="peserta-item">
                     <input type="checkbox" class="peserta-check" value="${p.nama}" checked>
-                    <label>${p.nama} (Level: ${p.level})</label>
+                    <label><strong>${p.nama}</strong> (${p.level})</label>
                 </div>`;
             });
-            btn.style.display = "block";
-        });
+            
+            // Munculkan tombol generate
+            document.getElementById("actionGenerate").style.display = "block";
+        })
+        .catch(err => alert("Gagal narik data: " + err));
 }
 
 function generateBracket() {
-    const checkedNames = Array.from(document.querySelectorAll(".peserta-check:checked")).map(c => c.value);
-    let pesertaTanding = dataPesertaCloud.filter(p => checkedNames.includes(p.nama));
+    // 2. Ambil semua checkbox yang DICENTANG
+    const checkboxes = document.querySelectorAll(".peserta-check:checked");
+    const namaTerpilih = Array.from(checkboxes).map(cb => cb.value);
 
-    if (pesertaTanding.length === 0) return alert("Pilih peserta dulu!");
+    console.log("Nama yang dicentang:", namaTerpilih);
 
-    // Sorting Level
+    // 3. Filter dataPesertaCloud berdasarkan nama yang dicentang
+    let pesertaFix = dataPesertaCloud.filter(p => namaTerpilih.includes(p.nama));
+
+    console.log("Data peserta yang siap tanding:", pesertaFix);
+
+    if (pesertaFix.length === 0) {
+        alert("Pilih peserta dulu (centang box-nya)!");
+        return;
+    }
+
+    // --- LANJUT LOGIKA SORTING & PEMBAGIAN HEAT ---
     const bobot = {"S":10,"A+":9,"A":8,"A-":7,"B+":6,"B":5,"B-":4,"C+":3,"C":2,"C-":1};
-    pesertaTanding.sort((a,b) => (bobot[b.level]||0) - (bobot[a.level]||0));
+    pesertaFix.sort((a,b) => (bobot[b.level] || 0) - (bobot[a.level] || 0));
 
     const hasil = document.getElementById("hasilBracket");
     hasil.innerHTML = "";
     let heatNum = 1;
 
-    while (pesertaTanding.length > 0) {
-        let jml = pesertaTanding.length;
-        let ambil = 4; // Default
-        if (jml === 5) ambil = 5;
-        else if (jml === 3 || jml === 6) ambil = 3;
+    // Logika Heat 4-3-5
+    while (pesertaFix.length > 0) {
+        let n = pesertaFix.length;
+        let ambil = 4;
+        if (n === 5) ambil = 5;
+        else if (n === 3 || n === 6) ambil = 3;
 
-        const kloter = pesertaTanding.splice(0, ambil);
-        kloter.sort(() => Math.random() - 0.5); // Acak posisi lintasan
-        
-        let listHtml = kloter.map((p, i) => `
-            <li>${i+1}. ${p.nama} 
-                <select onchange="simpanKeSheet('${p.nama}', this)">
-                    <option value="">-</option>
-                    <option value="Lolos">Lolos</option>
-                    <option value="J1">J1</option>
-                    <option value="J2">J2</option>
-                </select>
-            </li>`).join("");
-
-        hasil.innerHTML += `<div class="heat-box"><b>HEAT ${heatNum++}</b><ul>${listHtml}</ul></div>`;
+        const kloter = pesertaFix.splice(0, ambil);
+        renderHeatBox(kloter, heatNum++);
     }
 }
-
 // 3. SIMPAN KE SHEET 3 (Pake fetch, bukan google.script.run)
 function simpanKeSheet(nama, selectElement) {
     const hasil = selectElement.value;
