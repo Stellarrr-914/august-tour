@@ -183,17 +183,18 @@ function renderHeatBox(peserta, nomor, level) {
     let listHtml = "";
     
     peserta.forEach((p, idx) => {
-        listHtml += `
-            <li style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee;">
-                <span><strong>${idx + 1}. ${p.nama}</strong></span>
-                <select class="juara-select" style="border: 1px solid #ccc; border-radius: 4px;">
-                    <option value="">- Hasil -</option>
-                    <option value="1">Juara 1</option>
-                    <option value="2">Juara 2</option>
-                    <option value="3">Juara 3</option>
-                    <option value="Lolos">Lolos</option>
-                </select>
-            </li>`;
+       listHtml += `
+    <li style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee;">
+        <span><strong>${idx + 1}. ${p.nama}</strong></span>
+        <select class="juara-select" 
+                style="border: 1px solid #ccc; border-radius: 4px;" 
+                onchange="simpanKeSheet('${p.nama}', this)"> <option value="">- Hasil -</option>
+            <option value="Juara 1">Juara 1</option>
+            <option value="Juara 2">Juara 2</option>
+            <option value="Juara 3">Juara 3</option>
+            <option value="Lolos">Lolos</option>
+        </select>
+    </li>`;
     });
 
     hasil.innerHTML += `
@@ -208,4 +209,24 @@ function renderHeatBox(peserta, nomor, level) {
             <ul style="list-style: none; padding: 0; margin: 0;">${listHtml}</ul>
         </div>
     `;
+}
+
+function simpanKeSheet(nama, selectElement) {
+    const hasil = selectElement.value;
+    const lomba = document.getElementById("lombaSelect").value;
+    const kategori = document.getElementById("kategoriSelect").value;
+    
+    if (!hasil) return; // Kalau cuma pilih "-", jangan kirim apa-apa
+
+    console.log(`Menyimpan ${nama} sebagai ${hasil}...`);
+    
+    // Panggil fungsi di Code.gs yang udah kita buat tadi
+    google.script.run
+        .withSuccessHandler(function(res) {
+            console.log(res);
+            // Kasih efek hijau dikit biar panitia tau udah kesimpen
+            selectElement.style.background = "#d4edda"; 
+        })
+        .withFailureHandler(err => alert("Gagal simpan brok: " + err))
+        .simpanKelolosan(nama, lomba, kategori, hasil);
 }
