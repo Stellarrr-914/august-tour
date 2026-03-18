@@ -1,6 +1,6 @@
 // URL Web App lu yang baru dari step di atas
 const scriptURL = "https://script.google.com/macros/s/AKfycbyJAtPA6_FOOqTVHsmdsaTpjvuPIDUzyLE5QPVfCCY-SrvJsiqCal-1LVFRCqlhjUWS/exec"; 
-
+let dataPesertaCloud = [];
 // 1. UPDATE DROPDOWN LOMBA (Narik Real-time)
 let listLombaFull = []; // Simpen kategori di sini biar gak fetch bolak-balik
 
