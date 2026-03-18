@@ -1,13 +1,20 @@
 // URL API dari Google Apps Script lu
 const urlAPI = "https://script.google.com/macros/s/AKfycbwpp18nPBME5NaMZwKGwOsn1Bj5uJT7a6OH9XpOkeHaqHZdX7gsxZvqA1MVGmnZNMAz/exec";
 
+// FUNGSI CEK: Apakah ini kategori Ibu-ibu?
+// Mengembalikan true jika kategori diawali huruf M atau I
+function cekKategoriIbu(kat) {
+    const k = String(kat).toUpperCase();
+    return k.startsWith("M") || k.startsWith("I");
+}
+
 async function tambahPeserta() {
     const inputField = document.getElementById("inputPeserta");
     const value = inputField.value.trim();
     const parts = value.split(",");
 
     if (parts.length !== 3) {
-        alert("Format: Nama, Kategori, Level\nContoh: Budi, 1, A atau Susi, M, 1");
+        alert("Format: Nama, Kategori, Level\nContoh: Budi, 1, A atau Susi, M1, 1");
         return;
     }
 
@@ -17,14 +24,12 @@ async function tambahPeserta() {
 
     try {
         inputField.disabled = true;
-        // Kirim ke Cloud
         await fetch(urlAPI, {
             method: "POST",
             mode: "no-cors",
             body: JSON.stringify({ nama, kategori, level })
         });
 
-        // Update Lokal
         databaseAnak.push({ nama, kategori, level });
         tampilSemuaTabel();
         
@@ -41,7 +46,6 @@ function tampilSemuaTabel() {
     const tabelAnak = document.getElementById("tabelAnak");
     const tabelIbu = document.getElementById("tabelIbu");
 
-    // Validasi agar tidak error jika salah satu ID tidak ada
     if (!tabelAnak || !tabelIbu) return;
 
     tabelAnak.innerHTML = "";
@@ -51,14 +55,15 @@ function tampilSemuaTabel() {
     let noIbu = 1;
 
     databaseAnak.forEach(p => {
+        const isIbu = cekKategoriIbu(p.kategori);
         const row = `<tr>
-            <td>${(p.kategori === 'M' || p.kategori === 'I') ? noIbu++ : noAnak++}</td>
+            <td>${isIbu ? noIbu++ : noAnak++}</td>
             <td>${p.nama}</td>
             <td>${p.kategori}</td>
             <td>${p.level}</td>
         </tr>`;
 
-        if (p.kategori === "M" || p.kategori === "I") {
+        if (isIbu) {
             tabelIbu.innerHTML += row;
         } else {
             tabelAnak.innerHTML += row;
@@ -88,13 +93,24 @@ function cariPeserta() {
 function renderHasilCari(hasil) {
     const tabelAnak = document.getElementById("tabelAnak");
     const tabelIbu = document.getElementById("tabelIbu");
+    if (!tabelAnak || !tabelIbu) return;
+    
     tabelAnak.innerHTML = "";
     tabelIbu.innerHTML = "";
     
-    let noAnak = 1; let noIbu = 1;
+    let noAnak = 1; 
+    let noIbu = 1;
+    
     hasil.forEach(p => {
-        const row = `<tr><td>${(p.kategori === 'M' || p.kategori === 'I') ? noIbu++ : noAnak++}</td><td>${p.nama}</td><td>${p.kategori}</td><td>${p.level}</td></tr>`;
-        if (p.kategori === "M" || p.kategori === "I") tabelIbu.innerHTML += row;
+        const isIbu = cekKategoriIbu(p.kategori);
+        const row = `<tr>
+            <td>${isIbu ? noIbu++ : noAnak++}</td>
+            <td>${p.nama}</td>
+            <td>${p.kategori}</td>
+            <td>${p.level}</td>
+        </tr>`;
+        
+        if (isIbu) tabelIbu.innerHTML += row;
         else tabelAnak.innerHTML += row;
     });
 }
