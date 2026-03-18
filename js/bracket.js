@@ -43,50 +43,51 @@ function updateKategoriBerdasarkanLomba() {
     });
 }
 
-// 3. TAMPILKAN PESERTA (Narik dari Sheet 1 via Apps Script)
 function tampilkanPesertaBracket() {
-    const lomba = document.getElementById("lombaSelect").value;
-    const kategori = document.getElementById("kategoriSelect").value;
+    const kat = document.getElementById("kategoriSelect").value;
     const container = document.getElementById("pesertaLomba");
-    const actionBtn = document.getElementById("actionGenerate");
+    const btn = document.getElementById("actionGenerate");
 
-    if (!lomba || !kategori) {
-        alert("Pilih Lomba dan Kategori dulu, brok!");
-        return;
-    }
+    if (!kat) return alert("Pilih kategori dulu!");
 
-    container.innerHTML = "<i>Memuat data peserta dari cloud...</i>";
-
-    // Kita request ke Apps Script dengan type baru: getPeserta
-    fetch(`${scriptURL}?type=getPeserta&lomba=${encodeURIComponent(lomba)}&kategori=${encodeURIComponent(kategori)}`)
+    container.innerHTML = "Memuat peserta...";
+    
+    fetch(`${scriptURL}?type=getPesertaByKategori&kategori=${encodeURIComponent(kat)}`)
         .then(res => res.json())
         .then(data => {
             container.innerHTML = "";
-            
+            // Simpan ke global biar bisa diakses generateBracket()
+            window.semuaPesertaKategori = data; 
+
             if (data.length === 0) {
-                container.innerHTML = "<p style='color:red;'>Gak ada peserta yang terdaftar di kategori ini.</p>";
-                actionBtn.style.display = "none";
+                container.innerHTML = "Gak ada orang di kategori ini.";
+                btn.style.display = "none";
                 return;
             }
 
-            // Simpan data ke variabel global sementara buat dipakai fungsi Generate Heat nanti
-            window.pesertaFilterCloud = data; 
-
             data.forEach(p => {
                 container.innerHTML += `
-                    <div class="peserta-item">
-                        <input type="checkbox" class="peserta-check" value="${p.nama}" checked>
-                        <label><strong>${p.nama}</strong> <br><small>Level: ${p.level}</small></label>
-                    </div>
-                `;
+                <div class="peserta-item">
+                    <input type="checkbox" class="peserta-check" value="${p.nama}" checked>
+                    <label>${p.nama} (Level: ${p.level})</label>
+                </div>`;
             });
-
-            actionBtn.style.display = "block"; // Munculkan tombol Generate Heat
-        })
-        .catch(err => {
-            console.error(err);
-            container.innerHTML = "<p style='color:red;'>Gagal narik data peserta. Cek koneksi!</p>";
+            btn.style.display = "block";
         });
+}
+
+function generateBracket() {
+    // Cuma ambil yang dicentang
+    const checked = document.querySelectorAll(".peserta-check:checked");
+    const namaDipilih = Array.from(checked).map(c => c.value);
+    
+    // Filter data mentah berdasarkan checkbox
+    let pesertaTanding = window.semuaPesertaKategori.filter(p => namaDipilih.includes(p.nama));
+    
+    if (pesertaTanding.length === 0) return alert("Centang dulu pesertanya!");
+
+    // LANJUTKAN LOGIKA PEMBAGIAN HEAT 4-3-5 LU DI SINI...
+    // (Gunakan variabel pesertaTanding)
 }
 
 // 3. SIMPAN KE SHEET 3 (Pake fetch, bukan google.script.run)
