@@ -71,3 +71,25 @@ function prosesPemenang(nama, lomba, kategori, babak) {
         })
         .simpanKelolosan(nama, lomba, kategori, babak);
 }
+
+function loadLombaFromSheet() {
+    console.log("Sedang mengambil daftar lomba...");
+    
+    google.script.run
+        .withSuccessHandler(function(listLomba) {
+            const selectLomba = document.getElementById("pilihLomba"); // Pastikan ID ini ada di HTML
+            if (!selectLomba) return;
+
+            selectLomba.innerHTML = '<option value="">-- Pilih Lomba --</option>';
+            
+            listLomba.forEach(lomba => {
+                let option = document.createElement("option");
+                option.value = lomba;
+                option.text = lomba;
+                selectLomba.appendChild(option);
+            });
+            console.log("Daftar lomba berhasil dimuat!");
+        })
+        .withFailureHandler(err => console.error("Gagal muat lomba:", err))
+        .ambilDaftarLomba(); // Manggil fungsi di Code.gs tadi
+}
