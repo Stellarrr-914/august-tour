@@ -1,5 +1,5 @@
 // URL Web App lu yang baru dari step di atas
-const scriptURL = "https://script.google.com/macros/s/AKfycbyJAtPA6_FOOqTVHsmdsaTpjvuPIDUzyLE5QPVfCCY-SrvJsiqCal-1LVFRCqlhjUWS/exec"; 
+const scriptURL = "https://script.google.com/macros/s/AKfycby4dPqSXdqvZ1s0QX9b42pXN6-xw5LRx4HLZ8VJsUXIKPWPX8u1VhmE3DIM8l9zTZaD/exec"; 
 let dataPesertaCloud = [];
 // 1. UPDATE DROPDOWN LOMBA (Narik Real-time)
 let listLombaFull = []; // Simpen kategori di sini biar gak fetch bolak-balik
@@ -41,19 +41,32 @@ function updateKategoriBerdasarkanLomba() {
 // 3. TAMPILKAN PESERTA (Dari Sheet 1)
 function tampilkanPesertaBracket() {
     const kat = document.getElementById("kategoriSelect").value;
+    const lomba = document.getElementById("lombaSelect").value;
+    const babak = document.getElementById("babakSelect").value;
     const container = document.getElementById("pesertaLomba");
-    if (!kat) return alert("Pilih kategori dulu!");
+
+    if (!kat || !lomba) return;
 
     container.innerHTML = "Memuat peserta...";
-    fetch(`${scriptURL}?type=getPesertaByKategori&kategori=${encodeURIComponent(kat)}`)
+
+    // Tentukan URL berdasarkan Babak
+    let fetchURL = `${scriptURL}?type=getPesertaByKategori&kategori=${encodeURIComponent(kat)}`;
+    
+    if (babak !== "Penyisihan") {
+        fetchURL = `${scriptURL}?type=getPesertaLolos&lomba=${encodeURIComponent(lomba)}&kategori=${encodeURIComponent(kat)}`;
+    }
+
+    fetch(fetchURL)
         .then(res => res.json())
         .then(data => {
-            dataPesertaCloud = data; // Simpan ke variabel global
+            dataPesertaCloud = data; 
             container.innerHTML = "";
+            
             if (data.length === 0) {
-                container.innerHTML = "Gak ada peserta di kategori ini.";
+                container.innerHTML = babak === "Penyisihan" ? "Belum ada peserta." : "Belum ada yang lolos ke babak ini.";
                 return;
             }
+
             data.forEach(p => {
                 container.innerHTML += `
                 <div class="peserta-item">
