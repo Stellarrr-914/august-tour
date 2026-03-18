@@ -1,5 +1,5 @@
 // URL Web App lu yang baru dari step di atas
-const scriptURL = "https://script.google.com/macros/s/AKfycby4dPqSXdqvZ1s0QX9b42pXN6-xw5LRx4HLZ8VJsUXIKPWPX8u1VhmE3DIM8l9zTZaD/exec"; 
+const scriptURL = "https://script.google.com/macros/s/AKfycbylvbHLUbntnOswPAdiOwJerDwQF1HyhQs35vgZwunaMt4JgdEWNWpSC6HcNK3xU18f/exec"; 
 let dataPesertaCloud = [];
 // 1. UPDATE DROPDOWN LOMBA (Narik Real-time)
 let listLombaFull = []; // Simpen kategori di sini biar gak fetch bolak-balik
@@ -54,7 +54,8 @@ function tampilkanPesertaBracket() {
     // 2. Kalau selain itu -> Ambil orang yang "Lolos" di Lomba & Kategori itu dari Sheet 3
     let typeRequest = (babak === "Penyisihan") ? "getPesertaByKategori" : "getPesertaLolos";
     
-    let fetchURL = `${scriptURL}?type=${typeRequest}&kategori=${encodeURIComponent(kat)}&lomba=${encodeURIComponent(lomba)}`;
+    let fetchURL = `${scriptURL}?type=getPesertaLolos&lomba=${encodeURIComponent(lomba)}&kategori=${encodeURIComponent(kat)}`;
+console.log("Mencoba narik data lolos dari URL:", fetchURL); // CEK DI F12
 
     fetch(fetchURL)
         .then(res => res.json())
