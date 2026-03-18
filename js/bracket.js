@@ -1,5 +1,5 @@
 // URL Web App lu yang baru dari step di atas
-const scriptURL = "https://script.google.com/macros/s/AKfycbwUIIpGdCNUvYL34m5_B0G2hXfS09-1nhRBZ1StUliWEtbUGkD1IUIOYrj0EBfLEadn/exec"; 
+const scriptURL = "https://script.google.com/macros/s/AKfycbyJAtPA6_FOOqTVHsmdsaTpjvuPIDUzyLE5QPVfCCY-SrvJsiqCal-1LVFRCqlhjUWS/exec"; 
 
 // 1. UPDATE DROPDOWN LOMBA (Narik Real-time)
 let listLombaFull = []; // Simpen kategori di sini biar gak fetch bolak-balik
@@ -77,17 +77,40 @@ function tampilkanPesertaBracket() {
 }
 
 function generateBracket() {
-    // Cuma ambil yang dicentang
-    const checked = document.querySelectorAll(".peserta-check:checked");
-    const namaDipilih = Array.from(checked).map(c => c.value);
-    
-    // Filter data mentah berdasarkan checkbox
-    let pesertaTanding = window.semuaPesertaKategori.filter(p => namaDipilih.includes(p.nama));
-    
-    if (pesertaTanding.length === 0) return alert("Centang dulu pesertanya!");
+    const checkedNames = Array.from(document.querySelectorAll(".peserta-check:checked")).map(c => c.value);
+    let pesertaTanding = dataPesertaCloud.filter(p => checkedNames.includes(p.nama));
 
-    // LANJUTKAN LOGIKA PEMBAGIAN HEAT 4-3-5 LU DI SINI...
-    // (Gunakan variabel pesertaTanding)
+    if (pesertaTanding.length === 0) return alert("Pilih peserta dulu!");
+
+    // Sorting Level
+    const bobot = {"S":10,"A+":9,"A":8,"A-":7,"B+":6,"B":5,"B-":4,"C+":3,"C":2,"C-":1};
+    pesertaTanding.sort((a,b) => (bobot[b.level]||0) - (bobot[a.level]||0));
+
+    const hasil = document.getElementById("hasilBracket");
+    hasil.innerHTML = "";
+    let heatNum = 1;
+
+    while (pesertaTanding.length > 0) {
+        let jml = pesertaTanding.length;
+        let ambil = 4; // Default
+        if (jml === 5) ambil = 5;
+        else if (jml === 3 || jml === 6) ambil = 3;
+
+        const kloter = pesertaTanding.splice(0, ambil);
+        kloter.sort(() => Math.random() - 0.5); // Acak posisi lintasan
+        
+        let listHtml = kloter.map((p, i) => `
+            <li>${i+1}. ${p.nama} 
+                <select onchange="simpanKeSheet('${p.nama}', this)">
+                    <option value="">-</option>
+                    <option value="Lolos">Lolos</option>
+                    <option value="J1">J1</option>
+                    <option value="J2">J2</option>
+                </select>
+            </li>`).join("");
+
+        hasil.innerHTML += `<div class="heat-box"><b>HEAT ${heatNum++}</b><ul>${listHtml}</ul></div>`;
+    }
 }
 
 // 3. SIMPAN KE SHEET 3 (Pake fetch, bukan google.script.run)
