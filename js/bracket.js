@@ -42,19 +42,19 @@ function updateKategoriBerdasarkanLomba() {
 function tampilkanPesertaBracket() {
     const kat = document.getElementById("kategoriSelect").value;
     const lomba = document.getElementById("lombaSelect").value;
-    const babak = document.getElementById("babakSelect").value;
+    const babak = document.getElementById("babakSelect").value; // Pastikan ID ini ada di HTML
     const container = document.getElementById("pesertaLomba");
 
-    if (!kat || !lomba) return;
+    if (!kat || !lomba) return alert("Pilih Lomba & Kategori dulu!");
 
     container.innerHTML = "Memuat peserta...";
 
-    // Tentukan URL berdasarkan Babak
-    let fetchURL = `${scriptURL}?type=getPesertaByKategori&kategori=${encodeURIComponent(kat)}`;
+    // JALUR LOGIKA:
+    // 1. Kalau Penyisihan -> Ambil semua orang di Kategori itu dari Sheet 1
+    // 2. Kalau selain itu -> Ambil orang yang "Lolos" di Lomba & Kategori itu dari Sheet 3
+    let typeRequest = (babak === "Penyisihan") ? "getPesertaByKategori" : "getPesertaLolos";
     
-    if (babak !== "Penyisihan") {
-        fetchURL = `${scriptURL}?type=getPesertaLolos&lomba=${encodeURIComponent(lomba)}&kategori=${encodeURIComponent(kat)}`;
-    }
+    let fetchURL = `${scriptURL}?type=${typeRequest}&kategori=${encodeURIComponent(kat)}&lomba=${encodeURIComponent(lomba)}`;
 
     fetch(fetchURL)
         .then(res => res.json())
@@ -63,18 +63,23 @@ function tampilkanPesertaBracket() {
             container.innerHTML = "";
             
             if (data.length === 0) {
-                container.innerHTML = babak === "Penyisihan" ? "Belum ada peserta." : "Belum ada yang lolos ke babak ini.";
+                container.innerHTML = `<b style="color:red">Belum ada peserta ${babak} untuk ${lomba} - ${kat}</b>`;
                 return;
             }
 
+            // Render Checkbox
             data.forEach(p => {
                 container.innerHTML += `
                 <div class="peserta-item">
                     <input type="checkbox" class="peserta-check" value="${p.nama}" checked>
-                    <label><strong>${p.nama}</strong> (${p.level})</label>
+                    <label><strong>${p.nama}</strong></label>
                 </div>`;
             });
             document.getElementById("actionGenerate").style.display = "block";
+        })
+        .catch(err => {
+            container.innerHTML = "Gagal narik data. Cek koneksi!";
+            console.error(err);
         });
 }
 
