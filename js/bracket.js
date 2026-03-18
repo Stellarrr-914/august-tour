@@ -11,16 +11,18 @@ function updateLombaDropdown() {
     fetch(`${scriptURL}?type=getLomba`)
         .then(res => res.json())
         .then(data => {
-            listLombaFull = data; 
+            listLombaFull = data; // Simpen data lengkap (Lomba + Kategorinya)
             select.innerHTML = `<option value="">-- Pilih Lomba --</option>`;
+            
             data.forEach(l => {
                 const opt = document.createElement("option");
-                opt.value = l.nama;
+                opt.value = l.nama; // Ambil properti 'nama' (Kolom A)
                 opt.textContent = l.nama;
                 select.appendChild(opt);
             });
+            console.log("Dropdown Lomba Fixed!");
         })
-        .catch(err => console.error("Gagal load lomba:", err));
+        .catch(err => console.error("Gagal tarik data:", err));
 }
 
 // 2. UPDATE KATEGORI (Pecah titik koma dari Sheet 2)
