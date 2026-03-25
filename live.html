@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Report Turnamen 🏆</title>
+    <style>
+        :root { --bg: #121212; --card: #1e1e1e; --primary: #007bff; --accent: #ffc107; --success: #28a745; --text: #e0e0e0; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .container { max-width: 500px; margin: auto; }
+        h2 { text-align: center; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; }
+        
+        /* Card Styles */
+        .section-title { font-size: 14px; font-weight: bold; color: #888; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 1px solid #333; }
+        
+        /* Now Playing */
+        .now-playing { border-left: 5px solid #e74c3c; background: linear-gradient(145deg, #2c1a1a, #1e1e1e); }
+        .match-title { font-size: 20px; font-weight: bold; color: #fff; }
+        .match-sub { font-size: 14px; color: #bbb; margin-top: 5px; }
+
+        /* Results List */
+        .res-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #333; }
+        .res-item:last-child { border: none; }
+        .res-name { font-weight: bold; font-size: 15px; }
+        .res-tag { font-size: 11px; color: #777; text-transform: uppercase; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .badge-lolos { background: rgba(40, 167, 69, 0.2); color: #28a745; border: 1px solid #28a745; }
+        .badge-gugur { background: rgba(255, 255, 255, 0.05); color: #888; border: 1px solid #444; }
+
+        /* Next Schedule */
+        .next-card { border-left: 5px solid var(--primary); }
+        .time-tag { color: var(--primary); font-weight: bold; font-size: 13px; }
+
+        .loading { text-align: center; padding: 50px; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🏆 Live Report</h2>
+
+    <div class="section-title">🔴 SEDANG BERLANGSUNG</div>
+    <div id="now-playing-box" class="card now-playing">
+        <div class="loading">Menghubungkan ke server...</div>
+    </div>
+
+    <div class="section-title">📅 JADWAL BERIKUTNYA</div>
+    <div id="next-match-box" class="card next-card">
+        <div class="loading">Mengecek jadwal...</div>
+    </div>
+
+    <div class="section-title">🏁 HASIL TERAKHIR</div>
+    <div id="results-box" class="card">
+        <div class="loading">Mengambil data...</div>
+    </div>
+    
+    <p style="text-align: center; font-size: 10px; color: #555;">Auto-refresh setiap 15 detik</p>
+</div>
+
+<script>
+    const scriptURL = "URL_APPS_SCRIPT_LU"; // GANTI DENGAN URL LU BROK!
+
+    function fetchData() {
+        fetch(`${scriptURL}?type=getLiveReportFull`)
+        .then(res => res.json())
+        .then(data => {
+            renderNow(data.rekap[0]);
+            renderResults(data.rekap);
+            renderSchedule(data.rekap[0], data.jadwal);
+        })
+        .catch(err => console.error("Error:", err));
+    }
+
+    function renderNow(top) {
+        const box = document.getElementById("now-playing-box");
+        if (!top) return box.innerHTML = "Belum ada pertandingan.";
+        box.innerHTML = `
+            <div class="match-title">${top.lomba}</div>
+            <div class="match-sub">${top.kat} • Sedang diupdate panitia</div>
+        `;
+    }
+
+    function renderResults(rekap) {
+        const box = document.getElementById("results-box");
+        if (rekap.length === 0) return box.innerHTML = "Belum ada hasil.";
+        
+        let html = "";
+        rekap.slice(0, 6).forEach(item => { // Ambil 6 hasil terakhir
+            const isLolos = item.status.toLowerCase().includes("lolos") || item.status.toLowerCase().includes("juara");
+            html += `
+                <div class="res-item">
+                    <div>
+                        <div class="res-name">${item.nama}</div>
+                        <div class="res-tag">${item.lomba} - ${item.kat}</div>
+                    </div>
+                    <div class="badge ${isLolos ? 'badge-lolos' : 'badge-gugur'}">
+                        ${item.status.split(" - ")[0].toUpperCase()}
+                    </div>
+                </div>
+            `;
+        });
+        box.innerHTML = html;
+    }
+
+    function renderSchedule(current, jadwal) {
+        const box = document.getElementById("next-match-box");
+        if (!jadwal || jadwal.length === 0) return box.innerHTML = "Jadwal belum diatur.";
+
+        // Logika nyari jadwal setelah yang sekarang main
+        let currentIndex = jadwal.findIndex(j => j.lomba.toUpperCase() === current.lomba.toUpperCase() && j.kat.toUpperCase() === current.kat.toUpperCase());
+        let next = jadwal[currentIndex + 1];
+
+        if (!next) {
+            box.innerHTML = "Semua jadwal telah selesai! 🎉";
+        } else {
+            box.innerHTML = `
+                <div class="time-tag">ESTIMASI: ${next.jam} WIB</div>
+                <div style="font-weight:bold; margin-top:5px;">${next.lomba}</div>
+                <div style="font-size:13px; color:#888;">Kategori: ${next.kat}</div>
+            `;
+        }
+    }
+
+    // Jalankan & Set Interval
+    fetchData();
+    setInterval(fetchData, 15000); // Update tiap 15 detik
+</script>
+
+</body>
+</html>
