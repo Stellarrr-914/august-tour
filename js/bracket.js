@@ -311,24 +311,44 @@ function simpanKeSheet(nama, el) {
     const kategori = document.getElementById("kategoriSelect").value;
     const babakAktif = document.getElementById("babakSelect").value;
 
+    // Cek dulu, kalau dropdown lomba/kategori kosong, jangan kirim!
+    if (!lomba || !kategori) {
+        alert("Pilih Lomba dan Kategori dulu di atas, brok!");
+        el.value = ""; // reset dropdown biar gak bingung
+        return;
+    }
+
     if (!el.value) return;
 
-    // Gabungkan status (Lolos/Gugur) dengan nama babaknya
+    // Ambil nomor heat dari atribut elemen (tadi kita set pas generate)
+    // Kalau el gak punya atribut ini, default ke 1
+    const heatInfo = el.getAttribute("data-heat") || 1;
+
     // Hasilnya di Sheet 3 nanti: "Lolos - Penyisihan"
     const statusGabungan = `${el.value} - ${babakAktif}`;
 
+    console.log(`Mengirim: ${nama} | ${statusGabungan} | Heat: ${heatInfo}`);
+
     fetch(scriptURL, {
         method: 'POST',
+        mode: 'no-cors', // Tambahkan no-cors biar gak kena blokir browser
         body: JSON.stringify({
             type: "simpanJuara",
             lomba: lomba,
             kategori: kategori,
             nama: nama,
-            status: statusGabungan, 
-            heat: (nomorHeat + 1)// Ini yang masuk ke Kolom D
+            status: statusGabungan, // Koma jangan lupa di sini
+            heat: heatInfo          // Ini yang bakal masuk ke Kolom E (ID Heat)
         })
     })
-    // ... sisa kode fetch ...
-}
-// Jalankan load dropdown pas halaman dibuka
+    .then(() => {
+        // Kasih tanda kalau baris ini udah aman ter-upload
+        el.style.borderColor = "#28a745";
+        el.style.background = "#eaffea";
+    })
+    .catch(err => {
+        console.error("Gagal kirim ke Cloud:", err);
+        alert("Waduh, gagal upload data si " + nama);
+    });
+}// Jalankan load dropdown pas halaman dibuka
 document.addEventListener("DOMContentLoaded", updateLombaDropdown);
