@@ -1,5 +1,5 @@
 // URL Web App lu yang baru dari step di atas
-const scriptURL = "https://script.google.com/macros/s/AKfycbzyiODfi1B0edunxcl1GpPyPP-RJoL4dyKu-MCYJ0UhdC1utfGZKOUaw8p4G5hTCQpa/exec"; 
+const scriptURL = "https://script.google.com/macros/s/AKfycbxybLWkEaWyDvYLeFg-vtgoLYXwV4sJkCHot7VfP4OMOSIdeYapzVtDwnuakaSezJY/exec"; 
 let dataPesertaCloud = [];
 // 1. UPDATE DROPDOWN LOMBA (Narik Real-time)
 let listLombaFull = []; // Simpen kategori di sini biar gak fetch bolak-balik
@@ -106,45 +106,57 @@ function tampilkanPesertaBracket() {
         });
 }
 // 4. GENERATE HEAT (LOGIKA 4-3-5)
-function generateBracket() {
+function generateHeat() {
     const checkboxes = document.querySelectorAll(".peserta-check:checked");
-    const namaTerpilih = Array.from(checkboxes).map(cb => cb.value);
+    let pesertaTerpilih = [];
 
-    // Filter dataPesertaCloud berdasarkan yang dicentang
-    let pesertaFix = dataPesertaCloud.filter(p => namaTerpilih.includes(p.nama));
+    checkboxes.forEach(cb => {
+        // Ambil data asli dari array dataPesertaCloud yang sudah ada Level-nya
+        const dataAsli = dataPesertaCloud.find(p => p.nama === cb.value);
+        if (dataAsli) pesertaTerpilih.push(dataAsli);
+    });
 
-    if (pesertaFix.length === 0) {
-        alert("Pilih peserta dulu!");
-        return;
+    if (pesertaTerpilih.length < 3) return alert("Minimal 3 orang buat bikin Heat, brok!");
+
+    // A. URUTKAN BERDASARKAN LEVEL (Penting!)
+    const bobot = { "A": 3, "B": 2, "C": 1, "C-": 0 };
+    pesertaTerpilih.sort((a, b) => bobot[b.level] - bobot[a.level]);
+
+    // B. LOGIKA PEMBAGIAN (Prio 4, Range 3-5)
+    let total = pesertaTerpilih.length;
+    let hasilGrup = [];
+    let i = 0;
+
+    while (i < total) {
+        let sisa = total - i;
+        let ukuranGrup = 4; // Default prioritas
+
+        // Kondisi khusus biar gak ada Heat isi 1 atau 2 orang
+        if (sisa === 5) {
+            ukuranGrup = 5; // Langsung sikat 5 biar gak sisa 1
+        } else if (sisa === 6) {
+            ukuranGrup = 3; // Pecah jadi 3 dan 3
+        } else if (sisa === 3) {
+            ukuranGrup = 3;
+        }
+
+        hasilGrup.push(pesertaTerpilih.slice(i, i + ukuranGrup));
+        i += ukuranGrup;
     }
 
-    // Sort berdasarkan Level (Unggulan di atas)
-    const bobot = {"S":10,"A+":9,"A":8,"A-":7,"B+":6,"B":5,"B-":4,"C+":3,"C":2,"C-":1};
-    pesertaFix.sort((a,b) => (bobot[b.level] || 0) - (bobot[a.level] || 0));
-
-    const hasil = document.getElementById("hasilBracket");
-    hasil.innerHTML = "";
-    let heatNum = 1;
-
-    // Logika pembagian Heat
-    while (pesertaFix.length > 0) {
-        let n = pesertaFix.length;
-        let ambil = 4;
-        if (n === 5) ambil = 5;
-        else if (n === 3 || n === 6) ambil = 3;
-
-        const kloter = pesertaFix.splice(0, ambil);
-        renderHeatBox(kloter, heatNum++);
-    }
+    // C. RENDER KE LAYAR
+    const container = document.getElementById("hasilBracket");
+    container.innerHTML = ""; // Bersihkan Heat lama
+    hasilGrup.forEach((grup, index) => {
+        renderHeatBox(grup, index + 1);
+    });
 }
-
 // 5. RENDER BOX HEAT (Fungsi yang tadi ilang)
 function renderHeatBox(peserta, nomor) {
     const container = document.getElementById("hasilBracket");
     let list = "";
 
     // Acak urutan biar adil (Opsional)
-    peserta.sort(() => Math.random() - 0.5);
 
     peserta.forEach((p, i) => {
         list += `
