@@ -139,11 +139,18 @@ const bobot = {
 };
 
 // Fungsi sort (Dari yang Paling Jago ke Pemula)
+// A. URUTKAN BERDASARKAN LEVEL + ACAK DI DALAM LEVEL YANG SAMA
 pesertaTerpilih.sort((a, b) => {
-    // Pakai || 0 buat jaga-jaga kalau ada level yang gak kedaftar di kamus bobot
     let levelA = bobot[a.level] || 0;
     let levelB = bobot[b.level] || 0;
-    return levelB - levelA; 
+
+    // Jika level beda, urutin pake bobot (Prio)
+    if (levelA !== levelB) {
+        return levelB - levelA;
+    }
+    
+    // JIKA LEVEL SAMA, KITA ACAK (50:50)
+    return Math.random() - 0.5; 
 });
 
     // B. LOGIKA PEMBAGIAN (Prio 4, Range 3-5)
