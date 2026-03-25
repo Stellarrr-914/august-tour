@@ -1,5 +1,5 @@
 // URL Web App lu yang baru dari step di atas
-const scriptURL = "https://script.google.com/macros/s/AKfycbwgfBwC4eJanG90i1OpcR7pCM4_kmfo-DUExXAF-n7Agc859nG5VDlJwE909bh36Jwe/exec"; 
+const scriptURL = "https://script.google.com/macros/s/AKfycbzyiODfi1B0edunxcl1GpPyPP-RJoL4dyKu-MCYJ0UhdC1utfGZKOUaw8p4G5hTCQpa/exec"; 
 let dataPesertaCloud = [];
 // 1. UPDATE DROPDOWN LOMBA (Narik Real-time)
 let listLombaFull = []; // Simpen kategori di sini biar gak fetch bolak-balik
@@ -42,48 +42,24 @@ function updateKategoriBerdasarkanLomba() {
 function tampilkanPesertaBracket() {
     const kat = document.getElementById("kategoriSelect").value;
     const lomba = document.getElementById("lombaSelect").value;
-    const babak = document.getElementById("babakSelect").value; // Pastikan ID ini ada di HTML
+    const babak = document.getElementById("babakSelect").value;
     const container = document.getElementById("pesertaLomba");
 
-    if (!kat || !lomba) return alert("Pilih Lomba & Kategori dulu!");
+    if (!kat || !lomba) return;
 
     container.innerHTML = "Memuat peserta...";
 
-    // JALUR LOGIKA:
-    // 1. Kalau Penyisihan -> Ambil semua orang di Kategori itu dari Sheet 1
-    // 2. Kalau selain itu -> Ambil orang yang "Lolos" di Lomba & Kategori itu dari Sheet 3
     let typeRequest = (babak === "Penyisihan") ? "getPesertaByKategori" : "getPesertaLolos";
     
-    let fetchURL = `${scriptURL}?type=getPesertaLolos&lomba=${encodeURIComponent(lomba)}&kategori=${encodeURIComponent(kat)}`;
-console.log("Mencoba narik data lolos dari URL:", fetchURL); // CEK DI F12
+    // Tambahin &babak=${babak} di ujung URL
+    let fetchURL = `${scriptURL}?type=${typeRequest}&kategori=${encodeURIComponent(kat)}&lomba=${encodeURIComponent(lomba)}&babak=${encodeURIComponent(babak)}`;
 
     fetch(fetchURL)
         .then(res => res.json())
         .then(data => {
-            dataPesertaCloud = data; 
-            container.innerHTML = "";
-            
-            if (data.length === 0) {
-                container.innerHTML = `<b style="color:red">Belum ada peserta ${babak} untuk ${lomba} - ${kat}</b>`;
-                return;
-            }
-
-            // Render Checkbox
-            data.forEach(p => {
-                container.innerHTML += `
-                <div class="peserta-item">
-                    <input type="checkbox" class="peserta-check" value="${p.nama}" checked>
-                    <label><strong>${p.nama}</strong></label>
-                </div>`;
-            });
-            document.getElementById("actionGenerate").style.display = "block";
-        })
-        .catch(err => {
-            container.innerHTML = "Gagal narik data. Cek koneksi!";
-            console.error(err);
+            // ... sisa kode render checkbox ...
         });
 }
-
 // 4. GENERATE HEAT (LOGIKA 4-3-5)
 function generateBracket() {
     const checkboxes = document.querySelectorAll(".peserta-check:checked");
