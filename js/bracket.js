@@ -57,7 +57,27 @@ function tampilkanPesertaBracket() {
     fetch(fetchURL)
         .then(res => res.json())
         .then(data => {
-            // ... sisa kode render checkbox ...
+            dataPesertaCloud = data; 
+            container.innerHTML = "";
+            
+            if (data.length === 0) {
+                container.innerHTML = `<b style="color:red">Belum ada peserta ${babak} untuk ${lomba} - ${kat}</b>`;
+                return;
+            }
+
+            // Render Checkbox
+            data.forEach(p => {
+                container.innerHTML += `
+                <div class="peserta-item">
+                    <input type="checkbox" class="peserta-check" value="${p.nama}" checked>
+                    <label><strong>${p.nama}</strong></label>
+                </div>`;
+            });
+            document.getElementById("actionGenerate").style.display = "block";
+        })
+        .catch(err => {
+            container.innerHTML = "Gagal narik data. Cek koneksi!";
+            console.error(err);
         });
 }
 // 4. GENERATE HEAT (LOGIKA 4-3-5)
