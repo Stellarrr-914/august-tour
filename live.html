@@ -3,93 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Report Turnamen 🏆</title>
+    <title>Live Report Bracket 🏆</title>
     <style>
-    body { font-family: 'Segoe UI', sans-serif; background: #121212; color: white; overflow-x: auto; }
-    .bracket-container { display: flex; gap: 20px; padding: 20px; min-width: 800px; }
-    .column { flex: 1; background: #1e1e1e; border-radius: 10px; padding: 10px; min-width: 250px; border: 1px solid #333; }
-    .column-title { text-align: center; color: #ffc107; font-weight: bold; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
-    .node { background: #2d2d2d; margin-bottom: 8px; padding: 10px; border-radius: 6px; font-size: 13px; display: flex; justify-content: space-between; border-left: 4px solid #555; }
-    .node.lolos { border-left-color: #28a745; background: #243429; }
-    .node.juara { border-left-color: #d4af37; background: #3a321a; font-weight: bold; }
-    
-    /* Pojok Kanan Atas: Next Match */
-    .next-match-float { position: fixed; top: 10px; right: 10px; background: #e74c3c; padding: 10px 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 100; font-size: 12px; max-width: 150px; }
-</style>
+        :root { --bg: #0f0f0f; --card: #1a1a1a; --primary: #007bff; --accent: #ffd700; --success: #28a745; --text: #f0f0f0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; overflow-x: auto; }
+        
+        /* Header & Info */
+        .header { text-align: center; margin-bottom: 30px; }
+        .next-match-banner { position: fixed; top: 15px; right: 15px; background: #e74c3c; padding: 10px 15px; border-radius: 8px; font-size: 12px; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.5); border-left: 4px solid white; }
 
-<div style="padding: 10px;">
-    <a href="index.html" style="text-decoration: none; color: #aaa; font-size: 14px;">⬅️ Kembali ke Menu Utama</a>
-</div>
+        /* Bracket Layout */
+        .bracket-wrapper { display: flex; gap: 40px; padding-bottom: 50px; min-width: 900px; justify-content: center; }
+        .column { flex: 1; min-width: 280px; max-width: 320px; }
+        .column-header { background: var(--card); padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; color: var(--accent); border: 1px solid #333; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
 
-<div class="next-match-float" id="next-info">
-    <div style="font-weight: bold; font-size: 10px;">NEXT LOMBA:</div>
-    <div id="next-text">Memuat...</div>
-</div>
+        /* Match Groups (Heats) */
+        .match-box { background: var(--card); border: 1px solid #333; border-radius: 12px; padding: 15px; margin-bottom: 20px; position: relative; transition: 0.3s; }
+        .match-box:hover { border-color: var(--primary); }
+        .match-label { font-size: 10px; color: #666; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        
+        /* Player Row */
+        .player { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #252525; }
+        .player:last-child { border: none; }
+        .player-name { font-size: 14px; font-weight: 500; }
+        
+        /* Status Badges */
+        .status { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase; }
+        .status-win { background: rgba(40, 167, 69, 0.2); color: var(--success); }
+        .status-wait { color: #555; }
+        .status-champion { background: var(--accent); color: #000; box-shadow: 0 0 10px var(--accent); }
 
-<h2 style="text-align:center; color:#eee;">🏆 PROGRESS BRACKET</h2>
-<div id="lomba-aktif" style="text-align:center; font-size:14px; color:#888; margin-bottom:20px;">Memuat data lomba...</div>
+        .loading { text-align: center; margin-top: 100px; color: #555; }
+    </style>
+</head>
+<body>
 
-<div class="bracket-container">
-    <div class="column">
-        <div class="column-title">PENYISIHAN</div>
-        <div id="col-penyisihan"></div>
+    <div class="next-match-banner">
+        <div style="opacity: 0.8;">NEXT MATCH:</div>
+        <div id="next-match-info" style="font-weight: bold;">Memuat...</div>
     </div>
-    <div class="column">
-        <div class="column-title">SEMIFINAL</div>
-        <div id="col-semifinal"></div>
-    </div>
-    <div class="column">
-        <div class="column-title">FINAL & JUARA</div>
-        <div id="col-final"></div>
-    </div>
-</div>
 
-<script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbw5EWepU1dOm8oC4ScjBIaGaiprcZhtOkRwxJA2CyS_X-Ah0DHjhaWW8fBHD3KfdhDh/exec";
+    <div class="header">
+        <h1 style="margin: 0; font-size: 24px;">📊 PROGRESS TURNAMEN</h1>
+        <p id="current-lomba" style="color: #888; margin-top: 5px;">Memuat data pertandingan...</p>
+    </div>
 
-    function updateLive() {
-        fetch(`${scriptURL}?type=getLiveReportFull`)
-        .then(res => res.json())
-        .then(data => {
-            const rekap = data.rekap; // Ini data dari Sheet 3
-            const jadwal = data.jadwal; // Ini data dari Sheet 4
+    <div class="bracket-wrapper" id="bracket-root">
+        <div class="loading">Menarik data dari Google Sheets...</div>
+    </div>
+
+    <script>
+        const scriptURL = "https://script.google.com/macros/s/AKfycbw5EWepU1dOm8oC4ScjBIaGaiprcZhtOkRwxJA2CyS_X-Ah0DHjhaWW8fBHD3KfdhDh/exec"; // <--- GANTI PAKE URL DEPLOY LU BROK!
+
+        async function init() {
+            try {
+                const response = await fetch(`${scriptURL}?type=getLiveReportFull`);
+                const data = await response.json();
+                renderAll(data);
+            } catch (err) {
+                console.error("Gagal load data:", err);
+            }
+        }
+
+        function renderAll(data) {
+            const root = document.getElementById("bracket-root");
+            const rekap = data.rekap; // Data dari Sheet 3
+            const jadwal = data.jadwal; // Data dari Sheet 4
+
+            if (rekap.length === 0) {
+                root.innerHTML = "<p>Belum ada data pertandingan.</p>";
+                return;
+            }
+
+            // Update Info Header & Next Match
+            document.getElementById("current-lomba").innerText = `${rekap[0].lomba} (${rekap[0].kat})`;
+            updateNextMatch(rekap[0], jadwal);
+
+            // Logic Pengelompokan Babak
+            const stages = ["Penyisihan", "Semifinal", "Final"];
+            let html = "";
+
+            stages.forEach(stage => {
+                const players = rekap.filter(p => p.status.includes(stage));
+                html += `
+                    <div class="column">
+                        <div class="column-header">${stage}</div>
+                        ${renderGroups(players)}
+                    </div>
+                `;
+            });
+
+            root.innerHTML = html;
+        }
+
+        function renderGroups(players) {
+            if (players.length === 0) return `<p style="text-align:center; color:#444; font-size:12px;">Menunggu hasil babak sebelumnya...</p>`;
             
-            // Bersihkan kolom
-            document.getElementById("col-penyisihan").innerHTML = "";
-            document.getElementById("col-semifinal").innerHTML = "";
-            document.getElementById("col-final").innerHTML = "";
-
-            if(rekap.length > 0) {
-                document.getElementById("lomba-aktif").innerText = `${rekap[0].lomba} - ${rekap[0].kat}`;
+            let groups = "";
+            // Kita bagi per 4 orang biar rapi kayak "Match Box"
+            for (let i = 0; i < players.length; i += 4) {
+                const chunk = players.slice(i, i + 4);
+                let playersHTML = "";
                 
-                rekap.forEach(p => {
-                    let html = `<div class="node ${p.status.toLowerCase().includes('lolos') ? 'lolos' : ''} ${p.status.toLowerCase().includes('juara') ? 'juara' : ''}">
-                                    <span>${p.nama}</span>
-                                    <small style="color:#aaa;">${p.status.split(' - ')[0]}</small>
-                                </div>`;
+                chunk.forEach(p => {
+                    const isWin = p.status.toLowerCase().includes("lolos") || p.status.toLowerCase().includes("juara");
+                    const isChampion = p.status.toLowerCase().includes("juara 1");
                     
-                    // Masukkan ke kolom yang sesuai
-                    if (p.status.includes("Penyisihan")) {
-                        document.getElementById("col-penyisihan").innerHTML += html;
-                    } else if (p.status.includes("Semifinal")) {
-                        document.getElementById("col-semifinal").innerHTML += html;
-                    } else if (p.status.includes("Final")) {
-                        document.getElementById("col-final").innerHTML += html;
-                    }
+                    playersHTML += `
+                        <div class="player">
+                            <span class="player-name">${p.nama}</span>
+                            <span class="status ${isChampion ? 'status-champion' : (isWin ? 'status-win' : 'status-wait')}">
+                                ${isChampion ? '🏆 JUARA' : (isWin ? 'NEXT ➔' : '-')}
+                            </span>
+                        </div>
+                    `;
                 });
 
-                // Update Next Match (Pojok Kanan)
-                let currentLomba = rekap[0].lomba;
-                let currentKat = rekap[0].kat;
-                let idx = jadwal.findIndex(j => j.lomba === currentLomba && j.kat === currentKat);
-                let next = jadwal[idx + 1];
-                document.getElementById("next-text").innerText = next ? `${next.lomba} (${next.kat})` : "Selesai!";
+                groups += `
+                    <div class="match-box">
+                        <div class="match-label"><span>MATCH GROUP</span> <span>#${Math.floor(i/4)+1}</span></div>
+                        ${playersHTML}
+                    </div>
+                `;
             }
-        });
-    }
+            return groups;
+        }
 
-    setInterval(updateLive, 15000);
-    updateLive();
-</script>
+        function updateNextMatch(current, jadwal) {
+            const nextEl = document.getElementById("next-match-info");
+            const idx = jadwal.findIndex(j => j.lomba === current.lomba && j.kat === current.kat);
+            const next = jadwal[idx + 1];
+            nextEl.innerText = next ? `${next.lomba} (${next.kat})` : "Selesai!";
+        }
+
+        // Jalankan & Auto Refresh
+        init();
+        setInterval(init, 15000); // Update tiap 15 detik
+    </script>
 </body>
 </html>
