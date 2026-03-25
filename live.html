@@ -3,142 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Report Bracket 🏆</title>
+    <title>Live Report Turnamen</title>
     <style>
-        :root { --bg: #0f0f0f; --card: #1a1a1a; --primary: #007bff; --accent: #ffd700; --success: #28a745; --text: #f0f0f0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; overflow-x: auto; }
+        :root { --bg: #0f0f0f; --card: #1a1a1a; --accent: #ffd700; --text: #eee; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
         
-        /* Header & Info */
+        /* Banner Next Match */
+        .next-info { position: fixed; top: 10px; right: 10px; background: #c0392b; padding: 10px; border-radius: 8px; font-size: 11px; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.5); border-left: 4px solid #fff; }
+
         .header { text-align: center; margin-bottom: 30px; }
-        .next-match-banner { position: fixed; top: 15px; right: 15px; background: #e74c3c; padding: 10px 15px; border-radius: 8px; font-size: 12px; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.5); border-left: 4px solid white; }
-
-        /* Bracket Layout */
-        .bracket-wrapper { display: flex; gap: 40px; padding-bottom: 50px; min-width: 900px; justify-content: center; }
-        .column { flex: 1; min-width: 280px; max-width: 320px; }
-        .column-header { background: var(--card); padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; color: var(--accent); border: 1px solid #333; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* Match Groups (Heats) */
-        .match-box { background: var(--card); border: 1px solid #333; border-radius: 12px; padding: 15px; margin-bottom: 20px; position: relative; transition: 0.3s; }
-        .match-box:hover { border-color: var(--primary); }
-        .match-label { font-size: 10px; color: #666; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .bracket-container { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 40px; }
         
-        /* Player Row */
-        .player { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #252525; }
-        .player:last-child { border: none; }
-        .player-name { font-size: 14px; font-weight: 500; }
-        
-        /* Status Badges */
-        .status { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase; }
-        .status-win { background: rgba(40, 167, 69, 0.2); color: var(--success); }
-        .status-wait { color: #555; }
-        .status-champion { background: var(--accent); color: #000; box-shadow: 0 0 10px var(--accent); }
+        .column { min-width: 280px; flex: 1; }
+        .column-header { background: var(--card); padding: 12px; border-radius: 8px; text-align: center; color: var(--accent); font-weight: bold; border: 1px solid #333; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
 
-        .loading { text-align: center; margin-top: 100px; color: #555; }
+        .match-card { background: var(--card); border: 1px solid #333; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .player-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #252525; font-size: 14px; }
+        .player-row:last-child { border: none; }
+
+        .badge-win { color: #2ecc71; font-weight: bold; font-size: 10px; border: 1px solid #2ecc71; padding: 1px 6px; border-radius: 4px; }
+        
+        ::-webkit-scrollbar { height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="next-match-banner">
-        <div style="opacity: 0.8;">NEXT MATCH:</div>
-        <div id="next-match-info" style="font-weight: bold;">Memuat...</div>
+    <div class="next-info">
+        <div style="opacity: 0.7;">NEXT MATCH:</div>
+        <div id="next-match-text">Memuat...</div>
     </div>
 
     <div class="header">
-        <h1 style="margin: 0; font-size: 24px;">📊 PROGRESS TURNAMEN</h1>
-        <p id="current-lomba" style="color: #888; margin-top: 5px;">Memuat data pertandingan...</p>
+        <h2 id="lomba-aktif" style="margin:0; letter-spacing: 1px;">MEMUAT DATA...</h2>
+        <p style="font-size: 12px; color: #666; margin-top: 5px;">Data diperbarui otomatis tiap 15 detik</p>
     </div>
 
-    <div class="bracket-wrapper" id="bracket-root">
-        <div class="loading">Menarik data dari Google Sheets...</div>
-    </div>
+    <div class="bracket-container" id="bracket-root">
+        </div>
 
-    <script>
-        const scriptURL = "https://script.google.com/macros/s/AKfycbw5EWepU1dOm8oC4ScjBIaGaiprcZhtOkRwxJA2CyS_X-Ah0DHjhaWW8fBHD3KfdhDh/exec"; // <--- GANTI PAKE URL DEPLOY LU BROK!
-
-        async function init() {
-            try {
-                const response = await fetch(`${scriptURL}?type=getLiveReportFull`);
-                const data = await response.json();
-                renderAll(data);
-            } catch (err) {
-                console.error("Gagal load data:", err);
-            }
-        }
-
-        function renderAll(data) {
-            const root = document.getElementById("bracket-root");
-            const rekap = data.rekap; // Data dari Sheet 3
-            const jadwal = data.jadwal; // Data dari Sheet 4
-
-            if (rekap.length === 0) {
-                root.innerHTML = "<p>Belum ada data pertandingan.</p>";
-                return;
-            }
-
-            // Update Info Header & Next Match
-            document.getElementById("current-lomba").innerText = `${rekap[0].lomba} (${rekap[0].kat})`;
-            updateNextMatch(rekap[0], jadwal);
-
-            // Logic Pengelompokan Babak
-            const stages = ["Penyisihan", "Semifinal", "Final"];
-            let html = "";
-
-            stages.forEach(stage => {
-                const players = rekap.filter(p => p.status.includes(stage));
-                html += `
-                    <div class="column">
-                        <div class="column-header">${stage}</div>
-                        ${renderGroups(players)}
-                    </div>
-                `;
-            });
-
-            root.innerHTML = html;
-        }
-
-        function renderGroups(players) {
-            if (players.length === 0) return `<p style="text-align:center; color:#444; font-size:12px;">Menunggu hasil babak sebelumnya...</p>`;
-            
-            let groups = "";
-            // Kita bagi per 4 orang biar rapi kayak "Match Box"
-            for (let i = 0; i < players.length; i += 4) {
-                const chunk = players.slice(i, i + 4);
-                let playersHTML = "";
-                
-                chunk.forEach(p => {
-                    const isWin = p.status.toLowerCase().includes("lolos") || p.status.toLowerCase().includes("juara");
-                    const isChampion = p.status.toLowerCase().includes("juara 1");
-                    
-                    playersHTML += `
-                        <div class="player">
-                            <span class="player-name">${p.nama}</span>
-                            <span class="status ${isChampion ? 'status-champion' : (isWin ? 'status-win' : 'status-wait')}">
-                                ${isChampion ? '🏆 JUARA' : (isWin ? 'NEXT ➔' : '-')}
-                            </span>
-                        </div>
-                    `;
-                });
-
-                groups += `
-                    <div class="match-box">
-                        <div class="match-label"><span>MATCH GROUP</span> <span>#${Math.floor(i/4)+1}</span></div>
-                        ${playersHTML}
-                    </div>
-                `;
-            }
-            return groups;
-        }
-
-        function updateNextMatch(current, jadwal) {
-            const nextEl = document.getElementById("next-match-info");
-            const idx = jadwal.findIndex(j => j.lomba === current.lomba && j.kat === current.kat);
-            const next = jadwal[idx + 1];
-            nextEl.innerText = next ? `${next.lomba} (${next.kat})` : "Selesai!";
-        }
-
-        // Jalankan & Auto Refresh
-        init();
-        setInterval(init, 15000); // Update tiap 15 detik
-    </script>
+    <script src="js/live.js"></script>
 </body>
 </html>
