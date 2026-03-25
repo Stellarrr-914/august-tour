@@ -197,7 +197,6 @@ function renderHeatBox(peserta, nomor) {
                 <option value="Juara 1">🥇 Juara 1</option>
                 <option value="Juara 2">🥈 Juara 2</option>
                 <option value="Juara 3">🥉 Juara 3</option>
-                <option value="Harapan">🎗️ Harapan</option>
                 <option value="Gugur">❌ Tidak Juara</option>
             `;
         } else {
