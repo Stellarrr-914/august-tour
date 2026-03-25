@@ -185,32 +185,59 @@ pesertaTerpilih.sort((a, b) => {
 // 5. RENDER BOX HEAT (Fungsi yang tadi ilang)
 function renderHeatBox(peserta, nomor) {
     const container = document.getElementById("hasilBracket");
+    const babak = document.getElementById("babakSelect").value; // Ambil info babak
     let list = "";
 
-    // Acak urutan biar adil (Opsional)
-
     peserta.forEach((p, i) => {
+        // Logika Dropdown: Jika Final, munculkan opsi Juara
+        let opsiStatus = "";
+        if (babak === "Final") {
+            opsiStatus = `
+                <option value="">- Pilih Juara -</option>
+                <option value="Juara 1">🥇 Juara 1</option>
+                <option value="Juara 2">🥈 Juara 2</option>
+                <option value="Juara 3">🥉 Juara 3</option>
+                <option value="Harapan">🎗️ Harapan</option>
+                <option value="Gugur">❌ Tidak Juara</option>
+            `;
+        } else {
+            opsiStatus = `
+                <option value="">- Pilih -</option>
+                <option value="Lolos">✅ LOLOS</option>
+                <option value="Gugur">❌ GUGUR</option>
+            `;
+        }
+
         list += `
-<li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-    <span><strong>${i+1}.</strong> ${p.nama} <small>[${p.level}]</small></span>
-    <select class="select-status" data-nama="${p.nama}" style="...">
-        <option value="">- Pilih -</option>
-        <option value="Lolos">✅ LOLOS</option>
-        <option value="Gugur">❌ GUGUR</option>
-    </select>
-</li>`;
+        <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 5px; border-bottom: 1px dashed #ddd;">
+            <span style="font-size: 14px;"><strong>${i+1}.</strong> ${p.nama} <small style="color:blue">[${p.level}]</small></span>
+            <select class="select-status" data-nama="${p.nama}" 
+                style="padding: 3px; border-radius: 4px; font-size: 12px; cursor: pointer;">
+                ${opsiStatus}
+            </select>
+        </li>`;
     });
 
-    // Template Box Heat dengan Style Inline
+    // Render Box Heat
     container.innerHTML += `
-<div class="heat-box" id="heat-${nomor}" style="...">
-    <div style="...">HEAT ${nomor}</div>
-    <ul style="list-style:none; padding:0;">${list}</ul>
-    <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 5px;">
-        <button onclick="loloskanDuaTeratas(${nomor})" style="background: #ffc107; color: #000; ...">⚡ Set 2 Teratas</button>
-        <button onclick="kirimSatuHeat(${nomor})" style="background: #007bff; color: #fff; font-weight: bold; padding: 10px; border-radius: 6px; cursor: pointer; border: none;">📤 Update ke Cloud</button>
-    </div>
-</div>`;
+    <div class="heat-box" id="heat-${nomor}" 
+        style="border: 2px solid #444; border-radius: 12px; margin: 15px; padding: 15px; background: #fff; min-width: 280px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-block; vertical-align: top;">
+        
+        <div style="background: ${babak === 'Final' ? '#d4af37' : '#444'}; color: white; padding: 5px 10px; border-radius: 6px; margin-bottom: 15px; text-align: center; font-weight: bold;">
+            ${babak === 'Final' ? '🏆 BABAK FINAL' : 'HEAT ' + nomor}
+        </div>
+
+        <ul style="list-style: none; padding: 0; margin: 0;">${list}</ul>
+
+        <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+            ${babak !== 'Final' ? `<button onclick="loloskanDuaTeratas(${nomor})" style="background: #ffc107; border:none; padding:8px; border-radius:6px; cursor:pointer; font-weight:bold;">⚡ Set 2 Teratas</button>` : ''}
+            
+            <button onclick="kirimSatuHeat(${nomor})" 
+                style="width: 100%; background: #007bff; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                📤 Update ke Cloud
+            </button>
+        </div>
+    </div>`;
 }
 
 function kirimSatuHeat(nomorHeat) {
