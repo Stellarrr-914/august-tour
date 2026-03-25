@@ -324,7 +324,8 @@ function simpanKeSheet(nama, el) {
             lomba: lomba,
             kategori: kategori,
             nama: nama,
-            status: statusGabungan // Ini yang masuk ke Kolom D
+            status: statusGabungan 
+            heat: (nomorHeat + 1)// Ini yang masuk ke Kolom D
         })
     })
     // ... sisa kode fetch ...
