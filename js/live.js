@@ -1,5 +1,5 @@
 // Menggunakan URL yang sama dengan yang ada di bracket.js lo
-const scriptURL = "https://script.google.com/macros/s/AKfycbwtKg1FYEnYokPZX9RcePvsFmdmrVkX1zitsNjyrUnc3i4l-97pF6UG4afuaLqVFet5/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbzD93IXQYLKX9_1UXpPtu0AHH0-krkemDNLGee-_EnwS-W1BYG95i4SXXO57fx728py/exec";
 
 async function fetchLiveReport() {
     const root = document.getElementById("bracket-root");
