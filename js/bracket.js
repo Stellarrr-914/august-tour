@@ -125,8 +125,26 @@ function generateBracket() {
     if (pesertaTerpilih.length < 3) return alert("Minimal 3 orang buat bikin Heat, brok!");
 
     // A. URUTKAN BERDASARKAN LEVEL (Penting!)
-    const bobot = { "A": 3, "B": 2, "C": 1, "C-": 0 };
-    pesertaTerpilih.sort((a, b) => bobot[b.level] - bobot[a.level]);
+    // A. URUTKAN BERDASARKAN LEVEL (Presisi A+ sampai C-)
+const bobot = { 
+    "A+": 9, 
+    "A":  8, 
+    "A-": 7, 
+    "B+": 6, 
+    "B":  5, 
+    "B-": 4, 
+    "C+": 3, 
+    "C":  2, 
+    "C-": 1 
+};
+
+// Fungsi sort (Dari yang Paling Jago ke Pemula)
+pesertaTerpilih.sort((a, b) => {
+    // Pakai || 0 buat jaga-jaga kalau ada level yang gak kedaftar di kamus bobot
+    let levelA = bobot[a.level] || 0;
+    let levelB = bobot[b.level] || 0;
+    return levelB - levelA; 
+});
 
     // B. LOGIKA PEMBAGIAN (Prio 4, Range 3-5)
     let total = pesertaTerpilih.length;
