@@ -184,54 +184,94 @@ function renderHeatBox(peserta, nomor) {
 
     peserta.forEach((p, i) => {
         list += `
-        <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 5px; border-bottom: 1px dashed #ddd;">
-            <span style="font-size: 14px;"><strong>${i+1}.</strong> ${p.nama}</span>
-            <select class="select-status" data-nama="${p.nama}" onchange="simpanKeSheet('${p.nama}', this)" 
-                style="padding: 3px; border-radius: 4px; font-size: 12px; cursor: pointer;">
-                <option value="">- Status -</option>
-                <option value="Lolos">✅ LOLOS</option>
-                <option value="Gugur">❌ GUGUR</option>
-            </select>
-        </li>`;
+<li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+    <span><strong>${i+1}.</strong> ${p.nama} <small>[${p.level}]</small></span>
+    <select class="select-status" data-nama="${p.nama}" style="...">
+        <option value="">- Pilih -</option>
+        <option value="Lolos">✅ LOLOS</option>
+        <option value="Gugur">❌ GUGUR</option>
+    </select>
+</li>`;
     });
 
     // Template Box Heat dengan Style Inline
     container.innerHTML += `
-    <div class="heat-box" id="heat-${nomor}" 
-        style="border: 2px solid #444; border-radius: 12px; margin: 15px; padding: 15px; background: #ffffff; min-width: 280px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-block; vertical-align: top;">
-        
-        <div style="background: #444; color: white; padding: 5px 10px; border-radius: 6px; margin-bottom: 15px; text-align: center; font-weight: bold;">
-            HEAT ${nomor}
-        </div>
-
-        <ul style="list-style: none; padding: 0; margin: 0;">${list}</ul>
-
-        <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
-            <button onclick="loloskanDuaTeratas(${nomor})" 
-                style="width: 100%; background: #28a745; color: white; border: none; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.3s;">
-                ⚡ Loloskan 2 Teratas
-            </button>
-            <p style="font-size: 10px; color: #888; text-align: center; margin-top: 5px;">*Otomatis simpan ke Cloud</p>
-        </div>
-    </div>`;
+<div class="heat-box" id="heat-${nomor}" style="...">
+    <div style="...">HEAT ${nomor}</div>
+    <ul style="list-style:none; padding:0;">${list}</ul>
+    <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 5px;">
+        <button onclick="loloskanDuaTeratas(${nomor})" style="background: #ffc107; color: #000; ...">⚡ Set 2 Teratas</button>
+        <button onclick="kirimSatuHeat(${nomor})" style="background: #007bff; color: #fff; font-weight: bold; padding: 10px; border-radius: 6px; cursor: pointer; border: none;">📤 Update ke Cloud</button>
+    </div>
+</div>`;
 }
+
+function kirimSatuHeat(nomorHeat) {
+    const heatBox = document.getElementById(`heat-${nomorHeat}`);
+    const semuaSelect = heatBox.querySelectorAll('.select-status');
+    const lomba = document.getElementById("lombaSelect").value;
+    const kategori = document.getElementById("kategoriSelect").value;
+    const babak = document.getElementById("babakSelect").value;
+
+    let dataSiapKirim = [];
+
+    semuaSelect.forEach(select => {
+        if (select.value !== "") { // Cuma kirim yang sudah dipilih statusnya
+            dataSiapKirim.push({
+                nama: select.getAttribute('data-nama'),
+                status: `${select.value} - ${babak}`
+            });
+        }
+    });
+
+    if (dataSiapKirim.length === 0) return alert("Pilih status peserta dulu, brok!");
+
+    // Kasih indikator loading di tombol
+    const btn = heatBox.querySelector('button[onclick^="kirimSatuHeat"]');
+    const teksAsli = btn.innerText;
+    btn.innerText = "⏳ Mengirim...";
+    btn.disabled = true;
+
+    // Kita kirim satu per satu atau sekaligus (pake Loop Fetch)
+    let promises = dataSiapKirim.map(p => {
+        return fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify({
+                type: "simpanJuara",
+                lomba: lomba,
+                kategori: kategori,
+                nama: p.nama,
+                status: p.status
+            })
+        });
+    });
+
+    Promise.all(promises)
+        .then(() => {
+            alert(`Sakti! Data Heat ${nomorHeat} berhasil diupdate.`);
+            btn.innerText = "✅ Terupdate";
+            btn.style.background = "#28a745";
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Aduh, gagal kirim. Cek koneksi!");
+            btn.innerText = teksAsli;
+            btn.disabled = false;
+        });
+}
+
 function loloskanDuaTeratas(nomorHeat) {
     const heatBox = document.getElementById(`heat-${nomorHeat}`);
     const semuaSelect = heatBox.querySelectorAll('.select-status');
 
     semuaSelect.forEach((select, index) => {
-        if (index < 2) {
-            select.value = "Lolos";
-        } else {
-            select.value = "Gugur";
-        }
+        // Index 0 dan 1 jadi Lolos, sisanya Gugur
+        select.value = (index < 2) ? "Lolos" : "Gugur";
         
-        // Trigger fungsi simpan otomatis biar langsung ke-update ke Sheet 3
-        const nama = select.getAttribute('data-nama');
-        simpanKeSheet(nama, select);
+        // Kasih efek visual biar panitia tau mana yang berubah
+        select.style.border = "2px solid #28a745";
     });
 }
-
 // 6. SIMPAN KE SHEET 3
 function simpanKeSheet(nama, el) {
     const lomba = document.getElementById("lombaSelect").value;
