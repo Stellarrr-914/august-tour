@@ -121,29 +121,58 @@ function generateBracket() {
 function renderHeatBox(peserta, nomor) {
     const container = document.getElementById("hasilBracket");
     let list = "";
-    
-    // Acak posisi lintasan biar fair
-    peserta.sort(() => Math.random() - 0.5); 
+
+    // Acak urutan biar adil (Opsional)
+    peserta.sort(() => Math.random() - 0.5);
 
     peserta.forEach((p, i) => {
         list += `
-        <li>
-            ${i+1}. ${p.nama}
-            <select onchange="simpanKeSheet('${p.nama}', this)">
-                <option value="">- Hasil -</option>
-                <option value="Lolos">Lolos</option>
-                <option value="J1">Juara 1</option>
-                <option value="J2">Juara 2</option>
-                <option value="J3">Juara 3</option>
+        <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 5px; border-bottom: 1px dashed #ddd;">
+            <span style="font-size: 14px;"><strong>${i+1}.</strong> ${p.nama}</span>
+            <select class="select-status" data-nama="${p.nama}" onchange="simpanKeSheet('${p.nama}', this)" 
+                style="padding: 3px; border-radius: 4px; font-size: 12px; cursor: pointer;">
+                <option value="">- Status -</option>
+                <option value="Lolos">✅ LOLOS</option>
+                <option value="Gugur">❌ GUGUR</option>
             </select>
         </li>`;
     });
 
+    // Template Box Heat dengan Style Inline
     container.innerHTML += `
-    <div class="heat-box" style="border:1px solid #ccc; padding:10px; margin:10px; border-radius:8px; background:#f9f9f9;">
-        <b style="color:#007bff;">HEAT ${nomor}</b>
-        <ul style="list-style:none; padding:0; margin-top:5px;">${list}</ul>
+    <div class="heat-box" id="heat-${nomor}" 
+        style="border: 2px solid #444; border-radius: 12px; margin: 15px; padding: 15px; background: #ffffff; min-width: 280px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-block; vertical-align: top;">
+        
+        <div style="background: #444; color: white; padding: 5px 10px; border-radius: 6px; margin-bottom: 15px; text-align: center; font-weight: bold;">
+            HEAT ${nomor}
+        </div>
+
+        <ul style="list-style: none; padding: 0; margin: 0;">${list}</ul>
+
+        <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
+            <button onclick="loloskanDuaTeratas(${nomor})" 
+                style="width: 100%; background: #28a745; color: white; border: none; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.3s;">
+                ⚡ Loloskan 2 Teratas
+            </button>
+            <p style="font-size: 10px; color: #888; text-align: center; margin-top: 5px;">*Otomatis simpan ke Cloud</p>
+        </div>
     </div>`;
+}
+function loloskanDuaTeratas(nomorHeat) {
+    const heatBox = document.getElementById(`heat-${nomorHeat}`);
+    const semuaSelect = heatBox.querySelectorAll('.select-status');
+
+    semuaSelect.forEach((select, index) => {
+        if (index < 2) {
+            select.value = "Lolos";
+        } else {
+            select.value = "Gugur";
+        }
+        
+        // Trigger fungsi simpan otomatis biar langsung ke-update ke Sheet 3
+        const nama = select.getAttribute('data-nama');
+        simpanKeSheet(nama, select);
+    });
 }
 
 // 6. SIMPAN KE SHEET 3
