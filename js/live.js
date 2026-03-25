@@ -44,20 +44,24 @@ function renderLiveBracket(rekap, jadwal) {
         } else {
             // Kita kelompokkan per 4 orang (Sesuai limit default lo di bracket.html)
             for (let i = 0; i < players.length; i += 4) {
-                const group = players.slice(i, i + 4);
-                let pList = "";
-                
-                group.forEach(p => {
-                    // Logika: Lolos jika status mengandung kata "Lolos" atau "Juara"
-                    const isWin = p.status.toLowerCase().includes("lolos") || p.status.toLowerCase().includes("juara");
-                    const isGold = p.status.toLowerCase().includes("juara 1");
+                const groups = {};
+    dataPerBabak.forEach(p => {
+        if (!groups[p.heat]) groups[p.heat] = [];
+        groups[p.heat].push(p);
+    });
 
-                    pList += `
-                        <div class="player-row">
-                            <span style="${isGold ? 'color:#ffd700; font-weight:bold;' : ''}">${p.nama}</span>
-                            ${isWin ? `<span class="badge-win">${isGold ? '🏆' : 'NEXT'}</span>` : ''}
-                        </div>`;
-                });
+    // Sekarang tinggal tampilin per group
+    Object.keys(groups).forEach(heatNum => {
+        let htmlHeat = `<div class="match-box">
+            <div class="match-label">HEAT ${heatNum}</div>`;
+        
+        groups[heatNum].forEach(player => {
+            htmlHeat += `<div class="player">${player.nama} - ${player.status}</div>`;
+        });
+        
+        htmlHeat += `</div>`;
+        // Masukin ke kolom babak yang sesuai
+    });
                 columnHTML += `<div class="match-card">${pList}</div>`;
             }
         }
