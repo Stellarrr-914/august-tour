@@ -179,7 +179,14 @@ function loloskanDuaTeratas(nomorHeat) {
 function simpanKeSheet(nama, el) {
     const lomba = document.getElementById("lombaSelect").value;
     const kategori = document.getElementById("kategoriSelect").value;
-    
+    const babakAktif = document.getElementById("babakSelect").value;
+
+    if (!el.value) return;
+
+    // Gabungkan status (Lolos/Gugur) dengan nama babaknya
+    // Hasilnya di Sheet 3 nanti: "Lolos - Penyisihan"
+    const statusGabungan = `${el.value} - ${babakAktif}`;
+
     fetch(scriptURL, {
         method: 'POST',
         body: JSON.stringify({
@@ -187,15 +194,10 @@ function simpanKeSheet(nama, el) {
             lomba: lomba,
             kategori: kategori,
             nama: nama,
-            status: el.value
+            status: statusGabungan // Ini yang masuk ke Kolom D
         })
     })
-    .then(() => { 
-        el.style.background = "#d4edda"; 
-        console.log(`Berhasil simpan: ${nama} sebagai ${el.value}`);
-    })
-    .catch(err => alert("Gagal simpan!"));
+    // ... sisa kode fetch ...
 }
-
 // Jalankan load dropdown pas halaman dibuka
 document.addEventListener("DOMContentLoaded", updateLombaDropdown);
