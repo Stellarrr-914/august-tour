@@ -324,7 +324,7 @@ function simpanKeSheet(nama, el) {
             lomba: lomba,
             kategori: kategori,
             nama: nama,
-            status: statusGabungan 
+            status: statusGabungan, 
             heat: (nomorHeat + 1)// Ini yang masuk ke Kolom D
         })
     })
