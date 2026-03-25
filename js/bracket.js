@@ -112,7 +112,7 @@ function tampilkanPesertaBracket() {
         });
 }
 // 4. GENERATE HEAT (LOGIKA 4-3-5)
-function generateHeat() {
+function generateBracket() {
     const checkboxes = document.querySelectorAll(".peserta-check:checked");
     let pesertaTerpilih = [];
 
