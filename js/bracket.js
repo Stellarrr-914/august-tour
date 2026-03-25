@@ -1,5 +1,5 @@
 // URL Web App lu yang baru dari step di atas
-const scriptURL = "https://script.google.com/macros/s/AKfycbzTQWQ5OHeODNvynJ5ivAj2e9nebPUFAsE-gMZuSibS8IrGlHKo5H3gbmNuLgtaK1cb/exec"; 
+const scriptURL = "https://script.google.com/macros/s/AKfycbxL-Tr0GZiiyV5qV4aVww7ccglFsU4h2Z-obnaBlzY4NMWRGNFEDYBZobHkq_j9V-Jk/exec"; 
 let dataPesertaCloud = [];
 // 1. UPDATE DROPDOWN LOMBA (Narik Real-time)
 let listLombaFull = []; // Simpen kategori di sini biar gak fetch bolak-balik
@@ -66,21 +66,27 @@ function tampilkanPesertaBracket() {
     fetch(fetchURL)
         .then(res => res.json())
         .then(data => {
+            console.log("Data mentah dari server:", data); // CEK DI F12 (Penting!)
+            
+            // Cek apakah data beneran Array
+            if (!Array.isArray(data)) {
+                console.error("Format data salah, bukan Array:", data);
+                container.innerHTML = "<div style='color:red;'>Format data dari server salah!</div>";
+                return;
+            }
+
             dataPesertaCloud = data; 
             container.innerHTML = "";
             
-            if (!data || data.length === 0) {
-                container.innerHTML = `
-                <div style="padding:15px; border:1px solid #ffcccc; background:#fff5f5; border-radius:8px; color:#cc0000; text-align:center;">
-                    <b>Data Kosong!</b><br>
-                    ${babak === "Penyisihan" 
-                        ? "Belum ada pendaftar di kategori ini." 
-                        : "Belum ada peserta yang <b>Lolos</b> dari babak sebelumnya."}
+            if (data.length === 0) {
+                container.innerHTML = `<div style="padding:15px; background:#fff5f5; color:#cc0000; text-align:center;">
+                    <b>Data Kosong!</b><br>Belum ada peserta yang <b>Lolos</b> dari babak sebelumnya.
                 </div>`;
                 document.getElementById("actionGenerate").style.display = "none";
                 return;
             }
 
+            // ... sisa kode data.forEach lu di sini ...
             // Render Checkbox Peserta
             let htmlList = `<div style="margin-bottom:10px; font-weight:bold;">Daftar Peserta (${data.length} Orang):</div>`;
             
