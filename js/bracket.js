@@ -45,14 +45,23 @@ function tampilkanPesertaBracket() {
     const babak = document.getElementById("babakSelect").value;
     const container = document.getElementById("pesertaLomba");
 
-    if (!kat || !lomba) return;
+    // Validasi awal
+    if (!kat || !lomba) {
+        alert("Pilih Lomba & Kategori dulu ya brok!");
+        return;
+    }
 
-    container.innerHTML = "Memuat peserta...";
+    container.innerHTML = "<div style='padding:10px; color:#666;'>⏳ Sedang narik data dari Cloud...</div>";
 
+    // Tentukan mau panggil fungsi mana di Apps Script
+    // Jika Penyisihan -> Ambil semua dari Sheet 1 (Pendaftaran)
+    // Jika Semifinal/Final -> Ambil yang 'Lolos' dari babak sebelumnya di Sheet 3
     let typeRequest = (babak === "Penyisihan") ? "getPesertaByKategori" : "getPesertaLolos";
     
-    // Tambahin &babak=${babak} di ujung URL
+    // Pastikan parameter &babak=${babak} ikut dikirim buat filter berjenjang
     let fetchURL = `${scriptURL}?type=${typeRequest}&kategori=${encodeURIComponent(kat)}&lomba=${encodeURIComponent(lomba)}&babak=${encodeURIComponent(babak)}`;
+
+    console.log("Fetching dari URL:", fetchURL); // Buat debug di F12
 
     fetch(fetchURL)
         .then(res => res.json())
@@ -60,24 +69,40 @@ function tampilkanPesertaBracket() {
             dataPesertaCloud = data; 
             container.innerHTML = "";
             
-            if (data.length === 0) {
-                container.innerHTML = `<b style="color:red">Belum ada peserta ${babak} untuk ${lomba} - ${kat}</b>`;
+            if (!data || data.length === 0) {
+                container.innerHTML = `
+                <div style="padding:15px; border:1px solid #ffcccc; background:#fff5f5; border-radius:8px; color:#cc0000; text-align:center;">
+                    <b>Data Kosong!</b><br>
+                    ${babak === "Penyisihan" 
+                        ? "Belum ada pendaftar di kategori ini." 
+                        : "Belum ada peserta yang <b>Lolos</b> dari babak sebelumnya."}
+                </div>`;
+                document.getElementById("actionGenerate").style.display = "none";
                 return;
             }
 
-            // Render Checkbox
-            data.forEach(p => {
-                container.innerHTML += `
-                <div class="peserta-item">
-                    <input type="checkbox" class="peserta-check" value="${p.nama}" checked>
-                    <label><strong>${p.nama}</strong></label>
+            // Render Checkbox Peserta
+            let htmlList = `<div style="margin-bottom:10px; font-weight:bold;">Daftar Peserta (${data.length} Orang):</div>`;
+            
+            data.forEach((p, index) => {
+                htmlList += `
+                <div class="peserta-item" style="display:flex; align-items:center; gap:10px; margin-bottom:8px; padding:8px; background:#f8f9fa; border-radius:5px; border:1px solid #eee;">
+                    <input type="checkbox" class="peserta-check" id="check-${index}" value="${p.nama}" checked style="width:18px; height:18px; cursor:pointer;">
+                    <label for="check-${index}" style="cursor:pointer; flex-grow:1;">
+                        <strong>${p.nama}</strong> 
+                        <span style="font-size:11px; color:#888;">${p.level ? '(' + p.level + ')' : ''}</span>
+                    </label>
                 </div>`;
             });
+
+            container.innerHTML = htmlList;
+            
+            // Munculkan tombol "Generate Heat"
             document.getElementById("actionGenerate").style.display = "block";
         })
         .catch(err => {
-            container.innerHTML = "Gagal narik data. Cek koneksi!";
-            console.error(err);
+            console.error("Error Fetch:", err);
+            container.innerHTML = "<div style='color:red; padding:10px;'>❌ Gagal narik data. Pastikan Apps Script sudah di-Deploy!</div>";
         });
 }
 // 4. GENERATE HEAT (LOGIKA 4-3-5)
