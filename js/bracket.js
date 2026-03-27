@@ -117,59 +117,32 @@ function generateBracket() {
     let pesertaTerpilih = [];
 
     checkboxes.forEach(cb => {
-        // Ambil data asli dari array dataPesertaCloud yang sudah ada Level-nya
         const dataAsli = dataPesertaCloud.find(p => p.nama === cb.value);
         if (dataAsli) pesertaTerpilih.push(dataAsli);
     });
 
     if (pesertaTerpilih.length < 3) return alert("Minimal 3 orang buat bikin Heat, brok!");
 
-    // A. URUTKAN BERDASARKAN LEVEL (Penting!)
-    // A. URUTKAN BERDASARKAN LEVEL (Presisi A+ sampai C-)
-const bobot = { 
-    "A+": 9, 
-    "A":  8, 
-    "A-": 7, 
-    "B+": 6, 
-    "B":  5, 
-    "B-": 4, 
-    "C+": 3, 
-    "C":  2, 
-    "C-": 1 
-};
+    // A. URUTKAN BERDASARKAN LEVEL
+    const bobot = { "A+": 9, "A": 8, "A-": 7, "B+": 6, "B": 5, "B-": 4, "C+": 3, "C": 2, "C-": 1 };
 
-// Fungsi sort (Dari yang Paling Jago ke Pemula)
-// A. URUTKAN BERDASARKAN LEVEL + ACAK DI DALAM LEVEL YANG SAMA
-pesertaTerpilih.sort((a, b) => {
-    let levelA = bobot[a.level] || 0;
-    let levelB = bobot[b.level] || 0;
+    pesertaTerpilih.sort((a, b) => {
+        let levelA = bobot[a.level] || 0;
+        let levelB = bobot[b.level] || 0;
+        if (levelA !== levelB) return levelB - levelA;
+        return Math.random() - 0.5; 
+    });
 
-    // Jika level beda, urutin pake bobot (Prio)
-    if (levelA !== levelB) {
-        return levelB - levelA;
-    }
-    
-    // JIKA LEVEL SAMA, KITA ACAK (50:50)
-    return Math.random() - 0.5; 
-});
-
-    // B. LOGIKA PEMBAGIAN (Prio 4, Range 3-5)
+    // B. LOGIKA PEMBAGIAN
     let total = pesertaTerpilih.length;
     let hasilGrup = [];
     let i = 0;
 
     while (i < total) {
         let sisa = total - i;
-        let ukuranGrup = 4; // Default prioritas
-
-        // Kondisi khusus biar gak ada Heat isi 1 atau 2 orang
-        if (sisa === 5) {
-            ukuranGrup = 5; // Langsung sikat 5 biar gak sisa 1
-        } else if (sisa === 6) {
-            ukuranGrup = 3; // Pecah jadi 3 dan 3
-        } else if (sisa === 3) {
-            ukuranGrup = 3;
-        }
+        let ukuranGrup = 4; 
+        if (sisa === 5) { ukuranGrup = 5; } 
+        else if (sisa === 6 || sisa === 3) { ukuranGrup = 3; }
 
         hasilGrup.push(pesertaTerpilih.slice(i, i + ukuranGrup));
         i += ukuranGrup;
@@ -177,13 +150,15 @@ pesertaTerpilih.sort((a, b) => {
 
     // C. RENDER KE LAYAR
     const container = document.getElementById("hasilBracket");
-    container.innerHTML = ""; // Bersihkan Heat lama
+    container.innerHTML = ""; 
+    
     hasilGrup.forEach((grup, index) => {
+        // Kita oper 'index + 1' sebagai NOMOR HEAT
         renderHeatBox(grup, index + 1);
     });
+
     document.getElementById("btnPublikasi").style.display = "block";
 }
-
 function publikasikanHeat() {
     const lomba = document.getElementById("lombaSelect").value;
     const kategori = document.getElementById("kategoriSelect").value;
@@ -228,62 +203,35 @@ function publikasikanHeat() {
     });
 }
 // 5. RENDER BOX HEAT (Fungsi yang tadi ilang)
-function renderHeatBox(peserta, nomor) {
+function renderHeatBox(grup, nomorHeat) {
     const container = document.getElementById("hasilBracket");
-    const babak = document.getElementById("babakSelect").value; // Ambil info babak
-    let list = "";
+    
+    let html = `<div class="heat-box" style="border:2px solid #333; margin-bottom:20px; padding:15px; border-radius:10px; background:#fff;">
+                <h3 style="margin-top:0; color:#007bff;">HEAT ${nomorHeat}</h3>`;
 
-    peserta.forEach((p, i) => {
-        // Logika Dropdown: Jika Final, munculkan opsi Juara
-        let opsiStatus = "";
-        if (babak === "Final") {
-            opsiStatus = `
-                <option value="">- Pilih Juara -</option>
-                <option value="Juara 1">🥇 Juara 1</option>
-                <option value="Juara 2">🥈 Juara 2</option>
-                <option value="Juara 3">🥉 Juara 3</option>
-                <option value="Gugur">❌ Tidak Juara</option>
-            `;
-        } else {
-            opsiStatus = `
-                <option value="">- Pilih -</option>
-                <option value="Lolos">✅ LOLOS</option>
-                <option value="Gugur">❌ GUGUR</option>
-            `;
-        }
-
-        list += `
-        <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 5px; border-bottom: 1px dashed #ddd;">
-            <span style="font-size: 14px;"><strong>${i+1}.</strong> ${p.nama} <small style="color:blue">[${p.level}]</small></span>
-            <select class="select-status" data-nama="${p.nama}" 
-                style="padding: 3px; border-radius: 4px; font-size: 12px; cursor: pointer;">
-                ${opsiStatus}
-            </select>
-        </li>`;
+    grup.forEach(p => {
+        html += `
+            <div class="player-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
+                <span style="font-weight:bold;">${p.nama} <small style="color:#888;">(${p.level})</small></span>
+                
+                <select class="select-status" 
+                        data-nama="${p.nama}" 
+                        data-heat="${nomorHeat}" 
+                        onchange="simpanKeSheet('${p.nama}', this)"
+                        style="padding:5px; border-radius:5px; border:1px solid #ccc;">
+                    <option value="">-- Set Hasil --</option>
+                    <option value="Lolos">Lolos</option>
+                    <option value="Gugur">Gugur</option>
+                    <option value="Juara 1">Juara 1</option>
+                    <option value="Juara 2">Juara 2</option>
+                    <option value="Juara 3">Juara 3</option>
+                </select>
+            </div>`;
     });
 
-    // Render Box Heat
-    container.innerHTML += `
-    <div class="heat-box" id="heat-${nomor}" 
-        style="border: 2px solid #444; border-radius: 12px; margin: 15px; padding: 15px; background: #fff; min-width: 280px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-block; vertical-align: top;">
-        
-        <div style="background: ${babak === 'Final' ? '#d4af37' : '#444'}; color: white; padding: 5px 10px; border-radius: 6px; margin-bottom: 15px; text-align: center; font-weight: bold;">
-            ${babak === 'Final' ? '🏆 BABAK FINAL' : 'HEAT ' + nomor}
-        </div>
-
-        <ul style="list-style: none; padding: 0; margin: 0;">${list}</ul>
-
-        <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; display: flex; flex-direction: column; gap: 8px;">
-            ${babak !== 'Final' ? `<button onclick="loloskanDuaTeratas(${nomor})" style="background: #ffc107; border:none; padding:8px; border-radius:6px; cursor:pointer; font-weight:bold;">⚡ Set 2 Teratas</button>` : ''}
-            
-            <button onclick="kirimSatuHeat(${nomor})" 
-                style="width: 100%; background: #007bff; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold;">
-                📤 Update ke Cloud
-            </button>
-        </div>
-    </div>`;
+    html += `</div>`;
+    container.innerHTML += html;
 }
-
 function kirimSatuHeat(nomorHeat) {
     const heatBox = document.getElementById(`heat-${nomorHeat}`);
     const semuaSelect = heatBox.querySelectorAll('.select-status');
