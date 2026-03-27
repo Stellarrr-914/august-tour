@@ -56,18 +56,29 @@ function renderLiveBracket(rekap) {
                                     <div class="heat-label">HEAT ${noHeat}</div>`;
                     
                     groupHeat[noHeat].forEach(player => {
-                        const statusKecil = player.status.toLowerCase();
-                        let badge = "";
-                        if (statusKecil.includes("lolos")) badge = '<span class="badge badge-next">NEXT ➔</span>';
-                        else if (statusKecil.includes("menunggu")) badge = '<span class="badge badge-wait">READY</span>';
-                        else if (statusKecil.includes("juara")) badge = '<span class="badge badge-win">🏆</span>';
+    const statusKecil = player.status.toLowerCase();
+    let badge = "";
+    let rowStyle = ""; // Buat kasih warna baris
 
-                        htmlLomba += `
-                            <div class="player-row">
-                                <span class="player-name">${player.nama} <small>(${player.kat})</small></span>
-                                ${badge}
-                            </div>`;
-                    });
+    if (statusKecil.includes("lolos")) {
+        badge = '<span class="badge badge-next">LOLOS ➔</span>';
+        rowStyle = "background: #eaffea; border-left: 4px solid #2ecc71;"; // Hijau Muda
+    } else if (statusKecil.includes("gugur")) {
+        badge = '<span class="badge badge-lose">GUGUR</span>';
+        rowStyle = "background: #fff5f5; opacity: 0.7;"; // Merah tipis / redup
+    } else if (statusKecil.includes("menunggu")) {
+        badge = '<span class="badge badge-wait">READY</span>';
+    } else if (statusKecil.includes("juara")) {
+        badge = '<span class="badge badge-win">JUARA 🏆</span>';
+        rowStyle = "background: #fff9db; border-left: 4px solid #f1c40f;"; // Kuning Emas
+    }
+
+    htmlLomba += `
+        <div class="player-row" style="${rowStyle} padding: 8px; margin: 2px 0; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+            <span class="player-name" style="font-size: 0.9rem;">${player.nama}</span>
+            ${badge}
+        </div>`;
+});
                     htmlLomba += `</div>`; // Tutup heat-wrapper
                 });
 
