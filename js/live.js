@@ -108,7 +108,37 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
         htmlLeaderboard += `</div>`;
         container.innerHTML = htmlLeaderboard;
     }
-}// --- FITUR AUTO REFRESH ---
+}
+
+function generateLeaderboard(rekapHasil) {
+    let leaderboard = {};
+
+    rekapHasil.forEach(row => {
+        const nama = row.nama;
+        const status = row.status_babak ? row.status_babak.toLowerCase() : "";
+        
+        if (!nama) return;
+        if (!leaderboard[nama]) {
+            leaderboard[nama] = { nama: nama, totalPoin: 0, isZonk: true };
+        }
+
+        // Logic Poin Semangat & Juara
+        if (status.includes("juara")) {
+            leaderboard[nama].totalPoin += 100;
+            leaderboard[nama].isZonk = false; // Bukan Zonk karena Juara
+        } else if (status.includes("final")) {
+            leaderboard[nama].totalPoin += 10;
+        } else if (status.includes("semifinal")) {
+            leaderboard[nama].totalPoin += 5;
+        } else if (status.includes("lolos") || status.includes("gugur")) {
+            leaderboard[nama].totalPoin += 2; // Poin Partisipasi
+        }
+    });
+
+    // Ubah ke array dan urutkan dari poin tertinggi
+    return Object.values(leaderboard).sort((a, b) => b.totalPoin - a.totalPoin);
+}
+// --- FITUR AUTO REFRESH ---
 // Jalankan pertama kali saat halaman dibuka
 fetchLiveReport();
 
