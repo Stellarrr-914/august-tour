@@ -177,6 +177,7 @@ function publikasikanHeat() {
     let dataKirim = [];
 
     allPlayers.forEach(el => {
+        if (el.value !== "") return;
         dataKirim.push({
             type: "simpanJuara", // Kita pake type yang sama biar Apps Script yang nanganin update/append
             lomba: lomba,
