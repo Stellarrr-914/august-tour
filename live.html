@@ -52,39 +52,45 @@
     align-items: start;
 }
 
-.babak-section {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.lomba-card {
+    background: #fff;
+    border: 2px solid #007bff;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    overflow: hidden;
 }
 
-        .babak-section h2 {
-            text-align: center;
-            font-size: 1.2rem;
-            background: var(--dark);
-            color: white;
-            padding: 8px;
-            border-radius: 5px;
-            margin-top: 0;
-        }
+.lomba-header {
+    background: #007bff;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 1.1rem;
+}
 
-        /* Card per Heat */
-        .heat-card {
-            background: white;
-            border-left: 5px solid var(--primary);
-            margin-bottom: 15px;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
+.heat-wrapper {
+    padding: 10px;
+    border-bottom: 1px dashed #ccc;
+}
 
-        .heat-card h3 {
-            margin: 0 0 10px 0;
-            font-size: 0.9rem;
-            color: #666;
-            text-transform: uppercase;
-        }
+.heat-wrapper:last-child { border-bottom: none; }
 
+.heat-label {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.babak-title {
+    background: #333;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
         /* Baris Peserta */
         .player-row {
             display: flex;
