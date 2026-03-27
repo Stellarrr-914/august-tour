@@ -182,6 +182,39 @@ pesertaTerpilih.sort((a, b) => {
         renderHeatBox(grup, index + 1);
     });
 }
+
+function publikasikanHeat() {
+    const lomba = document.getElementById("lombaSelect").value;
+    const kategori = document.getElementById("kategoriSelect").value;
+    const babakAktif = document.getElementById("babakSelect").value;
+
+    const allHeats = document.querySelectorAll(".heat-box");
+    let dataKirim = [];
+
+    allHeats.forEach((box, index) => {
+        // Ambil semua nama di dalam heat box ini
+        const players = box.querySelectorAll("span"); 
+        players.forEach(p => {
+            dataKirim.push({
+                lomba: lomba,
+                kategori: kategori,
+                nama: p.innerText,
+                status: `Menunggu - ${babakAktif}`,
+                heat: index + 1
+            });
+        });
+    });
+
+    fetch(scriptURL, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify({
+            type: "bulkUpload",
+            payload: dataKirim
+        })
+    }).then(() => alert("Jadwal Heat sudah tampil di Live Report!"));
+}
+
 // 5. RENDER BOX HEAT (Fungsi yang tadi ilang)
 function renderHeatBox(peserta, nomor) {
     const container = document.getElementById("hasilBracket");
@@ -311,44 +344,51 @@ function simpanKeSheet(nama, el) {
     const kategori = document.getElementById("kategoriSelect").value;
     const babakAktif = document.getElementById("babakSelect").value;
 
-    // Cek dulu, kalau dropdown lomba/kategori kosong, jangan kirim!
-    if (!lomba || !kategori) {
-        alert("Pilih Lomba dan Kategori dulu di atas, brok!");
-        el.value = ""; // reset dropdown biar gak bingung
+    // 1. Validasi Input Dasar
+    if (!lomba || !kategori || !babakAktif) {
+        alert("Pilih Lomba, Kategori, dan Babak dulu di menu atas!");
+        el.value = ""; 
         return;
     }
 
-    if (!el.value) return;
+    if (!el.value) return; // Kalau milih '-- Set --' abaikan
 
-    // Ambil nomor heat dari atribut elemen (tadi kita set pas generate)
-    // Kalau el gak punya atribut ini, default ke 1
+    // 2. Ambil Nomor Heat dari atribut data-heat yang kita set pas Generate
     const heatInfo = el.getAttribute("data-heat") || 1;
 
-    // Hasilnya di Sheet 3 nanti: "Lolos - Penyisihan"
+    // 3. Gabungkan status (misal: "Lolos - Penyisihan")
     const statusGabungan = `${el.value} - ${babakAktif}`;
 
-    console.log(`Mengirim: ${nama} | ${statusGabungan} | Heat: ${heatInfo}`);
+    // Efek visual loading
+    el.style.opacity = "0.5";
+    el.disabled = true;
 
     fetch(scriptURL, {
         method: 'POST',
-        mode: 'no-cors', // Tambahkan no-cors biar gak kena blokir browser
+        mode: 'no-cors', 
         body: JSON.stringify({
             type: "simpanJuara",
             lomba: lomba,
             kategori: kategori,
             nama: nama,
-            status: statusGabungan, // Koma jangan lupa di sini
-            heat: heatInfo          // Ini yang bakal masuk ke Kolom E (ID Heat)
+            status: statusGabungan,
+            heat: heatInfo
         })
     })
     .then(() => {
-        // Kasih tanda kalau baris ini udah aman ter-upload
+        // Efek visual sukses
+        el.style.opacity = "1";
+        el.disabled = false;
         el.style.borderColor = "#28a745";
         el.style.background = "#eaffea";
+        console.log(`Berhasil update: ${nama} (${statusGabungan})`);
     })
     .catch(err => {
-        console.error("Gagal kirim ke Cloud:", err);
-        alert("Waduh, gagal upload data si " + nama);
+        el.disabled = false;
+        el.style.opacity = "1";
+        alert("Gagal koneksi ke Cloud!");
+        console.error(err);
     });
-}// Jalankan load dropdown pas halaman dibuka
+}
+
 document.addEventListener("DOMContentLoaded", updateLombaDropdown);
