@@ -1,18 +1,24 @@
-// Menggunakan URL yang sama dengan yang ada di bracket.js lo
+// 1. KONFIGURASI URL (Pastiin URL Deployment GS lo bener)
 const scriptURL = "https://script.google.com/macros/s/AKfycbyijZepuUbuoZOXdpKJLfvEXFSm0NNzjf-AwM4MkM5iP7ly1aV34V_bgRBI3HM_pV49/exec";
 
-// Fungsi untuk ambil data dari Cloud
+// 2. FUNGSI AMBIL DATA (Satu kali tarik dapat dua data sheet)
 function fetchLiveReport() {
     fetch(scriptURL + "?type=getLiveReportFull")
         .then(response => response.json())
         .then(data => {
-            if (data && data.rekap) {
-                renderLiveBracket(data.rekap);
+            // data.daftarLomba = Dari Sheet 2
+            // data.rekapHasil = Dari Sheet 3
+            if (data && data.daftarLomba && data.rekapHasil) {
+                renderLiveBracket(data.daftarLomba, data.rekapHasil);
             }
         })
-        .catch(err => console.error("Gagal update data:", err));
+        .catch(err => {
+            console.error("Gagal update data:", err);
+            document.getElementById('live-title').innerText = "Koneksi Terputus...";
+        });
 }
 
+// 3. FUNGSI PANGALIMA (Pilih Tampilan: Bracket vs Leaderboard)
 function renderLiveBracket(dataSheet2, dataSheet3) {
     const container = document.getElementById("liveReportContainer");
     const titleDisplay = document.getElementById('live-title');
@@ -20,14 +26,15 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
     
     container.innerHTML = ""; 
 
-    // 1. CARI LOMBA YANG LAGI "ON GOING" DI SHEET 2
+    // Cari lomba yang statusnya "ON GOING" di Sheet 2
+    // Nama kolom di Sheet 2: "Status"
     const currentMatch = dataSheet2.find(l => l.status === 'ON GOING');
 
-    // 2. KONDISI A: LAGI ADA LOMBA AKTIF (TAMPILKAN BRACKET)
     if (currentMatch) {
+        // --- MODE A: TAMPILKAN BRACKET (LOMBA AKTIF) ---
         titleDisplay.innerText = `🔴 LIVE: ${currentMatch.nama_lomba} (${currentMatch.kategori})`;
         
-        // Filter data Sheet 3 (Rekap) hanya untuk lomba yang lagi jalan ini
+        // Filter data Sheet 3 hanya untuk lomba yang sedang jalan
         const rekapAktif = dataSheet3.filter(p => p.lomba === currentMatch.nama_lomba);
 
         const daftarBabak = ["Penyisihan", "Semifinal", "Final"];
@@ -38,8 +45,9 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
             section.innerHTML = `<h2 class="babak-title">${namaBabak.toUpperCase()}</h2>`;
 
             const dataPerBabak = rekapAktif.filter(player => {
-                if (!player.status) return false;
-                const parts = player.status.split(" - ");
+                if (!player.status_babak) return false;
+                // Pecah status (Misal: "Lolos - Semifinal")
+                const parts = player.status_babak.split(" - ");
                 const babakDiStatus = parts[1] ? parts[1].trim() : "";
                 return babakDiStatus.toLowerCase() === namaBabak.toLowerCase();
             });
@@ -49,7 +57,7 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
             } else {
                 const groupHeat = {};
                 dataPerBabak.forEach(p => {
-                    const noHeat = p.heat || "1";
+                    const noHeat = p.nomor_heat || "1";
                     if (!groupHeat[noHeat]) groupHeat[noHeat] = [];
                     groupHeat[noHeat].push(p);
                 });
@@ -59,7 +67,7 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
                                     <div class="heat-label">HEAT ${noHeat}</div>`;
                     
                     groupHeat[noHeat].forEach(player => {
-                        const s = player.status.toLowerCase();
+                        const s = player.status_babak.toLowerCase();
                         let badge = '<span class="badge badge-wait">READY</span>';
                         let style = "";
 
@@ -88,21 +96,21 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
         });
 
     } else {
-        // 3. KONDISI B: GAK ADA LOMBA AKTIF (TAMPILKAN LEADERBOARD)
+        // --- MODE B: TAMPILKAN LEADERBOARD (ISTIRAHAT / SEMUA FINISHED) ---
         titleDisplay.innerText = `🏆 KLASEMEN SEMENTARA & PESERTA ZONK`;
         
-        // Panggil fungsi hitung poin yang kita bahas tadi
         const dataPoin = generateLeaderboard(dataSheet3); 
         
-        // Render tabel Leaderboard ke dalam container
         let htmlLeaderboard = `<div class="leaderboard-table" style="width:100%">`;
         dataPoin.forEach((p, index) => {
             const rank = index + 1;
+            // Peserta Zonk adalah yang poinnya ada tapi gak pernah juara
             const statusZonk = p.isZonk ? '<span style="color:#888; font-size:12px;">(Zonk)</span>' : '⭐';
+            
             htmlLeaderboard += `
-                <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #eee; background:white; margin-bottom:5px; border-radius:8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid #eee; background:white; margin-bottom:5px; border-radius:8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                     <span><strong>#${rank}</strong> ${p.nama} ${statusZonk}</span>
-                    <span><strong>${p.totalPoin} Poin</strong></span>
+                    <span style="font-weight:bold; color:#2c3e50;">${p.totalPoin} Poin</span>
                 </div>`;
         });
         htmlLeaderboard += `</div>`;
@@ -110,6 +118,7 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
     }
 }
 
+// 4. FUNGSI HITUNG POIN (Logic untuk Peserta Zonk & Juara Umum)
 function generateLeaderboard(rekapHasil) {
     let leaderboard = {};
 
@@ -122,25 +131,26 @@ function generateLeaderboard(rekapHasil) {
             leaderboard[nama] = { nama: nama, totalPoin: 0, isZonk: true };
         }
 
-        // Logic Poin Semangat & Juara
+        // Logic Poin
         if (status.includes("juara")) {
             leaderboard[nama].totalPoin += 100;
-            leaderboard[nama].isZonk = false; // Bukan Zonk karena Juara
+            leaderboard[nama].isZonk = false; // Jika pernah juara, status Zonk hilang
         } else if (status.includes("final")) {
             leaderboard[nama].totalPoin += 10;
         } else if (status.includes("semifinal")) {
             leaderboard[nama].totalPoin += 5;
         } else if (status.includes("lolos") || status.includes("gugur")) {
-            leaderboard[nama].totalPoin += 2; // Poin Partisipasi
+            leaderboard[nama].totalPoin += 2; // Poin partisipasi dasar
         }
     });
 
-    // Ubah ke array dan urutkan dari poin tertinggi
+    // Urutkan dari poin tertinggi
     return Object.values(leaderboard).sort((a, b) => b.totalPoin - a.totalPoin);
 }
-// --- FITUR AUTO REFRESH ---
-// Jalankan pertama kali saat halaman dibuka
+
+// 5. INISIALISASI & AUTO REFRESH
+// Jalankan saat pertama kali dibuka
 fetchLiveReport();
 
-// Jalankan ulang setiap 10 detik (10000 milidetik)
+// Auto update tiap 10 detik
 setInterval(fetchLiveReport, 10000);
