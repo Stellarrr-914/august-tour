@@ -26,22 +26,10 @@ function renderLiveBracket(rekap) {
         section.innerHTML = `<h2 class="babak-title">BABAK ${namaBabak.toUpperCase()}</h2>`;
 
         // --- LOGIKA FILTER ANTI-HILANG ---
-        const dataPerBabak = rekap.filter(player => {
-            // Pastikan variabel 'player' (atau 'p') terdefinisi di sini
-            if (!player || !player.status) return false;
-            
-            const s = player.status.toLowerCase();
-            const target = namaBabak.toLowerCase();
-
-            // 1. Tampilkan jika memang statusnya di babak ini (misal: "Lolos - Penyisihan")
-            if (s.includes(target)) return true;
-
-            // 2. HISTORI: Jika dia sudah di Semifinal, dia harus TETAP muncul di kotak Penyisihan
-            if (target === "penyisihan" && (s.includes("semifinal") || s.includes("final"))) return true;
-            if (target === "semifinal" && s.includes("final")) return true;
-
-            return false;
-        });
+       const dataPerBabak = rekap.filter(player => {
+    if (!player || !player.status) return false;
+    return player.status.toLowerCase().includes(namaBabak.toLowerCase());
+});
 
         if (dataPerBabak.length === 0) {
             section.innerHTML += "<p class='empty-msg' style='text-align:center; color:#999;'>Belum ada data.</p>";
