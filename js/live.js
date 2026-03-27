@@ -1,79 +1,69 @@
 // Menggunakan URL yang sama dengan yang ada di bracket.js lo
 const scriptURL = "https://script.google.com/macros/s/AKfycbyijZepuUbuoZOXdpKJLfvEXFSm0NNzjf-AwM4MkM5iP7ly1aV34V_bgRBI3HM_pV49/exec";
 
-async function fetchLiveReport() {
-    const root = document.getElementById("bracket-root");
-    try {
-        const response = await fetch(`${scriptURL}?type=getLiveReportFull`);
-        const data = await response.json();
-        
-        if (data.rekap && data.rekap.length > 0) {
-            renderLiveBracket(data.rekap, data.jadwal);
-        } else {
-            root.innerHTML = "<div style='text-align:center; padding:50px; color:#666;'>Belum ada data pertandingan yang masuk brok...</div>";
-        }
-    } catch (err) {
-        console.error("Gagal load live report:", err);
-        root.innerHTML = "<div style='text-align:center; color:red;'>Koneksi ke server gagal.</div>";
-    }
-}
-
-function renderLiveBracket(rekap, jadwal) {
-    const root = document.getElementById("bracket-root");
-    const titleEl = document.getElementById("lomba-aktif");
-    const nextEl = document.getElementById("next-match-text");
-
-    // 1. Update Judul Lomba (Data terbaru di urutan pertama)
-    titleEl.innerText = `${rekap[0].lomba} - ${rekap[0].kat}`;
-
-    // 2. Cari Next Match di Jadwal (Sheet 4)
-    const idx = jadwal.findIndex(j => j.lomba === rekap[0].lomba && j.kat === rekap[0].kat);
-    const next = jadwal[idx + 1];
-    nextEl.innerText = next ? `${next.lomba} (${next.kat})` : "Selesai! 🏁";
-
-    // 3. Render Kolom (Penyisihan, Semifinal, Final)
-    const stages = ["Penyisihan", "Semifinal", "Final"];
-    let finalHTML = "";
-
-    stages.forEach(stage => {
-        const players = rekap.filter(p => p.status.includes(stage));
-        let columnHTML = `<div class="column"><div class="column-header">${stage.toUpperCase()}</div>`;
-        
-        if (players.length === 0) {
-            columnHTML += `<div style="text-align:center; color:#444; font-size:12px; margin-top:20px;">Menunggu hasil...</div>`;
-        } else {
-            // Kita kelompokkan per 4 orang (Sesuai limit default lo di bracket.html)
-            for (let i = 0; i < players.length; i += 4) {
-                const groups = {};
-    dataPerBabak.forEach(p => {
-        if (!groups[p.heat]) groups[p.heat] = [];
-        groups[p.heat].push(p);
-    });
-
-    // Sekarang tinggal tampilin per group
-    Object.keys(groups).forEach(heatNum => {
-        let htmlHeat = `<div class="match-box">
-            <div class="match-label">HEAT ${heatNum}</div>`;
-        
-        groups[heatNum].forEach(player => {
-            htmlHeat += `<div class="player">${player.nama} - ${player.status}</div>`;
+function fetchLiveReport() {
+    fetch(scriptURL + "?type=getLiveReportFull")
+        .then(response => response.json())
+        .then(data => {
+            console.log("Data diterima:", data);
+            renderLiveBracket(data.rekap); // Kirim data rekap ke fungsi render
+        })
+        .catch(err => {
+            console.error("Gagal load live report:", err);
+            document.getElementById("liveReportContainer").innerHTML = "<p>Koneksi ke server gagal brok, coba refresh!</p>";
         });
-        
-        htmlHeat += `</div>`;
-        // Masukin ke kolom babak yang sesuai
-    });
-                columnHTML += `<div class="match-card">${pList}</div>`;
-            }
-        }
-        columnHTML += `</div>`;
-        finalHTML += columnHTML;
-    });
-
-    root.innerHTML = finalHTML;
 }
 
-// Jalankan saat halaman siap
-document.addEventListener("DOMContentLoaded", () => {
-    fetchLiveReport();
-    setInterval(fetchLiveReport, 15000); // Auto update tiap 15 detik
-});
+function renderLiveBracket(rekap) {
+    const container = document.getElementById("liveReportContainer");
+    container.innerHTML = ""; // Bersihkan dulu
+
+    // 1. Kelompokkan data berdasarkan BABAK (dari kolom Status di Sheet 3)
+    // Ingat: Status kita isinya "Lolos - Penyisihan" atau "Menunggu - Semifinal"
+    const babaks = ["Penyisihan", "Semifinal", "Final"];
+
+    babaks.forEach(namaBabak => {
+        const section = document.createElement("div");
+        section.className = "babak-section";
+        section.innerHTML = `<h2>BABAK ${namaBabak.toUpperCase()}</h2>`;
+
+        // FILTER data yang sesuai dengan nama babak ini
+        const dataPerBabak = rekap.filter(p => p.status.includes(namaBabak));
+
+        if (dataPerBabak.length === 0) {
+            section.innerHTML += "<p>Belum ada jadwal/hasil.</p>";
+        } else {
+            // 2. Grouping lagi berdasarkan nomor HEAT (Kolom E)
+            const heats = {};
+            dataPerBabak.forEach(p => {
+                const h = p.heat || "1"; // Default ke 1 kalau kosong
+                if (!heats[h]) heats[h] = [];
+                heats[h].push(p);
+            });
+
+            // 3. Render per Heat
+            Object.keys(heats).forEach(num => {
+                let heatHtml = `<div class="heat-card"><h3>HEAT ${num}</h3>`;
+                heats[num].forEach(p => {
+                    const isLolos = p.status.toLowerCase().includes("lolos");
+                    const isWaiting = p.status.toLowerCase().includes("menunggu");
+                    
+                    let badge = "";
+                    if (isLolos) badge = '<span class="badge-next">NEXT ➔</span>';
+                    if (isWaiting) badge = '<span class="badge-wait">READY</span>';
+
+                    heatHtml += `<div class="player-row">
+                                    <span>${p.nama}</span>
+                                    ${badge}
+                                 </div>`;
+                });
+                heatHtml += `</div>`;
+                section.innerHTML += heatHtml;
+            });
+        }
+        container.appendChild(section);
+    });
+}
+
+// Jalankan saat halaman dibuka
+fetchLiveReport();
