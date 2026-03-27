@@ -13,57 +13,49 @@ function fetchLiveReport() {
         .catch(err => console.error("Gagal update data:", err));
 }
 
-function renderLiveBracket(rekap) {
+function renderLiveBracket(dataSheet2, dataSheet3) {
     const container = document.getElementById("liveReportContainer");
+    const titleDisplay = document.getElementById('live-title');
     if (!container) return;
+    
     container.innerHTML = ""; 
 
-    // Urutan kolom yang akan muncul di layar
-    const daftarBabak = ["Penyisihan", "Semifinal", "Final"];
+    // 1. CARI LOMBA YANG LAGI "ON GOING" DI SHEET 2
+    const currentMatch = dataSheet2.find(l => l.status === 'ON GOING');
 
-    daftarBabak.forEach(namaBabak => {
-        // 1. BUAT KOLOM UNTUK BABAK INI
-        const section = document.createElement("div");
-        section.className = "babak-section";
-        section.innerHTML = `<h2 class="babak-title">${namaBabak.toUpperCase()}</h2>`;
+    // 2. KONDISI A: LAGI ADA LOMBA AKTIF (TAMPILKAN BRACKET)
+    if (currentMatch) {
+        titleDisplay.innerText = `🔴 LIVE: ${currentMatch.nama_lomba} (${currentMatch.kategori})`;
+        
+        // Filter data Sheet 3 (Rekap) hanya untuk lomba yang lagi jalan ini
+        const rekapAktif = dataSheet3.filter(p => p.lomba === currentMatch.nama_lomba);
 
-        // 2. FILTER DATA: Ambil data yang statusnya mengandung nama babak ini
-        // Contoh: "Lolos - Semifinal" hanya masuk ke kolom Semifinal
-        const dataPerBabak = rekap.filter(player => {
-            if (!player.status) return false;
-            
-            // Kita pecah statusnya (Misal: "Lolos - Semifinal")
-            const parts = player.status.split(" - ");
-            const babakDiStatus = parts[1] ? parts[1].trim() : "";
+        const daftarBabak = ["Penyisihan", "Semifinal", "Final"];
 
-            // CEK: Apakah babak di status SAMA DENGAN nama kolom (namaBabak)?
-            return babakDiStatus.toLowerCase() === namaBabak.toLowerCase();
-        });
+        daftarBabak.forEach(namaBabak => {
+            const section = document.createElement("div");
+            section.className = "babak-section";
+            section.innerHTML = `<h2 class="babak-title">${namaBabak.toUpperCase()}</h2>`;
 
-        // 3. JIKA KOSONG, TAMPILKAN PESAN
-        if (dataPerBabak.length === 0) {
-            section.innerHTML += `<p style="text-align:center; color:#999; padding:20px;">Belum ada jadwal ${namaBabak}</p>`;
-        } else {
-            // 4. GROUPING PER LOMBA & HEAT (Seperti biasa)
-            const groupLomba = {};
-            dataPerBabak.forEach(p => {
-                if (!groupLomba[p.lomba]) groupLomba[p.lomba] = [];
-                groupLomba[p.lomba].push(p);
+            const dataPerBabak = rekapAktif.filter(player => {
+                if (!player.status) return false;
+                const parts = player.status.split(" - ");
+                const babakDiStatus = parts[1] ? parts[1].trim() : "";
+                return babakDiStatus.toLowerCase() === namaBabak.toLowerCase();
             });
 
-            Object.keys(groupLomba).forEach(namaLomba => {
-                let htmlLomba = `<div class="lomba-card">
-                                    <div class="lomba-header">${namaLomba}</div>`;
-
+            if (dataPerBabak.length === 0) {
+                section.innerHTML += `<p style="text-align:center; color:#999; padding:20px;">Belum ada jadwal ${namaBabak}</p>`;
+            } else {
                 const groupHeat = {};
-                groupLomba[namaLomba].forEach(p => {
+                dataPerBabak.forEach(p => {
                     const noHeat = p.heat || "1";
                     if (!groupHeat[noHeat]) groupHeat[noHeat] = [];
                     groupHeat[noHeat].push(p);
                 });
 
                 Object.keys(groupHeat).sort().forEach(noHeat => {
-                    htmlLomba += `<div class="heat-wrapper">
+                    let htmlHeat = `<div class="heat-wrapper">
                                     <div class="heat-label">HEAT ${noHeat}</div>`;
                     
                     groupHeat[noHeat].forEach(player => {
@@ -82,21 +74,40 @@ function renderLiveBracket(rekap) {
                             style = "background:#fff9db; border-left:4px solid #f1c40f;";
                         }
 
-                        htmlLomba += `
+                        htmlHeat += `
                             <div class="player-row" style="${style} display:flex; justify-content:space-between; padding:8px; margin-bottom:3px; border-radius:4px;">
                                 <span class="player-name">${player.nama}</span>
                                 ${badge}
                             </div>`;
                     });
-                    htmlLomba += `</div>`;
+                    htmlHeat += `</div>`;
+                    section.innerHTML += htmlHeat;
                 });
-                htmlLomba += `</div>`;
-                section.innerHTML += htmlLomba;
-            });
-        }
-        // Masukkan kolom babak ke container utama
-        container.appendChild(section);
-    });
+            }
+            container.appendChild(section);
+        });
+
+    } else {
+        // 3. KONDISI B: GAK ADA LOMBA AKTIF (TAMPILKAN LEADERBOARD)
+        titleDisplay.innerText = `🏆 KLASEMEN SEMENTARA & PESERTA ZONK`;
+        
+        // Panggil fungsi hitung poin yang kita bahas tadi
+        const dataPoin = generateLeaderboard(dataSheet3); 
+        
+        // Render tabel Leaderboard ke dalam container
+        let htmlLeaderboard = `<div class="leaderboard-table" style="width:100%">`;
+        dataPoin.forEach((p, index) => {
+            const rank = index + 1;
+            const statusZonk = p.isZonk ? '<span style="color:#888; font-size:12px;">(Zonk)</span>' : '⭐';
+            htmlLeaderboard += `
+                <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #eee; background:white; margin-bottom:5px; border-radius:8px;">
+                    <span><strong>#${rank}</strong> ${p.nama} ${statusZonk}</span>
+                    <span><strong>${p.totalPoin} Poin</strong></span>
+                </div>`;
+        });
+        htmlLeaderboard += `</div>`;
+        container.innerHTML = htmlLeaderboard;
+    }
 }// --- FITUR AUTO REFRESH ---
 // Jalankan pertama kali saat halaman dibuka
 fetchLiveReport();
