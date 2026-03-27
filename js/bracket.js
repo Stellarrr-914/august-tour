@@ -181,6 +181,7 @@ pesertaTerpilih.sort((a, b) => {
     hasilGrup.forEach((grup, index) => {
         renderHeatBox(grup, index + 1);
     });
+    document.getElementById("btnPublikasi").style.display = "block";
 }
 
 function publikasikanHeat() {
@@ -188,33 +189,44 @@ function publikasikanHeat() {
     const kategori = document.getElementById("kategoriSelect").value;
     const babakAktif = document.getElementById("babakSelect").value;
 
-    const allHeats = document.querySelectorAll(".heat-box");
+    if (!lomba || !kategori) {
+        alert("Pilih Lomba & Kategori dulu brok!");
+        return;
+    }
+
+    const konfirmasi = confirm(`Publikasikan jadwal ${babakAktif} ini ke Live Report?`);
+    if (!konfirmasi) return;
+
+    // Ambil semua dropdown/elemen yang punya data-nama di dalam hasil generate
+    const allPlayers = document.querySelectorAll(".select-status"); 
     let dataKirim = [];
 
-    allHeats.forEach((box, index) => {
-        // Ambil semua nama di dalam heat box ini
-        const players = box.querySelectorAll("span"); 
-        players.forEach(p => {
-            dataKirim.push({
-                lomba: lomba,
-                kategori: kategori,
-                nama: p.innerText,
-                status: `Menunggu - ${babakAktif}`,
-                heat: index + 1
-            });
+    allPlayers.forEach(el => {
+        dataKirim.push({
+            type: "simpanJuara", // Kita pake type yang sama biar Apps Script yang nanganin update/append
+            lomba: lomba,
+            kategori: kategori,
+            nama: el.getAttribute("data-nama"),
+            status: `Menunggu - ${babakAktif}`,
+            heat: el.getAttribute("data-heat")
         });
     });
 
-    fetch(scriptURL, {
-        method: "POST",
-        mode: "no-cors",
-        body: JSON.stringify({
-            type: "bulkUpload",
-            payload: dataKirim
-        })
-    }).then(() => alert("Jadwal Heat sudah tampil di Live Report!"));
+    // Kirim satu-satu (atau bisa masal kalau mau modif Apps Script lagi)
+    // Untuk awal, kita pake loop biar simple dan gak ubah Code.gs terlalu banyak
+    Promise.all(dataKirim.map(item => {
+        return fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify(item)
+        });
+    })).then(() => {
+        alert("Mantap! Jadwal Heat sudah live di Live Report.");
+    }).catch(err => {
+        alert("Aduh, gagal publikasi masal.");
+        console.error(err);
+    });
 }
-
 // 5. RENDER BOX HEAT (Fungsi yang tadi ilang)
 function renderHeatBox(peserta, nomor) {
     const container = document.getElementById("hasilBracket");
