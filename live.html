@@ -3,45 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Report Turnamen</title>
+    <title>Live Report Tournament 🏆</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0f0f0f; --card: #1a1a1a; --accent: #ffd700; --text: #eee; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        
-        /* Banner Next Match */
-        .next-info { position: fixed; top: 10px; right: 10px; background: #c0392b; padding: 10px; border-radius: 8px; font-size: 11px; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.5); border-left: 4px solid #fff; }
+        :root {
+            --primary: #007bff;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+        }
 
-        .header { text-align: center; margin-bottom: 30px; }
-        .bracket-container { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 40px; }
-        
-        .column { min-width: 280px; flex: 1; }
-        .column-header { background: var(--card); padding: 12px; border-radius: 8px; text-align: center; color: var(--accent); font-weight: bold; border: 1px solid #333; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 20px;
+            color: var(--dark);
+        }
 
-        .match-card { background: var(--card); border: 1px solid #333; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .player-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #252525; font-size: 14px; }
-        .player-row:last-child { border: none; }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
 
-        .badge-win { color: #2ecc71; font-weight: bold; font-size: 10px; border: 1px solid #2ecc71; padding: 1px 6px; border-radius: 4px; }
-        
-        ::-webkit-scrollbar { height: 6px; }
-        ::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
+        h1 {
+            text-align: center;
+            color: var(--dark);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--primary);
+            display: inline-block;
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        /* Layout Kolom Babak */
+        #liveReportContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .babak-section {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+        }
+
+        .babak-section h2 {
+            text-align: center;
+            font-size: 1.2rem;
+            background: var(--dark);
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            margin-top: 0;
+        }
+
+        /* Card per Heat */
+        .heat-card {
+            background: white;
+            border-left: 5px solid var(--primary);
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .heat-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        /* Baris Peserta */
+        .player-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .player-row:last-child { border-bottom: none; }
+
+        .player-name { font-weight: 600; font-size: 0.95rem; }
+
+        /* Badge Status */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .badge-next { background: var(--success); color: white; }
+        .badge-wait { background: #6c757d; color: white; }
+        .badge-win { background: gold; color: black; border: 1px solid #b8860b; }
+
+        @media (max-width: 600px) {
+            #liveReportContainer { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="next-info">
-        <div style="opacity: 0.7;">NEXT MATCH:</div>
-        <div id="next-match-text">Memuat...</div>
-    </div>
-
-    <div class="header">
-        <h2 id="lomba-aktif" style="margin:0; letter-spacing: 1px;">MEMUAT DATA...</h2>
-        <p style="font-size: 12px; color: #666; margin-top: 5px;">Data diperbarui otomatis tiap 15 detik</p>
-    </div>
-
-    <div class="bracket-container" id="bracket-root">
+    <div class="container">
+        <h1>🏆 Live Report Tournament</h1>
+        
+        <div id="liveReportContainer">
+            <div style="text-align: center; width: 100%; padding: 50px;">
+                <p>Menghubungkan ke server cloud...</p>
+            </div>
         </div>
+    </div>
 
     <script src="js/live.js"></script>
+
 </body>
 </html>
