@@ -32,7 +32,8 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
     const currentMatch = dataSheet2.find(l => {
     const s = l.status ? l.status.toLowerCase() : "";
     return statusAktif.includes(s);
-
+    });
+    
     if (currentMatch) {
         // --- MODE A: TAMPILKAN BRACKET (LOMBA AKTIF) ---
         titleDisplay.innerText = `🔴 LIVE: ${currentMatch.nama_lomba} (${currentMatch.kategori})`;
