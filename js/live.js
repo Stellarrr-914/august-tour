@@ -18,39 +18,48 @@ function renderLiveBracket(rekap) {
     if (!container) return;
     container.innerHTML = ""; 
 
-    const babaks = ["Penyisihan", "Semifinal", "Final"];
+    // Urutan kolom yang akan muncul di layar
+    const daftarBabak = ["Penyisihan", "Semifinal", "Final"];
 
-    babaks.forEach(namaBabak => {
+    daftarBabak.forEach(namaBabak => {
+        // 1. BUAT KOLOM UNTUK BABAK INI
         const section = document.createElement("div");
         section.className = "babak-section";
-        section.innerHTML = `<h2 class="babak-title">BABAK ${namaBabak.toUpperCase()}</h2>`;
+        section.innerHTML = `<h2 class="babak-title">${namaBabak.toUpperCase()}</h2>`;
 
-        // --- LOGIKA FILTER ANTI-HILANG ---
-       const dataPerBabak = rekap.filter(player => {
-    if (!player || !player.status) return false;
-    return player.status.toLowerCase().includes(namaBabak.toLowerCase());
-});
+        // 2. FILTER DATA: Ambil data yang statusnya mengandung nama babak ini
+        // Contoh: "Lolos - Semifinal" hanya masuk ke kolom Semifinal
+        const dataPerBabak = rekap.filter(player => {
+            if (!player.status) return false;
+            
+            // Kita pecah statusnya (Misal: "Lolos - Semifinal")
+            const parts = player.status.split(" - ");
+            const babakDiStatus = parts[1] ? parts[1].trim() : "";
 
+            // CEK: Apakah babak di status SAMA DENGAN nama kolom (namaBabak)?
+            return babakDiStatus.toLowerCase() === namaBabak.toLowerCase();
+        });
+
+        // 3. JIKA KOSONG, TAMPILKAN PESAN
         if (dataPerBabak.length === 0) {
-            section.innerHTML += "<p class='empty-msg' style='text-align:center; color:#999;'>Belum ada data.</p>";
+            section.innerHTML += `<p style="text-align:center; color:#999; padding:20px;">Belum ada jadwal ${namaBabak}</p>`;
         } else {
-            // Grouping Lomba
+            // 4. GROUPING PER LOMBA & HEAT (Seperti biasa)
             const groupLomba = {};
-            dataPerBabak.forEach(player => {
-                if (!groupLomba[player.lomba]) groupLomba[player.lomba] = [];
-                groupLomba[player.lomba].push(player);
+            dataPerBabak.forEach(p => {
+                if (!groupLomba[p.lomba]) groupLomba[p.lomba] = [];
+                groupLomba[p.lomba].push(p);
             });
 
             Object.keys(groupLomba).forEach(namaLomba => {
                 let htmlLomba = `<div class="lomba-card">
                                     <div class="lomba-header">${namaLomba}</div>`;
 
-                // Grouping Heat
                 const groupHeat = {};
-                groupLomba[namaLomba].forEach(player => {
-                    const noHeat = player.heat || "1";
+                groupLomba[namaLomba].forEach(p => {
+                    const noHeat = p.heat || "1";
                     if (!groupHeat[noHeat]) groupHeat[noHeat] = [];
-                    groupHeat[noHeat].push(player);
+                    groupHeat[noHeat].push(p);
                 });
 
                 Object.keys(groupHeat).sort().forEach(noHeat => {
@@ -58,27 +67,24 @@ function renderLiveBracket(rekap) {
                                     <div class="heat-label">HEAT ${noHeat}</div>`;
                     
                     groupHeat[noHeat].forEach(player => {
-                        const statusKecil = player.status.toLowerCase();
-                        let badge = "";
-                        let rowStyle = "";
+                        const s = player.status.toLowerCase();
+                        let badge = '<span class="badge badge-wait">READY</span>';
+                        let style = "";
 
-                        // Cek status buat nentuin warna & badge
-                        if (statusKecil.includes("lolos")) {
+                        if (s.includes("lolos")) {
                             badge = '<span class="badge badge-next">LOLOS ➔</span>';
-                            rowStyle = "background: #eaffea; border-left: 4px solid #2ecc71;";
-                        } else if (statusKecil.includes("gugur")) {
+                            style = "background:#eaffea; border-left:4px solid #2ecc71;";
+                        } else if (s.includes("gugur")) {
                             badge = '<span class="badge badge-lose">GUGUR</span>';
-                            rowStyle = "background: #fff5f5; opacity: 0.7;";
-                        } else if (statusKecil.includes("juara")) {
+                            style = "background:#fff5f5; opacity:0.6;";
+                        } else if (s.includes("juara")) {
                             badge = '<span class="badge badge-win">JUARA 🏆</span>';
-                            rowStyle = "background: #fff9db; border-left: 4px solid #f1c40f;";
-                        } else {
-                            badge = '<span class="badge badge-wait">READY</span>';
+                            style = "background:#fff9db; border-left:4px solid #f1c40f;";
                         }
 
                         htmlLomba += `
-                            <div class="player-row" style="${rowStyle} padding: 8px; margin: 2px 0; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
-                                <span class="player-name" style="font-weight:600;">${player.nama} <small style="font-weight:normal; color:#666;">(${player.kat})</small></span>
+                            <div class="player-row" style="${style} display:flex; justify-content:space-between; padding:8px; margin-bottom:3px; border-radius:4px;">
+                                <span class="player-name">${player.nama}</span>
                                 ${badge}
                             </div>`;
                     });
@@ -88,6 +94,7 @@ function renderLiveBracket(rekap) {
                 section.innerHTML += htmlLomba;
             });
         }
+        // Masukkan kolom babak ke container utama
         container.appendChild(section);
     });
 }// --- FITUR AUTO REFRESH ---
