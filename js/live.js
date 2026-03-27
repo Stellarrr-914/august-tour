@@ -26,7 +26,12 @@ function renderLiveBracket(rekap) {
 
         // 1. Filter data babak ini
         const dataPerBabak = rekap.filter(p => p.status.includes(namaBabak));
-
+            const status = p.status.toLowerCase();
+            const target = namaBabak.toLowerCase();
+            if (status.includes(target)) return true;
+            if (target === "penyisihan" && (status.includes("semifinal") || status.includes("final"))) return true;
+            if (target === "semifinal" && status.includes("final")) return true;
+        return false;
         if (dataPerBabak.length === 0) {
             section.innerHTML += "<p class='empty-msg'>Belum ada jadwal.</p>";
         } else {
