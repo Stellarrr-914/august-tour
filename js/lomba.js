@@ -82,9 +82,7 @@ function tampilLomba() {
             <td>
                 <select onchange="updateStatusLomba('${namaLomba}', '${lomba.kategori}', this.value)">
                     <option value="Open" ${lomba.status === 'Open' ? 'selected' : ''}>Open</option>
-                    <option value="Penyisihan" ${lomba.status === 'Penyisihan' ? 'selected' : ''}>Penyisihan</option>
-                    <option value="Semifinal" ${lomba.status === 'Semifinal' ? 'selected' : ''}>Semifinal</option>
-                    <option value="Final" ${lomba.status === 'Final' ? 'selected' : ''}>Final</option>
+                    <option value="On-Going" ${lomba.status === 'On-Going' ? 'selected' : ''}>On-Going</option>
                     <option value="Selesai" ${lomba.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
                 </select>
             </td>
