@@ -28,7 +28,7 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
 
     // Cari lomba yang statusnya "ON GOING" di Sheet 2
     // Nama kolom di Sheet 2: "Status"
-    const statusAktif = ["penyisihan", "semifinal", "final"];
+    const statusAktif = ["On-Going"];
     const currentMatch = dataSheet2.find(l => {
     const s = l.status ? l.status.toLowerCase() : "";
     return statusAktif.includes(s);
