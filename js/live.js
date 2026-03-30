@@ -53,7 +53,8 @@ const currentMatch = dataSheet2.find(l => {
     
     if (currentMatch) {
         // --- MODE A: TAMPILKAN BRACKET (LOMBA AKTIF) ---
-        titleDisplay.innerText = `🔴 LIVE: ${currentMatch.nama_lomba} (${currentMatch.kategori})`;
+        class="live-indicator"
+        titleDisplay.innerText = ` LIVE: ${currentMatch.nama_lomba} (${currentMatch.kategori})`;
         
         // Filter data Sheet 3 hanya untuk lomba yang sedang jalan
         const rekapAktif = dataSheet3.filter(p => p.lomba === currentMatch.nama_lomba);
