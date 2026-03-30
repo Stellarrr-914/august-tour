@@ -1,45 +1,49 @@
 :root {
-    --primary: #e74c3c;    /* Merah */
-    --secondary: #f1c40f;  /* Kuning Emas */
-    --bg: #121212;        /* Hitam Deep */
-    --surface: #1e1e1e;   /* Abu Gelap */
+    --primary: #e74c3c;
+    --secondary: #f1c40f;
+    --bg: #121212;
+    --surface: #1e1e1e;
     --text: #ffffff;
-    --text-dim: #b0b0b0;
-    --border: #333333;
+    --border: #333;
 }
+
+* { box-sizing: border-box; } /* Biar padding gak ngerusak lebar */
 
 body {
     background-color: var(--bg);
     color: var(--text);
     font-family: 'Inter', sans-serif;
     margin: 0; padding: 20px;
+    display: flex; flex-direction: column; align-items: center;
 }
 
-/* Tombol Universal */
+/* Biar Form Gak Mepet */
+.form-section, .form-group {
+    background: var(--surface);
+    padding: 25px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 25px; /* Jarak antar bagian */
+    border: 1px solid var(--border);
+}
+
+/* Fix Input & Tombol Mepet */
+input, select, button {
+    width: 100%; /* Full biar rapi */
+    margin-bottom: 15px; /* Kasih napas antar elemen */
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
 button {
+    cursor: pointer;
+    border: none;
+    font-weight: bold;
     background: var(--primary);
     color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
 }
 
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
-}
-
-/* Card Menu Utama (Buat main.html) */
-.menu-card {
-    background: var(--surface) !important;
-    border: 1px solid var(--border);
-    transition: 0.3s;
-}
-
-.menu-card:hover {
-    border-color: var(--primary);
-    transform: scale(1.02);
-}
+/* Tombol Khusus Kembali */
+.btn-back { background: #555; margin-bottom: 20px; }
