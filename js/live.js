@@ -4,22 +4,29 @@ let dataSheet3 = []; // Buat simpan data rekap/juara
 let scriptURL = "https://script.google.com/macros/s/AKfycbyijZepuUbuoZOXdpKJLfvEXFSm0NNzjf-AwM4MkM5iP7ly1aV34V_bgRBI3HM_pV49/exec"; 
 
 // 2. FUNGSI AMBIL DATA (Satu kali tarik dapat dua data sheet)
+// 2. FUNGSI AMBIL DATA (Satu kali tarik dapat dua data sheet)
 function fetchLiveReport() {
     fetch(scriptURL + "?type=getLiveReportFull")
         .then(response => response.json())
         .then(data => {
-            // data.daftarLomba = Dari Sheet 2
-            // data.rekapHasil = Dari Sheet 3
             if (data && data.daftarLomba && data.rekapHasil) {
-                renderLiveBracket(data.daftarLomba, data.rekapHasil);
+                
+                // --- KUNCI UTAMA: ISI VARIABEL GLOBAL DISINI ---
+                dataSheet2 = data.daftarLomba; 
+                dataSheet3 = data.rekapHasil; 
+                // -----------------------------------------------
+
+                // Baru panggil render
+                renderLiveBracket(dataSheet2, dataSheet3);
+                console.log("Data Global Terupdate!");
             }
         })
         .catch(err => {
             console.error("Gagal update data:", err);
-            document.getElementById('live-title').innerText = "Koneksi Terputus...";
+            const title = document.getElementById('live-title');
+            if(title) title.innerText = "Koneksi Terputus...";
         });
 }
-
 // 3. FUNGSI PANGALIMA (Pilih Tampilan: Bracket vs Leaderboard)
 function renderLiveBracket(dataSheet2, dataSheet3) {
     const container = document.getElementById("liveReportContainer");
