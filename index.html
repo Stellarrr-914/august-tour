@@ -4,26 +4,31 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="css/global.css">
 <title>Lomba RT Agustusan - Login</title>
 
 </head>
 
 <body>
 
-<h1>Login Admin</h1>
-
-<input type="text" id="username" placeholder="Username"><br>
-
-<input type="password" id="password" placeholder="Password"><br>
-
-<button onclick="login()">Login</button>
-
-<p id="loginError" style="color:red;"></p>
-
-<div class="menu-card" onclick="window.location.href='live.html'" style="cursor:pointer; background: linear-gradient(135deg, #e74c3c, #c0392b); padding: 20px; border-radius: 15px; margin: 10px; color: white; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-    <div style="font-size: 40px;">📢</div>
-    <h3 style="margin: 10px 0 5px 0;">LIVE REPORT</h3>
-    <p style="font-size: 12px; opacity: 0.9;">Pantau hasil pertandingan & jadwal secara real-time</p>
+<div class="login-container">
+    <div class="login-box">
+        <div class="login-logo">🏆</div>
+        <h1>ADMIN LOGIN</h1>
+        <p>Turnamen Agustusan RT</p>
+        
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        
+        <button onclick="login()">Masuk ke Dashboard</button>
+        <p id="loginError" style="color:#ff7675; font-size: 13px; margin-top: 10px;"></p>
+        
+        <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
+        
+        <div class="live-link-card" onclick="window.location.href='live.html'">
+            <span>📢 Buka Live Report (Publik)</span>
+        </div>
+    </div>
 </div>
 
 <script src="js/data.js"></script>
