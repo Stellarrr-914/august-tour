@@ -1,0 +1,50 @@
+/* Layout Bracket Grid */
+#liveReportContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+}
+
+/* Card Per Babak */
+.babak-section {
+    background: var(--surface);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.babak-title {
+    color: var(--secondary);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 10px;
+}
+
+/* Heat Wrapper */
+.heat-wrapper {
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    margin-top: 15px;
+    padding: 15px;
+}
+
+.heat-label {
+    color: var(--text-dim);
+    font-size: 0.8em;
+    margin-bottom: 10px;
+}
+
+/* Baris Pemain (Overriding inline style) */
+.player-row {
+    background: #2a2a2a !important; /* Timpa warna hijau/merah pudar tadi */
+    border-left: 4px solid #444;
+    margin-bottom: 8px !important;
+    padding: 12px !important;
+}
+
+/* Badge Status Kontras */
+.badge-next { background: #27ae60 !important; color: white; }
+.badge-lose { background: #c0392b !important; color: white; }
+.badge-wait { background: #7f8c8d !important; color: white; }
