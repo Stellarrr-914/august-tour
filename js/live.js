@@ -89,10 +89,20 @@ const currentMatch = dataSheet2.find(l => {
                         } else if (s.includes("gugur")) {
                             badge = '<span class="badge badge-lose">GUGUR</span>';
                             style = "background:#fff5f5; opacity:0.6;";
-                        } else if (s.includes("juara")) {
-                            badge = '<span class="badge badge-win">JUARA 🏆</span>';
-                            style = "background:#fff9db; border-left:4px solid #f1c40f;";
-                        }
+                        } else if (s.includes("juara 1")) {
+    badge = '<span class="badge" style="background:#f1c40f; color:#000;">🥇 JUARA 1</span>';
+    style = "background:#fff9db; border-left:5px solid #f1c40f; font-weight:bold;";
+} else if (s.includes("juara 2")) {
+    badge = '<span class="badge" style="background:#95a5a6; color:#fff;">🥈 JUARA 2</span>';
+    style = "background:#f8f9fa; border-left:5px solid #95a5a6;";
+} else if (s.includes("juara 3")) {
+    badge = '<span class="badge" style="background:#e67e22; color:#fff;">🥉 JUARA 3</span>';
+    style = "background:#fdf2e9; border-left:5px solid #e67e22;";
+} else if (s.includes("juara")) { 
+    // Backup kalau cuma nulis "Juara" doang tanpa angka
+    badge = '<span class="badge badge-win">🏆 JUARA</span>';
+    style = "background:#fff9db; border-left:4px solid #f1c40f;";
+}
 
                         htmlHeat += `
                             <div class="player-row" style="${style} display:flex; justify-content:space-between; padding:8px; margin-bottom:3px; border-radius:4px;">
