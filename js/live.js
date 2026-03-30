@@ -28,11 +28,19 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
 
     // Cari lomba yang statusnya "ON GOING" di Sheet 2
     // Nama kolom di Sheet 2: "Status"
-    const statusAktif = ["On-Going"];
-    const currentMatch = dataSheet2.find(l => {
-    const s = l.status ? l.status.toLowerCase() : "";
+    // List babak yang dianggap aktif
+const statusAktif = ["on-going", "penyisihan", "semifinal", "final"];
+
+const currentMatch = dataSheet2.find(l => {
+    // Ambil nilai status dari object, gak peduli huruf gede/kecil key-nya
+    // Kita cari property yang namanya mirip "status"
+    let nilaiStatus = l.status || l.Status || l.STATUS || "";
+    
+    // Bersihkan spasi dan samakan jadi huruf kecil
+    let s = nilaiStatus.toString().toLowerCase().trim();
+    
     return statusAktif.includes(s);
-    });
+});
     
     if (currentMatch) {
         // --- MODE A: TAMPILKAN BRACKET (LOMBA AKTIF) ---
