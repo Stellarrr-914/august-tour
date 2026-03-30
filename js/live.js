@@ -178,42 +178,62 @@ function generateLeaderboard(rekapHasil) {
 }
 
 function showRekapJuara() {
-    const modal = document.getElementById("rekapModal");
     const list = document.getElementById("rekapList");
+    const modal = document.getElementById("rekapModal");
     modal.style.display = "flex";
     
-    // Filter hanya yang punya status "Juara"
-    const daftarJuara = dataSheet3.filter(p => p.status_babak.toLowerCase().includes("juara"));
+    // Filter KHUSUS Juara 1, 2, dan 3 saja
+    const daftarJuara = dataSheet3.filter(p => {
+        const s = p.status_babak ? p.status_babak.toLowerCase() : "";
+        return s.includes("juara 1") || s.includes("juara 2") || s.includes("juara 3");
+    });
 
     if (daftarJuara.length === 0) {
-        list.innerHTML = "<p style='text-align:center'>Belum ada juara resmi nih brok.</p>";
+        list.innerHTML = `
+            <div style="text-align:center; padding: 40px;">
+                <div style="font-size: 50px;">🏁</div>
+                <p>Belum ada pemenang yang naik podium, brok.<br>Tunggu pertandingan selesai ya!</p>
+            </div>`;
         return;
     }
 
-    // Kelompokkan berdasarkan Lomba + Kategori
+    // Sortir biar Juara 1 selalu paling atas di tiap grup
+    daftarJuara.sort((a, b) => {
+        const getRank = (str) => {
+            if (str.toLowerCase().includes("1")) return 1;
+            if (str.toLowerCase().includes("2")) return 2;
+            if (str.toLowerCase().includes("3")) return 3;
+            return 99;
+        };
+        return getRank(a.status_babak) - getRank(b.status_babak);
+    });
+
+    // Render HTML-nya
     let html = "";
     let currentGroup = "";
 
     daftarJuara.forEach(p => {
         let groupName = `${p.lomba} - ${p.kategori}`;
         if (currentGroup !== groupName) {
-            html += `<h3 style="color:#f1c40f; margin-top:20px; border-bottom:1px solid #f1c40f">${groupName}</h3>`;
+            html += `<h3 class="rekap-group-title">${groupName}</h3>`;
             currentGroup = groupName;
         }
         
-        let medali = p.status_babak.toLowerCase().includes("1") ? "🥇" : 
-                     p.status_babak.toLowerCase().includes("2") ? "🥈" : "🥉";
+        let medali = p.status_babak.includes("1") ? "🥇" : 
+                     p.status_babak.includes("2") ? "🥈" : "🥉";
 
         html += `
             <div class="item-rekap">
-                <span>${medali} <strong>${p.nama}</strong></span>
-                <span style="font-size: 0.8em; color: #aaa;">${p.status_babak.split(" - ")[0]}</span>
+                <div class="pemenang-info">
+                    <span class="medali-icon">${medali}</span>
+                    <span class="nama-pemenang">${p.nama}</span>
+                </div>
+                <span class="label-juara">${p.status_babak.split(" - ")[0].toUpperCase()}</span>
             </div>
         `;
     });
     list.innerHTML = html;
 }
-
 function closeRekapJuara() {
     document.getElementById("rekapModal").style.display = "none";
 }
