@@ -184,74 +184,81 @@ function generateLeaderboard(rekapHasil) {
     return Object.values(leaderboard).sort((a, b) => b.totalPoin - a.totalPoin);
 }
 
+// ==========================================
+// FUNGSI REKAP JUARA (Final & Rapi Jali)
+// ==========================================
 function showRekapJuara() {
     const list = document.getElementById("rekapList");
     const modal = document.getElementById("rekapModal");
+    if (!list || !modal) return; // Safety check
+    
     modal.style.display = "flex";
     
-    // Filter KHUSUS Juara 1, 2, dan 3 saja
+    // 1. Filter Strict: Cuma ambil Juara 1, 2, 3
     const daftarJuara = dataSheet3.filter(p => {
         const s = p.status_babak ? p.status_babak.toLowerCase() : "";
         return s.includes("juara 1") || s.includes("juara 2") || s.includes("juara 3");
     });
 
     if (daftarJuara.length === 0) {
-        list.innerHTML = `
-            <div style="text-align:center; padding: 40px;">
-                <div style="font-size: 50px;">🏁</div>
-                <p>Belum ada pemenang yang naik podium, brok.<br>Tunggu pertandingan selesai ya!</p>
-            </div>`;
+        list.innerHTML = `<div style="text-align:center; padding: 40px; color:#999;"><div style="font-size: 50px;">🏁</div><p>Belum ada pemenang yang naik podium, brok!</p></div>`;
         return;
     }
 
-    // Sortir biar Juara 1 selalu paling atas di tiap grup
-    // 1. Sortir Multi-Level: Urut Lomba Dulu, Baru Urut Juara
-daftarJuara.sort((a, b) => {
-    // Gabungkan Nama Lomba + Kategori buat pembanding
-    const grupA = `${a.lomba} - ${a.kategori}`.toLowerCase();
-    const grupB = `${b.lomba} - ${b.kategori}`.toLowerCase();
-    
-    // Kalau Lombanya beda, urutkan berdasarkan abjad Nama Lomba
-    if (grupA !== grupB) {
-        return grupA.localeCompare(grupB);
-    }
-    
-    // Kalau Lombanya SAMA, baru urutkan berdasarkan Ranking (1, 2, 3)
-    const getRank = (str) => {
-        const s = str.toLowerCase();
-        if (s.includes("1")) return 1;
-        if (s.includes("2")) return 2;
-        if (s.includes("3")) return 3;
-        return 99;
-    };
-    
-    return getRank(a.status_babak) - getRank(b.status_babak);
-});
+    // 2. Sortir Multi-Level: Urut Lomba Dulu, Baru Urut Ranking
+    daftarJuara.sort((a, b) => {
+        const grupA = `${a.lomba} - ${a.kategori}`.toLowerCase();
+        const grupB = `${b.lomba} - ${b.kategori}`.toLowerCase();
+        if (grupA !== grupB) return grupA.localeCompare(grupB);
+        
+        const getRank = (str) => {
+            if (str.includes("1")) return 1;
+            if (str.includes("2")) return 2;
+            if (str.includes("3")) return 3;
+            return 99;
+        };
+        return getRank(a.status_babak) - getRank(b.status_babak);
+    });
 
-    // Render HTML-nya
+    // 3. Render HTML
     let html = "";
     let currentGroup = "";
 
     daftarJuara.forEach(p => {
         let groupName = `${p.lomba} - ${p.kategori}`;
+        
+        // Header Nama Lomba
         if (currentGroup !== groupName) {
-            html += `<h3 class="rekap-group-title">${groupName}</h3>`;
+            html += `<div style="margin: 25px 0 10px 0; color:#f1c40f; font-weight:bold; font-size: 1.1em; text-transform:uppercase; border-bottom:1px solid #333; padding-bottom:5px;">🚩 ${groupName}</div>`;
             currentGroup = groupName;
         }
         
-        // Ganti bagian class item-rekap jadi dinamis
-let medali = p.status_babak.includes("1") ? "juara-1" : 
-                p.status_babak.includes("2") ? "juara-2" : "juara-3";
+        // Tentukan Emoji, Warna Medali, dan Status Tulisan
+        let medali = "🥉";
+        let medaliColor = "#e67e22"; // Perunggu
+        let statusTeks = "JUARA 3";
+        
+        if (p.status_babak.includes("1")) {
+            medali = "🥇"; medaliColor = "#f1c40f"; statusTeks = "JUARA 1";
+        } else if (p.status_babak.includes("2")) {
+            medali = "🥈"; medaliColor = "#bdc3c7"; statusTeks = "JUARA 2";
+        }
 
-html += `
-    <div class="item-rekap ${medali}">
-        <div class="pemenang-info">
-            <span class="medali-icon">${medali}</span>
-            <span class="nama-pemenang">${p.nama}</span>
-        </div>
-        <span class="label-juara">${p.status_babak.split(" - ")[0]}</span>
-    </div>
-`;
+        // --- RENDER BARIS PEMENANG (Satu Baris Rapi) ---
+        html += `
+            <div class="item-rekap" style="display:flex; align-items:center; padding:12px; background:rgba(255,255,255,0.06); margin-bottom:5px; border-radius:8px; border-left: 5px solid ${medaliColor}; gap: 15px;">
+                
+                <span style="font-size: 1.4em;">${medali}</span>
+                
+                <div style="display:flex; align-items:baseline; gap:10px; flex-grow:1;">
+                    <strong style="color:#fff; font-size: 1.1em; text-transform:uppercase; letter-spacing: 0.5px;">${p.nama}</strong>
+                    
+                    <span style="font-size: 0.8em; color: ${medaliColor}; font-weight: bold; letter-spacing: 1px;">
+                        (${statusTeks})
+                    </span>
+                </div>
+            </div>
+        `;
     });
     list.innerHTML = html;
 }
