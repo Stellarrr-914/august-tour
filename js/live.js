@@ -175,6 +175,47 @@ function generateLeaderboard(rekapHasil) {
     return Object.values(leaderboard).sort((a, b) => b.totalPoin - a.totalPoin);
 }
 
+function showRekapJuara() {
+    const modal = document.getElementById("rekapModal");
+    const list = document.getElementById("rekapList");
+    modal.style.display = "flex";
+    
+    // Filter hanya yang punya status "Juara"
+    const daftarJuara = dataSheet3.filter(p => p.status_babak.toLowerCase().includes("juara"));
+
+    if (daftarJuara.length === 0) {
+        list.innerHTML = "<p style='text-align:center'>Belum ada juara resmi nih brok.</p>";
+        return;
+    }
+
+    // Kelompokkan berdasarkan Lomba + Kategori
+    let html = "";
+    let currentGroup = "";
+
+    daftarJuara.forEach(p => {
+        let groupName = `${p.lomba} - ${p.kategori}`;
+        if (currentGroup !== groupName) {
+            html += `<h3 style="color:#f1c40f; margin-top:20px; border-bottom:1px solid #f1c40f">${groupName}</h3>`;
+            currentGroup = groupName;
+        }
+        
+        let medali = p.status_babak.toLowerCase().includes("1") ? "🥇" : 
+                     p.status_babak.toLowerCase().includes("2") ? "🥈" : "🥉";
+
+        html += `
+            <div class="item-rekap">
+                <span>${medali} <strong>${p.nama}</strong></span>
+                <span style="font-size: 0.8em; color: #aaa;">${p.status_babak.split(" - ")[0]}</span>
+            </div>
+        `;
+    });
+    list.innerHTML = html;
+}
+
+function closeRekapJuara() {
+    document.getElementById("rekapModal").style.display = "none";
+}
+
 // 5. INISIALISASI & AUTO REFRESH
 // Jalankan saat pertama kali dibuka
 fetchLiveReport();
