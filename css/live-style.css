@@ -88,3 +88,20 @@ body {
 }
 
 .leaderboard-table strong { color: var(--accent); }
+
+.live-indicator {
+    width: 10px;
+    height: 10px;
+    background-color: #ff4b2b;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    box-shadow: 0 0 8px #ff4b2b;
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
