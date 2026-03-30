@@ -240,11 +240,11 @@ daftarJuara.sort((a, b) => {
         }
         
         // Ganti bagian class item-rekap jadi dinamis
-let rankClass = p.status_babak.includes("1") ? "juara-1" : 
+let medali = p.status_babak.includes("1") ? "juara-1" : 
                 p.status_babak.includes("2") ? "juara-2" : "juara-3";
 
 html += `
-    <div class="item-rekap ${rankClass}">
+    <div class="item-rekap ${medali}">
         <div class="pemenang-info">
             <span class="medali-icon">${medali}</span>
             <span class="nama-pemenang">${p.nama}</span>
