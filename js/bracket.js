@@ -87,7 +87,9 @@ function tampilkanPesertaBracket() {
 }
 
 // 4. GENERATE HEAT (LOGIKA 4-3-5)
+// 4. GENERATE HEAT (LOGIKA 4-3-5)
 function generateBracket() {
+    console.log("Memulai Generate..."); 
     const checkboxes = document.querySelectorAll(".peserta-check:checked");
     let pesertaTerpilih = [];
 
@@ -96,36 +98,75 @@ function generateBracket() {
         if (dataAsli) pesertaTerpilih.push(dataAsli);
     });
 
-    if (pesertaTerpilih.length < 3) return alert("Minimal 3 orang, brok!");
+    if (pesertaTerpilih.length < 3) return alert("Minimal 3 orang buat bikin Heat, brok!");
 
-    // Seeding Level
+    // A. URUTKAN BERDASARKAN LEVEL
     const bobot = { "A+": 9, "A": 8, "A-": 7, "B+": 6, "B": 5, "B-": 4, "C+": 3, "C": 2, "C-": 1 };
-    pesertaTerpilih.sort((a, b) => (bobot[b.level] || 0) - (bobot[a.level] || 0) || Math.random() - 0.5);
+    pesertaTerpilih.sort((a, b) => {
+        let levelA = bobot[a.level] || 0;
+        let levelB = bobot[b.level] || 0;
+        if (levelA !== levelB) return levelB - levelA;
+        return Math.random() - 0.5; 
+    });
 
+    // B. LOGIKA PEMBAGIAN
     let total = pesertaTerpilih.length;
     let hasilGrup = [];
     let i = 0;
-
     while (i < total) {
         let sisa = total - i;
         let ukuranGrup = 4; 
-        if (sisa === 5) ukuranGrup = 5;
-        else if (sisa === 6 || sisa === 3) ukuranGrup = 3;
+        if (sisa === 5) { ukuranGrup = 5; } 
+        else if (sisa === 6 || sisa === 3) { ukuranGrup = 3; }
         hasilGrup.push(pesertaTerpilih.slice(i, i + ukuranGrup));
         i += ukuranGrup;
     }
 
+    // C. RENDER KE LAYAR
     const container = document.getElementById("hasilBracket");
     container.innerHTML = ""; 
-    window.currentHeatsData = []; 
-
+    
     hasilGrup.forEach((grup, index) => {
-        renderHeatBox(grup, index + 1);
+        const nomorHeat = index + 1;
+        
+        // Buat kotaknya
+        let html = `
+            <div class="heat-box" id="heat-${nomorHeat}" style="background:#1e1e1e; border:1px solid #333; border-radius:12px; margin-bottom:20px; color:white; overflow:hidden;">
+                <div style="background:#333; color:#f1c40f; padding:10px; font-weight:bold; display:flex; justify-content:space-between;">
+                    <span>HEAT ${nomorHeat}</span>
+                    <button onclick="loloskanDuaTeratas(${nomorHeat})" style="font-size:10px; background:#2980b9; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 5px;">Auto Lolos 2</button>
+                </div>
+                <div style="padding:10px;">
+        `;
+
+        grup.forEach(p => {
+            html += `
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #2a2a2a;">
+                    <span style="color:white;">${p.nama} <small style="color:#888;">(${p.level})</small></span>
+                    <select class="select-status" 
+                            data-nama="${p.nama}" 
+                            data-heat="${nomorHeat}" 
+                            onchange="simpanKeSheet('${p.nama}', this)"
+                            style="background:#2c3e50; color:white; border:1px solid #444; padding:4px; border-radius:4px;">
+                        <option value="">-- Set --</option>
+                        <option value="Lolos">🏆 Lolos</option>
+                        <option value="Gugur">❌ Gugur</option>
+                        <option value="Juara 1">🥇 Juara 1</option>
+                        <option value="Juara 2">🥈 Juara 2</option>
+                        <option value="Juara 3">🥉 Juara 3</option>
+                    </select>
+                </div>`;
+        });
+
+        html += `
+            <button onclick="kirimSatuHeat(${nomorHeat})" style="width:100%; margin-top:10px; background:#27ae60; color:white; border:none; padding:8px; border-radius:4px; cursor:pointer;">Simpan Hasil Heat ${nomorHeat}</button>
+            </div></div>`;
+        
+        container.innerHTML += html;
     });
 
     document.getElementById("btnPublikasi").style.display = "block";
 }
-
 // 5. RENDER BOX HEAT (Unified Dark Mode)
 function renderHeatBox(grup, nomor) {
     const container = document.getElementById("hasilBracket");
