@@ -123,9 +123,8 @@ function generateBracket() {
 
     if (pesertaTerpilih.length < 3) return alert("Minimal 3 orang buat bikin Heat, brok!");
 
-    // A. URUTKAN BERDASARKAN LEVEL
+    // A. URUTKAN BERDASARKAN LEVEL (Seeding)
     const bobot = { "A+": 9, "A": 8, "A-": 7, "B+": 6, "B": 5, "B-": 4, "C+": 3, "C": 2, "C-": 1 };
-
     pesertaTerpilih.sort((a, b) => {
         let levelA = bobot[a.level] || 0;
         let levelB = bobot[b.level] || 0;
@@ -133,7 +132,7 @@ function generateBracket() {
         return Math.random() - 0.5; 
     });
 
-    // B. LOGIKA PEMBAGIAN
+    // B. LOGIKA PEMBAGIAN (Udah Oke Banget Brok!)
     let total = pesertaTerpilih.length;
     let hasilGrup = [];
     let i = 0;
@@ -152,12 +151,50 @@ function generateBracket() {
     const container = document.getElementById("hasilBracket");
     container.innerHTML = ""; 
     
+    // Reset data sementara buat publikasi
+    window.currentHeatsData = []; 
+
     hasilGrup.forEach((grup, index) => {
-        // Kita oper 'index + 1' sebagai NOMOR HEAT
-        renderHeatBox(grup, index + 1);
+        const nomorHeat = index + 1;
+        renderHeatBox(grup, nomorHeat); // Panggil fungsi pembantu di bawah
+        
+        // Simpan data untuk dikirim ke Google Sheet nanti
+        window.currentHeatsData.push({
+            heat: `Heat ${nomorHeat}`,
+            peserta: grup.map(p => p.nama)
+        });
     });
 
     document.getElementById("btnPublikasi").style.display = "block";
+    document.getElementById("actionGenerate").style.display = "block";
+}
+
+// FUNGSI PEMBANTU: Biar Render Gak Berantakan & Teks Putih Aman
+function renderHeatBox(grup, nomor) {
+    const container = document.getElementById("hasilBracket");
+    
+    let html = `
+        <div class="heat-box">
+            <div class="heat-header">HEAT ${nomor}</div>
+            <div class="heat-list">
+    `;
+
+    grup.forEach(p => {
+        html += `
+            <div class="heat-item">
+                <span class="nama-peserta">${p.nama} <small style="color:#888;">(${p.level})</small></span>
+                <select class="select-pemenang" data-heat="${nomor}" onchange="updatePemenangLokal('${nomor}', '${p.nama}', this.value)">
+                    <option value="">-- Set --</option>
+                    <option value="Menang">🏆 Menang</option>
+                    <option value="Kalah">❌ Kalah</option>
+                    <option value="Tersingkir">🏳️ Tersingkir</option>
+                </select>
+            </div>
+        `;
+    });
+
+    html += `</div></div>`;
+    container.innerHTML += html;
 }
 function publikasikanHeat() {
     const lomba = document.getElementById("lombaSelect").value;
