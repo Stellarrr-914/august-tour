@@ -272,21 +272,55 @@ function kirimSatuHeat(nomorHeat) {
 }
 function publikasikanHeat() {
     const lomba = document.getElementById("lombaSelect").value;
+    const kategori = document.getElementById("kategoriSelect").value;
     const babak = document.getElementById("babakSelect").value;
-    if(!confirm(`Bikin status semua peserta jadi 'Menunggu - ${babak}'?`)) return;
 
-    const selects = document.querySelectorAll(".select-status");
-    let dataKirim = Array.from(selects).map(s => ({
-        type: "simpanJuara",
-        lomba: lomba,
-        kategori: document.getElementById("kategoriSelect").value,
-        nama: s.getAttribute("data-nama"),
-        status: `Menunggu - ${babak}`,
-        heat: s.getAttribute("data-heat")
-    }));
+    if (!lomba || !kategori) return alert("Pilih Lomba & Kategori dulu brok!");
 
-    Promise.all(dataKirim.map(item => fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(item) })))
-        .then(() => alert("Semua Peserta sudah tayang di Live Report!"));
+    const konfirmasi = confirm(`Publikasikan SEMUA Heat ${babak} ini ke Live Report?`);
+    if (!konfirmasi) return;
+
+    // Ambil semua dropdown status yang ada di layar
+    const allSelects = document.querySelectorAll(".select-status"); 
+    let payload = [];
+
+    allSelects.forEach(sel => {
+        // Kita kirim status "Menunggu" sebagai tanda jadwal sudah rilis
+        payload.push({
+            nama: sel.getAttribute("data-nama"),
+            status: `Menunggu - ${babak}`,
+            heat: sel.getAttribute("data-heat")
+        });
+    });
+
+    if (payload.length === 0) return alert("Gak ada data peserta buat dipublikasi, brok!");
+
+    // Kasih proteksi biar gak diklik dua kali
+    const btn = document.getElementById("btnPublikasi");
+    const teksAsli = btn.innerText;
+    btn.innerText = "⏳ Memproses Publikasi...";
+    btn.disabled = true;
+
+    // KIRIM BATCH (SATU REQUEST UNTUK SEMUA)
+    fetch(scriptURL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({
+            type: "batchSimpanJuara", // Pastikan type ini ada di Code.gs
+            lomba: lomba,
+            kategori: kategori,
+            data: payload 
+        })
+    })
+    .then(() => {
+        alert("Sakti! Semua jadwal Heat berhasil dipublikasikan tanpa ada yang ketinggalan.");
+        btn.innerText = teksAsli;
+        btn.disabled = false;
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Aduh, gagal publikasi masal. Cek koneksi!");
+        btn.disabled = false;
+    });
 }
-
 document.addEventListener("DOMContentLoaded", updateLombaDropdown);
