@@ -84,49 +84,39 @@ const currentMatch = dataSheet2.find(l => {
                 });
                 
                 Object.keys(groupHeat).sort().forEach(noHeat => {
-                    let htmlHeat = `<div class="heat-wrapper">
-                                    <div class="heat-label">HEAT ${noHeat}</div>`;
-                    
-                    groupHeat[noHeat].forEach(player => {
-                        const s = player.status_babak.toLowerCase();
-                        dataPerBabak.sort((a, b) => {
-    const statusA = a.status_babak.toLowerCase();
-    const statusB = b.status_babak.toLowerCase();
-    return statusA.localeCompare(statusB); 
+    let htmlHeat = `<div class="heat-wrapper">
+                    <div class="heat-label">HEAT ${noHeat}</div>`;
+    
+    // Sortir biar yang Lolos/Juara ada di atas
+    groupHeat[noHeat].sort((a, b) => a.status_babak.localeCompare(b.status_babak));
+
+    groupHeat[noHeat].forEach(player => {
+        const s = player.status_babak.toLowerCase();
+        let badge = '<span class="badge badge-wait">READY</span>';
+        let rowClass = "";
+
+        // Logika Badge & Styling Baris
+        if (s.includes("lolos")) {
+            badge = '<span class="badge badge-next">LOLOS ➔</span>';
+        } else if (s.includes("gugur")) {
+            badge = '<span class="badge badge-lose">GUGUR</span>';
+        } else if (s.includes("juara 1")) {
+            badge = '<span class="badge" style="background:#f1c40f; color:#000; box-shadow: 0 0 10px #f1c40f;">🥇 JUARA 1</span>';
+        } else if (s.includes("juara 2")) {
+            badge = '<span class="badge" style="background:#bdc3c7; color:#000;">🥈 JUARA 2</span>';
+        } else if (s.includes("juara 3")) {
+            badge = '<span class="badge" style="background:#cd7f32; color:#fff;">🥉 JUARA 3</span>';
+        }
+
+        htmlHeat += `
+            <div class="player-row ${rowClass}">
+                <span class="player-name">${player.nama}</span>
+                ${badge}
+            </div>`;
+    });
+    htmlHeat += `</div>`;
+    section.innerHTML += htmlHeat;
 });
-                        let badge = '<span class="badge badge-wait">READY</span>';
-                        let style = "";
-
-                        if (s.includes("lolos")) {
-                            badge = '<span class="badge badge-next">LOLOS ➔</span>';
-                            style = "background:#eaffea; border-left:4px solid #2ecc71;";
-                        } else if (s.includes("gugur")) {
-                            badge = '<span class="badge badge-lose">GUGUR</span>';
-                            style = "background:#fff5f5; opacity:0.6;";
-                        } else if (s.includes("juara 1")) {
-    badge = '<span class="badge" style="background:#f1c40f; color:#000;">🥇 JUARA 1</span>';
-    style = "background:#fff9db; border-left:5px solid #f1c40f; font-weight:bold;";
-} else if (s.includes("juara 2")) {
-    badge = '<span class="badge" style="background:#95a5a6; color:#fff;">🥈 JUARA 2</span>';
-    style = "background:#f8f9fa; border-left:5px solid #95a5a6;";
-} else if (s.includes("juara 3")) {
-    badge = '<span class="badge" style="background:#e67e22; color:#fff;">🥉 JUARA 3</span>';
-    style = "background:#fdf2e9; border-left:5px solid #e67e22;";
-} else if (s.includes("juara")) { 
-    // Backup kalau cuma nulis "Juara" doang tanpa angka
-    badge = '<span class="badge badge-win">🏆 JUARA</span>';
-    style = "background:#fff9db; border-left:4px solid #f1c40f;";
-}
-
-                        htmlHeat += `
-                            <div class="player-row" style="${style} display:flex; justify-content:space-between; padding:8px; margin-bottom:3px; border-radius:4px;">
-                                <span class="player-name">${player.nama}</span>
-                                ${badge}
-                            </div>`;
-                    });
-                    htmlHeat += `</div>`;
-                    section.innerHTML += htmlHeat;
-                });
             }
             container.appendChild(section);
         });
