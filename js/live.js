@@ -73,6 +73,12 @@ const currentMatch = dataSheet2.find(l => {
                     if (!groupHeat[noHeat]) groupHeat[noHeat] = [];
                     groupHeat[noHeat].push(p);
                 });
+                // Urutkan supaya Juara 1 di atas, Juara 2 di bawahnya, dst.
+dataPerBabak.sort((a, b) => {
+    const statusA = a.status_babak.toLowerCase();
+    const statusB = b.status_babak.toLowerCase();
+    return statusA.localeCompare(statusB); 
+});
 
                 Object.keys(groupHeat).sort().forEach(noHeat => {
                     let htmlHeat = `<div class="heat-wrapper">
