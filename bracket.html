@@ -9,55 +9,51 @@
 </head>
 <body>
 
-    <h2>Bracket / Heat Generator</h2>
-    
-    <div class="form-section">
-        <button onclick="location.href='menu.html'">← Kembali ke Menu</button>
-        <hr>
-        
-        <label><strong>1. Pilih Lomba:</strong></label><br>
-        <select id="lombaSelect" onchange="updateKategoriBerdasarkanLomba()" style="width: 100%;">
-            <option value="">-- Pilih Lomba --</option>
-        </select>
+    <div class="admin-container">
+    <header style="margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="color: var(--secondary); margin: 0;">🌿 BRACKET & HEAT MANAGER</h2>
+        <button onclick="location.href='menu.html'" class="btn-back" style="width: auto; margin: 0;">⬅️ Menu Utama</button>
+    </header>
 
-        <br><br>
+    <div class="form-group" style="background: var(--surface); border-left: 5px solid var(--primary);">
+        <h3 style="margin-top: 0;">🎯 Pilih Pertandingan</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+            <select id="lombaSelect" onchange="updateKategoriBerdasarkanLomba()" style="flex: 1; min-width: 200px;">
+                <option value="">-- Pilih Lomba --</option>
+            </select>
 
-        <label><strong>2. Pilih Kategori:</strong></label><br>
-        <select id="kategoriSelect" style="width: 100%;">
-            <option value="">-- Pilih Lomba Dulu --</option>
-        </select>
+            <select id="kategoriSelect" style="flex: 1; min-width: 150px;">
+                <option value="">-- Pilih Kategori --</option>
+            </select>
 
-        <select id="babakSelect" onchange="tampilkanPesertaBracket()">
-            <option value="Penyisihan">Penyisihan</option>
-            <option value="Semifinal">Semifinal</option>
-            <option value="Final">Final</option>
-        </select>
-
-        <br><br>
-
-        <button onclick="tampilkanPesertaBracket()">Tampilkan Daftar Peserta</button>
+            <select id="babakSelect" style="flex: 1; min-width: 150px;">
+                <option value="Penyisihan">Penyisihan</option>
+                <option value="Semifinal">Semifinal</option>
+                <option value="Final">Final</option>
+            </select>
+        </div>
+        <button onclick="tampilkanPesertaBracket()" style="margin-top: 15px; width: 100%; background: #2980b9;">
+            🔍 Tampilkan Daftar Peserta
+        </button>
     </div>
 
-    <div id="loadingData" style="display:none; color: blue; font-weight: bold;">
-        Sedang memproses data...
+    <div id="pesertaLomba" class="grid-peserta"></div>
+
+    <div id="actionGenerate" style="display:none; background: #2c3e50; padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #34495e;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <label style="color: #bdc3c7; font-weight: bold;">Peserta per Heat:</label>
+                <input type="number" id="limitPerHeat" value="4" style="width: 70px; padding: 8px; margin-left: 10px; text-align: center;">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="generateBracket()" style="background: #27ae60; padding: 10px 20px;">⚡ Generate Heat</button>
+                <button id="btnPublikasi" onclick="publikasikanHeat()" style="background: #f39c12; display: none;">📢 Publikasikan ke Live</button>
+            </div>
+        </div>
     </div>
 
-    <div id="pesertaLomba"></div>
-
-    <br>
-    <div id="actionGenerate" style="display:none;">
-        <hr>
-        <label>Peserta per Heat:</label>
-        <input type="number" id="limitPerHeat" value="4" style="width: 50px; padding: 5px;">
-        <button onclick="generateBracket()" style="background: #007bff;">Generate Heat Otomatis</button>
-        <button id="btnPublikasi" onclick="publikasikanHeat()" style="background: #f39c12; color: white; display: none; margin-top: 10px;">
-    📢 Publikasikan Ke Live Report
-</button>
-    </div>
-
-
-
-    <div id="hasilBracket" class="heat-container"></div>
+    <div id="hasilBracket" class="heat-grid-container"></div>
+</div>
 
     <script src="js/data.js"></script>
     <script src="js/auth.js"></script>
