@@ -242,15 +242,23 @@ daftarJuara.sort((a, b) => {
         let medali = p.status_babak.includes("1") ? "🥇" : 
                      p.status_babak.includes("2") ? "🥈" : "🥉";
 
-        html += `
-            <div class="item-rekap">
-                <div class="pemenang-info">
-                    <span class="medali-icon">${medali}</span>
-                    <span class="nama-pemenang">${p.nama}</span>
-                </div>
-                <span class="label-juara">${p.status_babak.split(" - ")[0].toUpperCase()}</span>
+        // Di dalam loop daftarJuara.forEach(p => { ... })
+
+html += `
+    <div class="item-rekap" style="display:flex; align-items:center; padding:10px; background:rgba(255,255,255,0.07); margin-bottom:4px; border-radius:6px; border-left: 4px solid #f1c40f;">
+        <div style="display:flex; align-items:center; gap:12px; width: 100%;">
+            <span style="font-size: 1.4em;">${medali}</span>
+            
+            <div style="display:flex; align-items:baseline; gap:10px;">
+                <strong style="color:#fff; font-size: 1.1em; text-transform: uppercase;">${p.nama}</strong>
+                
+                <span style="font-size: 0.75em; color: #f1c40f; font-weight: bold; letter-spacing: 1px; opacity: 0.9;">
+                    (${p.status_babak.split(" - ")[0].toUpperCase()})
+                </span>
             </div>
-        `;
+        </div>
+    </div>
+`;
     });
     list.innerHTML = html;
 }
