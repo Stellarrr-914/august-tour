@@ -68,3 +68,28 @@ tr:hover td { background: rgba(255,255,255,0.03); }
 /* Action Buttons */
 .btn-search { background: #3498db; }
 .btn-back { background: #555; }
+
+/* Styling Select Status di dalam Tabel */
+.status-select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    border: 1px solid #444;
+    cursor: pointer;
+    outline: none;
+}
+
+/* Warna otomatis pas admin milih status */
+.status-open { background: #2ecc71 !important; color: white; }    /* Hijau */
+.status-ongoing { background: #f39c12 !important; color: white; } /* Oranye */
+.status-selesai { background: #e74c3c !important; color: white; } /* Merah */
+
+/* Form Input Lomba yang lebih lega */
+.lomba-input-group {
+    display: flex;
+    gap: 10px;
+    background: rgba(255,255,255,0.02);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
