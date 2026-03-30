@@ -93,3 +93,71 @@ tr:hover td { background: rgba(255,255,255,0.03); }
     border-radius: 10px;
     margin-bottom: 15px;
 }
+
+/* Container Utama di bracket.html biar rapi Grid-nya */
+.heat-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+    align-items: start;
+}
+
+/* Box per Heat (Dark Mode) */
+.heat-box {
+    background: var(--surface); /* #1e1e1e */
+    border: 1px solid var(--border); /* #333 */
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+}
+
+/* Judul Heat di Atas Box */
+.heat-header {
+    background: #333;
+    color: var(--secondary); /* #f1c40f - Kuning */
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid var(--primary); /* #e74c3c - Merah */
+}
+
+/* List Peserta */
+.heat-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Baris Peserta di Dalem Heat */
+.heat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #2a2a2a;
+    gap: 10px;
+}
+
+.heat-item:last-child { border-bottom: none; }
+
+/* Nama Peserta (Pastiin Putih) */
+.nama-peserta {
+    color: #ffffff;
+    font-weight: 500;
+}
+
+/* Select Menang/Kalah (Warna Gelap) */
+.select-pemenang {
+    background: #2c3e50;
+    color: white;
+    border: 1px solid #444;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    outline: none;
+}
+.select-pemenang:hover { border-color: #555; }
