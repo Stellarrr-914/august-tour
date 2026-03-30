@@ -154,11 +154,6 @@ function renderHeatBox(grup, nomor) {
                 </select>
             </div>`;
     });
-
-    html += `
-        <button onclick="kirimSatuHeat(${nomor})" style="width:100%; margin-top:10px; background:#27ae60; font-size:12px; padding:8px;">Simpan Heat ${nomor}</button>
-        </div></div>`;
-    container.innerHTML += html;
 }
 
 // 6. FUNGSI SIMPAN & PUBLIKASI
@@ -182,14 +177,6 @@ function simpanKeSheet(nama, el) {
     }).then(() => {
         el.disabled = false;
         el.style.borderColor = "#27ae60";
-    });
-}
-
-function loloskanDuaTeratas(nomor) {
-    const selects = document.querySelectorAll(`#heat-${nomor} .select-status`);
-    selects.forEach((sel, idx) => {
-        sel.value = (idx < 2) ? "Lolos" : "Gugur";
-        sel.style.border = "2px solid #2980b9";
     });
 }
 
