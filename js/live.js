@@ -1,5 +1,7 @@
 // 1. KONFIGURASI URL (Pastiin URL Deployment GS lo bener)
-const scriptURL = "https://script.google.com/macros/s/AKfycbyijZepuUbuoZOXdpKJLfvEXFSm0NNzjf-AwM4MkM5iP7ly1aV34V_bgRBI3HM_pV49/exec";
+let dataSheet2 = []; // Buat simpan data status lomba
+let dataSheet3 = []; // Buat simpan data rekap/juara
+let scriptURL = "https://script.google.com/macros/s/AKfycbyijZepuUbuoZOXdpKJLfvEXFSm0NNzjf-AwM4MkM5iP7ly1aV34V_bgRBI3HM_pV49/exec"; 
 
 // 2. FUNGSI AMBIL DATA (Satu kali tarik dapat dua data sheet)
 function fetchLiveReport() {
