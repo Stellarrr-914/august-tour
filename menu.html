@@ -11,17 +11,40 @@
 
 <body>
 
-<h1>Menu Utama</h1>
+<div class="main-container">
+    <header class="menu-header">
+        <h1>PANEL KONTROL</h1>
+        <p>Manajemen Turnamen Agustusan</p>
+    </header>
 
-<button onclick="location.href='database.html'">
-Update Database
-</button>
+    <div class="menu-grid">
+        <div class="menu-card card-blue" onclick="location.href='database.html'">
+            <div class="card-icon">📁</div>
+            <div class="card-info">
+                <h3>Update Database</h3>
+                <p>Tambah peserta & kelola daftar lomba</p>
+            </div>
+        </div>
 
-<button onclick="location.href='bracket.html'">
-Bracket / Heat
-</button>
+        <div class="menu-card card-green" onclick="location.href='bracket.html'">
+            <div class="card-icon">🌿</div>
+            <div class="card-info">
+                <h3>Bracket / Heat</h3>
+                <p>Atur pertandingan & input hasil pemenang</p>
+            </div>
+        </div>
 
-<button id="logoutBtn" onclick="logout()">Logout</button>
+        <div class="menu-card card-red" onclick="window.open('live.html', '_blank')">
+            <div class="card-icon">📢</div>
+            <div class="card-info">
+                <h3>Buka Live Report</h3>
+                <p>Lihat tampilan publik (Halaman TV)</p>
+            </div>
+        </div>
+    </div>
+
+    <button id="logoutBtn" onclick="logout()" class="btn-logout">🚪 Keluar dari Sistem</button>
+</div>
 
 <script src="js/data.js"></script>
 <script src="js/lomba.js"></script>
