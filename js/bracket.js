@@ -86,10 +86,8 @@ function tampilkanPesertaBracket() {
         });
 }
 
-// 4. GENERATE HEAT (LOGIKA 4-3-5)
-// 4. GENERATE HEAT (LOGIKA 4-3-5)
+// 4. GENERATE HEAT (LOGIKA 4-3-5) - VERSI RAPI TOTAL
 function generateBracket() {
-    console.log("Memulai Generate..."); 
     const checkboxes = document.querySelectorAll(".peserta-check:checked");
     let pesertaTerpilih = [];
 
@@ -100,7 +98,7 @@ function generateBracket() {
 
     if (pesertaTerpilih.length < 3) return alert("Minimal 3 orang buat bikin Heat, brok!");
 
-    // A. URUTKAN BERDASARKAN LEVEL
+    // A. URUTKAN BERDASARKAN LEVEL (Seeding)
     const bobot = { "A+": 9, "A": 8, "A-": 7, "B+": 6, "B": 5, "B-": 4, "C+": 3, "C": 2, "C-": 1 };
     pesertaTerpilih.sort((a, b) => {
         let levelA = bobot[a.level] || 0;
@@ -122,32 +120,34 @@ function generateBracket() {
         i += ukuranGrup;
     }
 
-    // C. RENDER KE LAYAR
+    // C. RENDER KE LAYAR (Tampilan Diperhalus)
     const container = document.getElementById("hasilBracket");
     container.innerHTML = ""; 
     
     hasilGrup.forEach((grup, index) => {
         const nomorHeat = index + 1;
         
-        // Buat kotaknya
         let html = `
-            <div class="heat-box" id="heat-${nomorHeat}" style="background:#1e1e1e; border:1px solid #333; border-radius:12px; margin-bottom:20px; color:white; overflow:hidden;">
-                <div style="background:#333; color:#f1c40f; padding:10px; font-weight:bold; display:flex; justify-content:space-between;">
-                    <span>HEAT ${nomorHeat}</span>
-                    <button onclick="loloskanDuaTeratas(${nomorHeat})" style="font-size:10px; background:#2980b9; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 5px;">Auto Lolos 2</button>
+            <div class="heat-box" id="heat-${nomorHeat}" style="background:#1e1e1e; border:1px solid #333; border-radius:12px; margin-bottom:20px; color:white; overflow:hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                <div style="background:#333; color:#f1c40f; padding:12px; font-weight:bold; text-align:center; border-bottom: 2px solid #444; text-transform: uppercase; letter-spacing: 1px;">
+                    HEAT ${nomorHeat}
                 </div>
                 <div style="padding:10px;">
         `;
 
         grup.forEach(p => {
             html += `
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #2a2a2a;">
-                    <span style="color:white;">${p.nama} <small style="color:#888;">(${p.level})</small></span>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 5px; border-bottom:1px solid #2a2a2a; gap: 15px;">
+                    <span style="color:white; font-size:14px; flex-grow:1; text-align:left;">
+                        <strong style="text-transform: uppercase;">${p.nama}</strong> 
+                        <br><small style="color:#888; font-size:11px;">Level: ${p.level || '-'}</small>
+                    </span>
+                    
                     <select class="select-status" 
                             data-nama="${p.nama}" 
                             data-heat="${nomorHeat}" 
                             onchange="simpanKeSheet('${p.nama}', this)"
-                            style="background:#2c3e50; color:white; border:1px solid #444; padding:4px; border-radius:4px;">
+                            style="background:#2c3e50; color:white; border:1px solid #444; padding:8px; border-radius:6px; width:130px; min-width:130px; cursor:pointer; font-size:13px; outline:none;">
                         <option value="">-- Set --</option>
                         <option value="Lolos">🏆 Lolos</option>
                         <option value="Gugur">❌ Gugur</option>
@@ -158,14 +158,18 @@ function generateBracket() {
                 </div>`;
         });
 
-        html += `
-            <button onclick="kirimSatuHeat(${nomorHeat})" style="width:100%; margin-top:10px; background:#27ae60; color:white; border:none; padding:8px; border-radius:4px; cursor:pointer;">Simpan Hasil Heat ${nomorHeat}</button>
-            </div></div>`;
-        
+        html += `</div></div>`;
         container.innerHTML += html;
     });
 
-    document.getElementById("btnPublikasi").style.display = "block";
+    // Munculkan tombol publikasi di paling bawah
+    const btnPub = document.getElementById("btnPublikasi");
+    if(btnPub) {
+        btnPub.style.display = "block";
+        btnPub.style.width = "100%";
+        btnPub.style.padding = "15px";
+        btnPub.style.fontWeight = "bold";
+    }
 }
 // 5. RENDER BOX HEAT (Unified Dark Mode)
 function renderHeatBox(grup, nomor) {
@@ -174,7 +178,6 @@ function renderHeatBox(grup, nomor) {
         <div class="heat-box" id="heat-${nomor}" style="background:#1e1e1e; border:1px solid #333; border-radius:12px; margin-bottom:20px; overflow:hidden;">
             <div style="background:#333; color:#f1c40f; padding:10px; font-weight:bold; display:flex; justify-content:space-between; align-items:center;">
                 <span>HEAT ${nomor}</span>
-                <button onclick="loloskanDuaTeratas(${nomor})" style="font-size:10px; padding:3px 8px; background:#2980b9;">Auto Lolos 2</button>
             </div>
             <div style="padding:10px;">
     `;
