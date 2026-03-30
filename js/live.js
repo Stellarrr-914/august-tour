@@ -205,15 +205,28 @@ function showRekapJuara() {
     }
 
     // Sortir biar Juara 1 selalu paling atas di tiap grup
-    daftarJuara.sort((a, b) => {
-        const getRank = (str) => {
-            if (str.toLowerCase().includes("1")) return 1;
-            if (str.toLowerCase().includes("2")) return 2;
-            if (str.toLowerCase().includes("3")) return 3;
-            return 99;
-        };
-        return getRank(a.status_babak) - getRank(b.status_babak);
-    });
+    // 1. Sortir Multi-Level: Urut Lomba Dulu, Baru Urut Juara
+daftarJuara.sort((a, b) => {
+    // Gabungkan Nama Lomba + Kategori buat pembanding
+    const grupA = `${a.lomba} - ${a.kategori}`.toLowerCase();
+    const grupB = `${b.lomba} - ${b.kategori}`.toLowerCase();
+    
+    // Kalau Lombanya beda, urutkan berdasarkan abjad Nama Lomba
+    if (grupA !== grupB) {
+        return grupA.localeCompare(grupB);
+    }
+    
+    // Kalau Lombanya SAMA, baru urutkan berdasarkan Ranking (1, 2, 3)
+    const getRank = (str) => {
+        const s = str.toLowerCase();
+        if (s.includes("1")) return 1;
+        if (s.includes("2")) return 2;
+        if (s.includes("3")) return 3;
+        return 99;
+    };
+    
+    return getRank(a.status_babak) - getRank(b.status_babak);
+});
 
     // Render HTML-nya
     let html = "";
