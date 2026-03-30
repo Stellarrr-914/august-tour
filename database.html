@@ -24,24 +24,6 @@
         <button onclick="location.href='menu.html'" class="btn-back" style="margin-top: 15px; width: auto;">⬅️ Kembali ke Menu</button>
     </div>
 
-    <div class="section-title">🏆 Daftar Lomba</div>
-    <div class="form-group" style="border-radius: 0 0 12px 12px; margin-top: -1px;">
-        <div style="display: flex; gap: 10px;">
-            <input type="text" id="inputLomba" placeholder="Nama Lomba, Kat1, Kat2" style="flex: 1;">
-            <button onclick="tambahLomba()" style="width: auto;">Tambah Lomba</button>
-        </div>
-    </div>
-    <table>
-        <thead>
-            <tr>
-                <th>Nama Lomba</th>
-                <th>Kategori</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody id="tabelLomba"></tbody>
-    </table>
-
     <div class="section-title">👶 Peserta Anak-Anak</div>
     <table id="tabelAnakContainer">
         <thead>
@@ -81,6 +63,14 @@
     </p>
 </div>
 
+<div class="section-title">🏆 Daftar Lomba</div>
+    <div class="form-group" style="border-radius: 0 0 12px 12px; margin-top: -1px;">
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="inputLomba" placeholder="Nama Lomba, Kat1, Kat2" style="flex: 1;">
+            <button onclick="tambahLomba()" style="width: auto;">Tambah Lomba</button>
+        </div>
+    </div>
+
 <table id="tabelLombaContainer">
     <thead>
         <tr>
@@ -90,6 +80,16 @@
         </tr>
     </thead>
     <tbody id="tabelLomba">
+        <table>
+        <thead>
+            <tr>
+                <th>Nama Lomba</th>
+                <th>Kategori</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="tabelLomba"></tbody>
+    </table>
         </tbody>
 </table>
     <script src="js/peserta.js"></script>  
