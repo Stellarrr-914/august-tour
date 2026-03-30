@@ -224,33 +224,52 @@ function simpanKeSheet(nama, el) {
     });
 }
 
-function kirimSatuHeat(nomor) {
-    const selects = document.querySelectorAll(`#heat-${nomor} .select-status`);
-    const btn = event.target;
-    btn.innerText = "⏳ Memproses...";
-    
-    let promises = Array.from(selects).filter(s => s.value !== "").map(s => {
-        return fetch(scriptURL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({
-                type: "simpanJuara",
-                lomba: document.getElementById("lombaSelect").value,
-                kategori: document.getElementById("kategoriSelect").value,
-                nama: s.getAttribute("data-nama"),
-                status: `${s.value} - ${document.getElementById("babakSelect").value}`,
-                heat: nomor
-            })
-        });
+function kirimSatuHeat(nomorHeat) {
+    const heatBox = document.getElementById(`heat-${nomorHeat}`);
+    const semuaSelect = heatBox.querySelectorAll('.select-status');
+    const lomba = document.getElementById("lombaSelect").value;
+    const kategori = document.getElementById("kategoriSelect").value;
+    const babak = document.getElementById("babakSelect").value;
+
+    let dataHeat = [];
+
+    semuaSelect.forEach(select => {
+        if (select.value !== "") {
+            dataHeat.push({
+                nama: select.getAttribute('data-nama'),
+                status: `${select.value} - ${babak}`,
+                heat: nomorHeat
+            });
+        }
     });
 
-    Promise.all(promises).then(() => {
-        alert(`Heat ${nomor} Berhasil Diupdate!`);
-        btn.innerText = "✅ Selesai";
-        btn.style.background = "#2ecc71";
+    if (dataHeat.length === 0) return alert("Pilih status dulu!");
+
+    const btn = event.target;
+    btn.innerText = "⏳ Sinkronisasi...";
+    btn.disabled = true;
+
+    // KIRIM SEKALI JALAN (Batch)
+    fetch(scriptURL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({
+            type: "batchSimpanJuara", // Kita buat fungsi baru di Apps Script
+            lomba: lomba,
+            kategori: kategori,
+            data: dataHeat // Kirim array langsung
+        })
+    })
+    .then(() => {
+        alert(`Heat ${nomorHeat} Beres!`);
+        btn.innerText = "✅ Tersimpan";
+    })
+    .catch(err => {
+        console.error(err);
+        btn.innerText = "Gagal!";
+        btn.disabled = false;
     });
 }
-
 function publikasikanHeat() {
     const lomba = document.getElementById("lombaSelect").value;
     const babak = document.getElementById("babakSelect").value;
