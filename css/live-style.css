@@ -1,15 +1,90 @@
-/* Fix Klasemen (Teks Putih di BG Putih) */
-.leaderboard-table div {
-    background: var(--surface) !important; /* Paksa pake warna gelap */
-    color: var(--text) !important;
-    border: 1px solid var(--border) !important;
-    margin-bottom: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+:root {
+    --bg-body: #0f172a;
+    --surface: #1e293b;
+    --border: #334155;
+    --text-main: #f8fafc;
+    --text-dim: #94a3b8;
+    --accent: #f1c40f;
+    --success: #22c55e;
+    --danger: #ef4444;
 }
 
-.leaderboard-table strong { color: var(--secondary); }
+body {
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    margin: 0; padding: 20px;
+}
 
-/* Fix Rekap Juara (Garis Luar Sesuai Tingkatan) */
-.item-rekap.juara-1 { border-left: 5px solid #f1c40f; background: rgba(241, 196, 15, 0.1); }
-.item-rekap.juara-2 { border-left: 5px solid #bdc3c7; background: rgba(189, 195, 199, 0.1); }
-.item-rekap.juara-3 { border-left: 5px solid #e67e22; background: rgba(230, 126, 34, 0.1); }
+/* Container Babak (Penyisihan, Semi, Final) */
+.babak-section {
+    margin-bottom: 40px;
+}
+
+.babak-title {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+}
+
+/* Card Heat */
+.heat-wrapper {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.heat-label {
+    background: #334155;
+    color: var(--accent);
+    padding: 10px 15px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Baris Player */
+.player-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+}
+
+.player-row:last-child { border-bottom: none; }
+.player-name { font-weight: 500; color: var(--text-main); }
+
+/* Badge Status */
+.badge {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    min-width: 80px;
+    text-align: center;
+}
+
+.badge-wait { background: #475569; color: #cbd5e1; }
+.badge-next { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; }
+.badge-lose { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid #991b1b; opacity: 0.7; }
+
+/* Leaderboard / Klasemen */
+.leaderboard-table div {
+    background: var(--surface) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border) !important;
+    padding: 15px !important;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.leaderboard-table strong { color: var(--accent); }
