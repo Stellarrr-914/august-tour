@@ -76,10 +76,19 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
         titleDisplay.innerText = ` LIVE: ${matchTampil.nama_lomba} (${matchTampil.kategori})`;
 
         // Filter Sheet 3 sesuai Lomba & Kategori
-        const rekapAktif = dataSheet3.filter(p => 
-            p.lomba === matchTampil.nama_lomba && 
-            p.kategori === matchTampil.kategori 
-        );
+        // GANTI BAGIAN INI DI live.js
+const rekapAktif = dataSheet3.filter(p => {
+    const namaLombaSheet = (p.lomba || "").toString().trim().toUpperCase();
+    const kategoriSheet = (p.kategori || p.kat || "").toString().trim().toUpperCase();
+    
+    const namaLombaTab = matchTampil.nama_lomba.trim().toUpperCase();
+    const kategoriTab = matchTampil.kategori.trim().toUpperCase();
+
+    return namaLombaSheet === namaLombaTab && kategoriSheet === kategoriTab;
+});
+
+        console.log("Kategori yang dipilih:", matchTampil.nama_lomba, matchTampil.kategori);
+console.log("Data yang berhasil lolos filter:", rekapAktif);
 
         const daftarBabak = ["Penyisihan", "Semifinal", "Final"];
 
@@ -89,12 +98,17 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
             section.className = "babak-section";
             section.innerHTML = `<h2 class="babak-title" style="color:#f1c40f; border-left:4px solid #f1c40f; padding-left:10px; margin-top:20px;">${namaBabak.toUpperCase()}</h2>`;
 
-            const dataPerBabak = rekapAktif.filter(player => {
-                if (!player.status_babak) return false;
-                const parts = player.status_babak.split(" - ");
-                const babakDiStatus = parts[1] ? parts[1].trim() : parts[0].trim();
-                return babakDiStatus.toLowerCase() === namaBabak.toLowerCase();
-            });
+            // GANTI BAGIAN INI JUGA
+const dataPerBabak = rekapAktif.filter(player => {
+    if (!player.status_babak) return false;
+    
+    const statusLengkap = player.status_babak.toLowerCase();
+    const targetBabak = namaBabak.toLowerCase(); // "penyisihan", "semifinal", atau "final"
+
+    // Cukup cek apakah kata "penyisihan" ada di dalam status_babak
+    // Jadi mau tulisannya "Lolos - Penyisihan" atau "Penyisihan" aja, dia bakal dapet.
+    return statusLengkap.includes(targetBabak);
+});
 
             if (dataPerBabak.length === 0) {
                 section.innerHTML += `<p style="text-align:center; color:#666; padding:15px;">Belum ada jadwal ${namaBabak}</p>`;
