@@ -1,39 +1,29 @@
-// 1. KONFIGURASI URL (Pastiin URL Deployment GS lo bener)
-let dataSheet2 = []; // Buat simpan data status lomba
-let dataSheet3 = []; // Buat simpan data rekap/juara
+// 1. KONFIGURASI URL
+let dataSheet2 = []; 
+let dataSheet3 = []; 
 let scriptURL = "https://script.google.com/macros/s/AKfycbyijZepuUbuoZOXdpKJLfvEXFSm0NNzjf-AwM4MkM5iP7ly1aV34V_bgRBI3HM_pV49/exec"; 
 
-// 2. FUNGSI AMBIL DATA (Satu kali tarik dapat dua data sheet)
-// 2. FUNGSI AMBIL DATA (Satu kali tarik dapat dua data sheet)
 function fetchLiveReport() {
     fetch(scriptURL + "?type=getLiveReportFull")
         .then(response => response.json())
         .then(data => {
             if (data && data.daftarLomba && data.rekapHasil) {
-                
-                // --- KUNCI UTAMA: ISI VARIABEL GLOBAL DISINI ---
                 dataSheet2 = data.daftarLomba; 
                 dataSheet3 = data.rekapHasil; 
-                // -----------------------------------------------
-
-                // Baru panggil render
                 renderLiveBracket(dataSheet2, dataSheet3);
-                console.log("Data Global Terupdate!");
+                console.log("Data Berhasil Diperbarui:", new Date().toLocaleTimeString());
             }
         })
-        .catch(err => {
-            console.error("Gagal update data:", err);
-            const title = document.getElementById('live-title');
-            if(title) title.innerText = "Koneksi Terputus...";
-        });
+        .catch(err => console.error("Gagal update data:", err));
 }
-// 3. FUNGSI PANGALIMA (Pilih Tampilan: Bracket vs Leaderboard)
+
 function renderLiveBracket(dataSheet2, dataSheet3) {
     const container = document.getElementById("liveReportContainer");
     const titleDisplay = document.getElementById('live-title');
     if (!container) return;
     container.innerHTML = ""; 
 
+    // 1. Ambil Lomba yang statusnya Aktif
     const statusAktif = ["on-going", "penyisihan", "semifinal", "final"];
     const daftarLombaAktif = dataSheet2.filter(l => {
         let s = (l.status || "").toString().toLowerCase().trim();
@@ -41,10 +31,9 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
     });
 
     if (daftarLombaAktif.length > 0) {
-        // Tab Kategori
+        // --- RENDER TAB ---
         const tabWrapper = document.createElement("div");
-        tabWrapper.className = "tab-kategori-wrapper";
-        tabWrapper.style = "display:flex; gap:10px; overflow-x:auto; padding:10px 5px; margin-bottom:20px;";
+        tabWrapper.style = "display:flex; gap:10px; overflow-x:auto; padding:10px 5px; margin-bottom:20px; scrollbar-width:none;";
 
         if (!window.kategoriAktif) {
             window.kategoriAktif = `${daftarLombaAktif[0].nama_lomba}-${daftarLombaAktif[0].kategori}`;
@@ -55,8 +44,13 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
             const btn = document.createElement("button");
             btn.innerText = `${l.nama_lomba} (${l.kategori})`;
             const isAktif = window.kategoriAktif === keyKat;
-            btn.style = `padding:8px 15px; border-radius:20px; border:none; cursor:pointer; background:${isAktif ? '#f1c40f' : '#2c3e50'}; color:${isAktif ? '#000' : '#fff'}; font-weight:bold;`;
-            btn.onclick = () => { window.kategoriAktif = keyKat; renderLiveBracket(dataSheet2, dataSheet3); };
+            btn.style = `padding:8px 15px; border-radius:20px; border:none; cursor:pointer; white-space:nowrap; font-weight:bold; 
+                         background:${isAktif ? '#f1c40f' : '#2c3e50'}; color:${isAktif ? '#000' : '#fff'};`;
+
+            btn.onclick = () => {
+                window.kategoriAktif = keyKat;
+                renderLiveBracket(dataSheet2, dataSheet3); 
+            };
             tabWrapper.appendChild(btn);
         });
         container.appendChild(tabWrapper);
@@ -64,29 +58,33 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
         const matchTampil = daftarLombaAktif.find(l => `${l.nama_lomba}-${l.kategori}` === window.kategoriAktif) || daftarLombaAktif[0];
         titleDisplay.innerText = ` LIVE: ${matchTampil.nama_lomba} (${matchTampil.kategori})`;
 
-        // --- FILTER SAKTI (BIAR GAK SALAH KAMAR) ---
-        const rekapAktif = dataSheet3.filter(p => 
-            (p.lomba || "").toString().trim() === matchTampil.nama_lomba.trim() && 
-            (p.kategori || "").toString().trim() === matchTampil.kategori.trim()
-        );
+        // --- FILTER STRICT (BIAR GAK SALAH KAMAR) ---
+        const rekapAktif = dataSheet3.filter(p => {
+            const lombaS3 = (p.lomba || "").toString().toLowerCase().trim();
+            const katS3 = (p.kategori || "").toString().toLowerCase().trim();
+            const lombaTampil = (matchTampil.nama_lomba || "").toString().toLowerCase().trim();
+            const katTampil = (matchTampil.kategori || "").toString().toLowerCase().trim();
+            return lombaS3 === lombaTampil && katS3 === katTampil;
+        });
+
+        console.log("Data ditemukan untuk " + matchTampil.nama_lomba + ":", rekapAktif.length, "orang");
 
         const daftarBabak = ["Penyisihan", "Semifinal", "Final"];
         daftarBabak.forEach(namaBabak => {
             const section = document.createElement("div");
             section.className = "babak-section";
-            section.innerHTML = `<h2 style="color:#f1c40f; border-left:4px solid #f1c40f; padding-left:10px; margin-top:20px;">${namaBabak.toUpperCase()}</h2>`;
-
+            
+            // Filter per babak
             const dataPerBabak = rekapAktif.filter(player => {
                 if (!player.status_babak) return false;
                 return player.status_babak.toLowerCase().includes(namaBabak.toLowerCase());
             });
 
-            if (dataPerBabak.length === 0) {
-                section.innerHTML += `<p style="text-align:center; color:#666; padding:10px;">Belum ada jadwal ${namaBabak}</p>`;
-            } else {
+            if (dataPerBabak.length > 0) {
+                section.innerHTML = `<h2 style="color:#f1c40f; border-left:4px solid #f1c40f; padding-left:10px; margin-top:20px;">${namaBabak.toUpperCase()}</h2>`;
+                
                 const groupHeat = {};
                 dataPerBabak.forEach(p => {
-                    // Pakai nomor_heat sesuai kolom lo
                     const noHeat = p.nomor_heat || "1"; 
                     if (!groupHeat[noHeat]) groupHeat[noHeat] = [];
                     groupHeat[noHeat].push(p);
@@ -94,27 +92,27 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
                 
                 Object.keys(groupHeat).sort((a,b) => a - b).forEach(noHeat => {
                     let htmlHeat = `<div style="margin-bottom:15px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px;">
-                                    <div style="font-weight:bold; color:#888; font-size:0.9em;">HEAT ${noHeat}</div>`;
+                                    <div style="font-weight:bold; color:#888; font-size:0.9em; margin-bottom:8px;">HEAT ${noHeat}</div>`;
                     
                     groupHeat[noHeat].forEach(player => {
                         const s = player.status_babak.toLowerCase();
                         let badge = '<span style="background:#444; padding:2px 8px; border-radius:4px; font-size:0.8em; color:#fff;">READY</span>';
-                        if (s.includes("lolos")) badge = '<span style="background:#27ae60; color:#fff; padding:2px 8px; border-radius:4px;">LOLOS ➔</span>';
-                        else if (s.includes("gugur")) badge = '<span style="background:#c0392b; color:#fff; padding:2px 8px; border-radius:4px;">GUGUR</span>';
-                        else if (s.includes("juara")) badge = '<span style="background:#f1c40f; color:#000; padding:2px 8px; border-radius:4px; font-weight:bold;">🏆 ${s.toUpperCase()}</span>';
+                        if (s.includes("lolos")) badge = '<span style="background:#27ae60; color:#fff; padding:2px 8px; border-radius:4px; font-size:0.8em;">LOLOS ➔</span>';
+                        else if (s.includes("gugur")) badge = '<span style="background:#c0392b; color:#fff; padding:2px 8px; border-radius:4px; font-size:0.8em;">GUGUR</span>';
+                        else if (s.includes("juara")) badge = `<span style="background:#f1c40f; color:#000; padding:2px 8px; border-radius:4px; font-size:0.8em; font-weight:bold;">🏆 ${s.toUpperCase()}</span>`;
 
-                        htmlHeat += `<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid rgba(255,255,255,0.05);">
+                        htmlHeat += `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid rgba(255,255,255,0.05);">
                                         <span style="color:#eee;">${player.nama}</span>
                                         ${badge}
                                      </div>`;
                     });
                     section.innerHTML += htmlHeat + `</div>`;
                 });
+                container.appendChild(section);
             }
-            container.appendChild(section);
         });
     } else {
-        // Logika Leaderboard (Tetap sama)
+        // --- MODE LEADERBOARD ---
         titleDisplay.innerText = `🏆 KLASEMEN SEMENTARA`;
         const dataPoin = generateLeaderboard(dataSheet3); 
         let htmlLeaderboard = `<div style="width:100%">`;
@@ -128,121 +126,46 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
         container.innerHTML = htmlLeaderboard + `</div>`;
     }
 }
-// 4. FUNGSI HITUNG POIN (Logic untuk Peserta Zonk & Juara Umum)
+
+// FUNGSI POIN & REKAP (Tetap sama namun pastikan key kecil semua)
 function generateLeaderboard(rekapHasil) {
     let leaderboard = {};
-
     rekapHasil.forEach(row => {
         const nama = row.nama;
-        const status = row.status_babak ? row.status_babak.toLowerCase() : "";
-        
+        const status = (row.status_babak || "").toLowerCase();
         if (!nama) return;
-        if (!leaderboard[nama]) {
-            leaderboard[nama] = { nama: nama, totalPoin: 0, isZonk: true };
-        }
-
-        // Logic Poin
-        if (status.includes("juara")) {
-            leaderboard[nama].totalPoin += 100;
-            leaderboard[nama].isZonk = false; // Jika pernah juara, status Zonk hilang
-        } else if (status.includes("final")) {
-            leaderboard[nama].totalPoin += 10;
-        } else if (status.includes("semifinal")) {
-            leaderboard[nama].totalPoin += 5;
-        } else if (status.includes("lolos") || status.includes("gugur")) {
-            leaderboard[nama].totalPoin += 2; // Poin partisipasi dasar
-        }
+        if (!leaderboard[nama]) leaderboard[nama] = { nama: nama, totalPoin: 0, isZonk: true };
+        if (status.includes("juara")) { leaderboard[nama].totalPoin += 100; leaderboard[nama].isZonk = false; }
+        else if (status.includes("final")) leaderboard[nama].totalPoin += 10;
+        else if (status.includes("semifinal")) leaderboard[nama].totalPoin += 5;
+        else if (status.includes("lolos") || status.includes("gugur")) leaderboard[nama].totalPoin += 2;
     });
-
-    // Urutkan dari poin tertinggi
     return Object.values(leaderboard).sort((a, b) => b.totalPoin - a.totalPoin);
 }
 
-// ==========================================
-// FUNGSI REKAP JUARA (Final & Rapi Jali)
-// ==========================================
 function showRekapJuara() {
     const list = document.getElementById("rekapList");
     const modal = document.getElementById("rekapModal");
-    if (!list || !modal) return; // Safety check
-    
+    if (!list || !modal) return;
     modal.style.display = "flex";
-    
-    // 1. Filter Strict: Cuma ambil Juara 1, 2, 3
     const daftarJuara = dataSheet3.filter(p => {
-        const s = p.status_babak ? p.status_babak.toLowerCase() : "";
+        const s = (p.status_babak || "").toLowerCase();
         return s.includes("juara 1") || s.includes("juara 2") || s.includes("juara 3");
     });
-
     if (daftarJuara.length === 0) {
-        list.innerHTML = `<div style="text-align:center; padding: 40px; color:#999;"><div style="font-size: 50px;">🏁</div><p>Belum ada pemenang yang naik podium, brok!</p></div>`;
+        list.innerHTML = `<div style="text-align:center; padding: 40px; color:#999;">🏁<p>Belum ada pemenang, brok!</p></div>`;
         return;
     }
-
-    // 2. Sortir Multi-Level: Urut Lomba Dulu, Baru Urut Ranking
-    daftarJuara.sort((a, b) => {
-        const grupA = `${a.lomba} - ${a.kategori}`.toLowerCase();
-        const grupB = `${b.lomba} - ${b.kategori}`.toLowerCase();
-        if (grupA !== grupB) return grupA.localeCompare(grupB);
-        
-        const getRank = (str) => {
-            if (str.includes("1")) return 1;
-            if (str.includes("2")) return 2;
-            if (str.includes("3")) return 3;
-            return 99;
-        };
-        return getRank(a.status_babak) - getRank(b.status_babak);
-    });
-
-    // 3. Render HTML
     let html = "";
-    let currentGroup = "";
-
     daftarJuara.forEach(p => {
-        let groupName = `${p.lomba} - ${p.kategori}`;
-        
-        // Header Nama Lomba
-        if (currentGroup !== groupName) {
-            html += `<div style="margin: 25px 0 10px 0; color:#f1c40f; font-weight:bold; font-size: 1.1em; text-transform:uppercase; border-bottom:1px solid #333; padding-bottom:5px;">🚩 ${groupName}</div>`;
-            currentGroup = groupName;
-        }
-        
-        // Tentukan Emoji, Warna Medali, dan Status Tulisan
-        let medali = "🥉";
-        let medaliColor = "#e67e22"; // Perunggu
-        let statusTeks = "JUARA 3";
-        
-        if (p.status_babak.includes("1")) {
-            medali = "🥇"; medaliColor = "#f1c40f"; statusTeks = "JUARA 1";
-        } else if (p.status_babak.includes("2")) {
-            medali = "🥈"; medaliColor = "#bdc3c7"; statusTeks = "JUARA 2";
-        }
-
-        // --- RENDER BARIS PEMENANG (Satu Baris Rapi) ---
-        html += `
-            <div class="item-rekap" style="display:flex; align-items:center; padding:12px; background:rgba(255,255,255,0.06); margin-bottom:5px; border-radius:8px; border-left: 5px solid ${medaliColor}; gap: 15px;">
-                
-                <span style="font-size: 1.4em;">${medali}</span>
-                
-                <div style="display:flex; align-items:baseline; gap:10px; flex-grow:1;">
-                    <strong style="color:#fff; font-size: 1.1em; text-transform:uppercase; letter-spacing: 0.5px;">${p.nama}</strong>
-                    
-                    <span style="font-size: 0.8em; color: ${medaliColor}; font-weight: bold; letter-spacing: 1px;">
-                        (${statusTeks})
-                    </span>
-                </div>
-            </div>
-        `;
+        html += `<div style="padding:10px; background:rgba(255,255,255,0.05); margin-bottom:5px; border-radius:8px; color:#fff;">
+                    <strong>${p.nama}</strong> - ${p.lomba} (${p.status_babak})
+                 </div>`;
     });
     list.innerHTML = html;
 }
-function closeRekapJuara() {
-    document.getElementById("rekapModal").style.display = "none";
-}
 
-// 5. INISIALISASI & AUTO REFRESH
-// Jalankan saat pertama kali dibuka
+function closeRekapJuara() { document.getElementById("rekapModal").style.display = "none"; }
+
 fetchLiveReport();
-
-// Auto update tiap 10 detik
 setInterval(fetchLiveReport, 10000);
