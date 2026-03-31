@@ -46,46 +46,78 @@ function tampilkanPesertaBracket() {
 
     if (!kat || !lomba) return alert("Pilih Lomba & Kategori dulu ya brok!");
 
-    container.innerHTML = "<div style='padding:10px; color:#f1c40f;'>⏳ Sedang narik data dari Cloud...</div>";
+    container.innerHTML = "<div style='padding:10px; color:#f1c40f;'>⏳ Sedang menyaring peserta bertahan...</div>";
 
-    let typeRequest = (babak === "Penyisihan") ? "getPesertaByKategori" : "getPesertaLolos";
-    let fetchURL = `${scriptURL}?type=${typeRequest}&kategori=${encodeURIComponent(kat)}&lomba=${encodeURIComponent(lomba)}&babak=${encodeURIComponent(babak)}`;
+    // Kita tembak ke getLiveReportFull aja biar dapet SEMUA data rekap terbaru (dataSheet3)
+    let fetchURL = `${scriptURL}?type=getLiveReportFull`;
 
     fetch(fetchURL)
         .then(res => res.json())
         .then(data => {
-            if (!Array.isArray(data)) return console.error("Data bukan Array");
+            // Kita butuh data rekap (Sheet 3)
+            const rekapHasil = data.rekapHasil || [];
+            const daftarPesertaAwal = data.daftarLombaPeserta || []; // Sesuaikan jika ada sheet1
 
-            dataPesertaCloud = data; 
+            let pesertaTampil = [];
+
+            if (babak === "Penyisihan") {
+                // JIKA PENYISIHAN: Ambil semua peserta awal (Sheet 1) sesuai kategori & lomba
+                // Atau lo bisa tetep pake logic lama lo kalau getPesertaByKategori udah aman.
+                pesertaTampil = rekapHasil.filter(p => 
+                    p.lomba === lomba && p.kategori === kat && p.status_babak.toLowerCase().includes("penyisihan")
+                );
+            } else {
+                // JIKA SEMIFINAL/FINAL: Saring pake Logika Status Terakhir
+                const historyLomba = rekapHasil.filter(p => 
+                    (p.lomba || "").toLowerCase().trim() === lomba.toLowerCase().trim() && 
+                    (p.kategori || "").toLowerCase().trim() === kat.toLowerCase().trim()
+                );
+
+                let mappingStatusTerakhir = {};
+                historyLomba.forEach(p => {
+                    // Karena data dari GS biasanya urut dari atas ke bawah, 
+                    // baris paling bawah akan menimpa status lama si nama tersebut.
+                    mappingStatusTerakhir[p.nama] = (p.status_babak || "").toLowerCase();
+                });
+
+                // Cuma ambil yang status TERAKHIRNYA ada kata "Lolos"
+                const namaLolos = Object.keys(mappingStatusTerakhir).filter(nama => {
+                    return mappingStatusTerakhir[nama].includes("lolos");
+                });
+
+                pesertaTampil = namaLolos.map(nama => ({ nama: nama }));
+            }
+
             container.innerHTML = "";
             
-            if (data.length === 0) {
+            if (pesertaTampil.length === 0) {
                 container.innerHTML = `<div style="padding:15px; background:#2c3e50; color:#e74c3c; text-align:center; border-radius:8px;">
-                    <b>Data Kosong!</b><br>Belum ada peserta yang sesuai kriteria / lolos.
+                    <b>Tidak Ada Peserta!</b><br>Tidak ditemukan peserta yang status terakhirnya "Lolos".
                 </div>`;
                 document.getElementById("actionGenerate").style.display = "none";
                 return;
             }
 
-            let htmlList = `<div style="margin-bottom:10px; font-weight:bold; color:white;">Daftar Peserta (${data.length} Orang):</div>`;
-            data.forEach((p, index) => {
+            let htmlList = `<div style="margin-bottom:10px; font-weight:bold; color:white;">Peserta Bertahan (${pesertaTampil.length} Orang):</div>`;
+            pesertaTampil.forEach((p, index) => {
                 htmlList += `
                 <div class="peserta-item" style="display:flex; align-items:center; gap:10px; margin-bottom:8px; padding:8px; background:#1e1e1e; border-radius:5px; border:1px solid #333;">
                     <input type="checkbox" class="peserta-check" id="check-${index}" value="${p.nama}" checked style="width:18px; height:18px;">
                     <label for="check-${index}" style="color:white; cursor:pointer; flex-grow:1;">
-                        <strong>${p.nama}</strong> <small style="color:#888;">${p.level ? '('+p.level+')' : ''}</small>
+                        <strong>${p.nama}</strong>
                     </label>
                 </div>`;
             });
 
             container.innerHTML = htmlList;
             document.getElementById("actionGenerate").style.display = "block";
+            dataPesertaCloud = pesertaTampil; 
         })
         .catch(err => {
-            container.innerHTML = "<div style='color:red;'>❌ Gagal narik data!</div>";
+            console.error(err);
+            container.innerHTML = "<div style='color:red;'>❌ Gagal sinkronisasi data cloud!</div>";
         });
 }
-
 // 4. GENERATE HEAT (LOGIKA 4-3-5) - VERSI RAPI TOTAL
 function generateBracket() {
     const checkboxes = document.querySelectorAll(".peserta-check:checked");
