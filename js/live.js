@@ -35,22 +35,59 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
     
     container.innerHTML = ""; 
 
-    // Cari lomba yang statusnya "ON GOING" di Sheet 2
-    // Nama kolom di Sheet 2: "Status"
-    // List babak yang dianggap aktif
-const statusAktif = ["on-going", "penyisihan", "semifinal", "final"];
+    // 1. CARI SEMUA lomba yang statusnya Aktif (bisa lebih dari satu!)
+    const statusAktif = ["on-going", "penyisihan", "semifinal", "final"];
+    const daftarLombaAktif = dataSheet2.filter(l => {
+        let s = (l.status || l.Status || "").toString().toLowerCase().trim();
+        return statusAktif.includes(s);
+    });
 
-const currentMatch = dataSheet2.find(l => {
-    // Ambil nilai status dari object, gak peduli huruf gede/kecil key-nya
-    // Kita cari property yang namanya mirip "status"
-    let nilaiStatus = l.status || l.Status || l.STATUS || "";
-    
-    // Bersihkan spasi dan samakan jadi huruf kecil
-    let s = nilaiStatus.toString().toLowerCase().trim();
-    
-    return statusAktif.includes(s);
-});
-    
+    if (daftarLombaAktif.length > 0) {
+        // --- MODE BARU: PAKE TAB / FILTER KATEGORI ---
+        
+        // Bikin wadah buat tombol kategori (Tabs)
+        const tabWrapper = document.createElement("div");
+        tabWrapper.className = "tab-kategori-wrapper"; // Kasih CSS flex & overflow-x: auto
+        tabWrapper.style = "display:flex; gap:10px; overflow-x:auto; padding:10px 0; margin-bottom:20px;";
+
+        // Ambil kategori pertama buat jadi default yang tampil
+        if (!window.kategoriAktif) {
+            window.kategoriAktif = `${daftarLombaAktif[0].nama_lomba}-${daftarLombaAktif[0].kategori}`;
+        }
+
+        daftarLombaAktif.forEach(l => {
+            const keyKat = `${l.nama_lomba}-${l.kategori}`;
+            const btn = document.createElement("button");
+            btn.innerText = `${l.nama_lomba} (${l.kategori})`;
+            
+            // Styling Tombol (Kuning kalau aktif, Gelap kalau nggak)
+            const isAktif = window.kategoriAktif === keyKat;
+            btn.style = `padding:8px 15px; border-radius:20px; border:none; cursor:pointer; white-space:nowrap; font-weight:bold; 
+                         background:${isAktif ? '#f1c40f' : '#2c3e50'}; 
+                         color:${isAktif ? '#000' : '#fff'};`;
+
+            btn.onclick = () => {
+                window.kategoriAktif = keyKat;
+                renderLiveBracket(dataSheet2, dataSheet3); // Re-render saat diklik
+            };
+            tabWrapper.appendChild(btn);
+        });
+        
+        container.appendChild(tabWrapper);
+
+        // 2. FILTER DATA berdasarkan tab yang dipilih
+        const matchTampil = daftarLombaAktif.find(l => `${l.nama_lomba}-${l.kategori}` === window.kategoriAktif) || daftarLombaAktif[0];
+        
+        titleDisplay.innerText = ` LIVE: ${matchTampil.nama_lomba} (${matchTampil.kategori})`;
+
+        // Filter Sheet 3: HARUS COCOK LOMBA DAN KATEGORI
+        const rekapAktif = dataSheet3.filter(p => 
+            p.lomba === matchTampil.nama_lomba && 
+            (p.kategori === matchTampil.kategori || p.kat === matchTampil.kategori)
+        );
+
+        // ... SISANYA (Looping Babak & Heat) PAKE rekapAktif YANG SUDAH DIFILTER TADI ...
+        // (Gak perlu diubah banyak, tinggal lanjutin kode lo yang lama ke bawah)    
     if (currentMatch) {
         // --- MODE A: TAMPILKAN BRACKET (LOMBA AKTIF) ---
         titleDisplay.innerText = ` LIVE: ${currentMatch.nama_lomba} (${currentMatch.kategori})`;
