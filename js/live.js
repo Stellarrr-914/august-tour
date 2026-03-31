@@ -80,34 +80,29 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
         titleDisplay.innerText = ` LIVE: ${matchTampil.nama_lomba} (${matchTampil.kategori})`;
 
         // FILTER Sheet 3: Harus cocok Lomba DAN Kategori biar gak nyampur!
-        const rekapAktif = dataSheet3.filter(p => 
-            p.lomba === matchTampil.nama_lomba && 
-            (p.kategori === matchTampil.kategori || p.kat === matchTampil.kategori)
-        );
+        // 1. Filter Rekap Hasil (Sheet 3)
+const rekapAktif = dataSheet3.filter(p => 
+    p.lomba === matchTampil.nama_lomba && 
+    p.kategori === matchTampil.kategori 
+);
 
-        const daftarBabak = ["Penyisihan", "Semifinal", "Final"];
+// 2. Filter Babak
+const dataPerBabak = rekapAktif.filter(player => {
+    // Pake status_babak (huruf kecil semua)
+    if (!player.status_babak) return false;
+    const parts = player.status_babak.split(" - ");
+    const babakDiStatus = parts[1] ? parts[1].trim() : parts[0].trim();
+    return babakDiStatus.toLowerCase() === namaBabak.toLowerCase();
+});
 
-        daftarBabak.forEach(namaBabak => {
-            const section = document.createElement("div");
-            section.className = "babak-section";
-            section.innerHTML = `<h2 class="babak-title" style="color:#f1c40f; border-left:4px solid #f1c40f; padding-left:10px; margin-top:20px;">${namaBabak.toUpperCase()}</h2>`;
-
-            const dataPerBabak = rekapAktif.filter(player => {
-                if (!player.status_babak) return false;
-                const parts = player.status_babak.split(" - ");
-                const babakDiStatus = parts[1] ? parts[1].trim() : parts[0].trim();
-                return babakDiStatus.toLowerCase() === namaBabak.toLowerCase();
-            });
-
-            if (dataPerBabak.length === 0) {
-                section.innerHTML += `<p style="text-align:center; color:#666; padding:15px; background:rgba(255,255,255,0.05); border-radius:8px;">Belum ada jadwal ${namaBabak}</p>`;
-            } else {
-                const groupHeat = {};
-                dataPerBabak.forEach(p => {
-                    const noHeat = p.heat || p.nomor_heat || "1";
-                    if (!groupHeat[noHeat]) groupHeat[noHeat] = [];
-                    groupHeat[noHeat].push(p);
-                });
+// 3. Kelompokkan Heat
+const groupHeat = {};
+dataPerBabak.forEach(p => {
+    // Pastiin pake nomor_heat (sesuai header Sheet 3 lo yang dikecilin)
+    const noHeat = p.nomor_heat || "1"; 
+    if (!groupHeat[noHeat]) groupHeat[noHeat] = [];
+    groupHeat[noHeat].push(p);
+});
                 
                 Object.keys(groupHeat).sort((a,b) => a - b).forEach(noHeat => {
                     let htmlHeat = `<div class="heat-wrapper" style="margin-bottom:15px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px;">
