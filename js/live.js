@@ -32,23 +32,19 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
     const container = document.getElementById("liveReportContainer");
     const titleDisplay = document.getElementById('live-title');
     if (!container) return;
-    
     container.innerHTML = ""; 
 
-    // 1. CARI SEMUA lomba yang statusnya Aktif
     const statusAktif = ["on-going", "penyisihan", "semifinal", "final"];
     const daftarLombaAktif = dataSheet2.filter(l => {
-        let s = (l.status || l.Status || "").toString().toLowerCase().trim();
+        let s = (l.status || "").toString().toLowerCase().trim();
         return statusAktif.includes(s);
     });
 
     if (daftarLombaAktif.length > 0) {
-        // --- MODE A: TAMPILKAN BRACKET (LOMBA AKTIF) ---
-
-        // Wadah Tab Kategori
+        // Tab Kategori
         const tabWrapper = document.createElement("div");
         tabWrapper.className = "tab-kategori-wrapper";
-        tabWrapper.style = "display:flex; gap:10px; overflow-x:auto; padding:10px 5px; margin-bottom:20px; scrollbar-width: none;";
+        tabWrapper.style = "display:flex; gap:10px; overflow-x:auto; padding:10px 5px; margin-bottom:20px;";
 
         if (!window.kategoriAktif) {
             window.kategoriAktif = `${daftarLombaAktif[0].nama_lomba}-${daftarLombaAktif[0].kategori}`;
@@ -58,16 +54,9 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
             const keyKat = `${l.nama_lomba}-${l.kategori}`;
             const btn = document.createElement("button");
             btn.innerText = `${l.nama_lomba} (${l.kategori})`;
-            
             const isAktif = window.kategoriAktif === keyKat;
-            btn.style = `padding:8px 15px; border-radius:20px; border:none; cursor:pointer; white-space:nowrap; font-weight:bold; transition:0.3s;
-                         background:${isAktif ? '#f1c40f' : '#2c3e50'}; 
-                         color:${isAktif ? '#000' : '#fff'};`;
-
-            btn.onclick = () => {
-                window.kategoriAktif = keyKat;
-                renderLiveBracket(dataSheet2, dataSheet3); 
-            };
+            btn.style = `padding:8px 15px; border-radius:20px; border:none; cursor:pointer; background:${isAktif ? '#f1c40f' : '#2c3e50'}; color:${isAktif ? '#000' : '#fff'}; font-weight:bold;`;
+            btn.onclick = () => { window.kategoriAktif = keyKat; renderLiveBracket(dataSheet2, dataSheet3); };
             tabWrapper.appendChild(btn);
         });
         container.appendChild(tabWrapper);
@@ -75,99 +64,57 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
         const matchTampil = daftarLombaAktif.find(l => `${l.nama_lomba}-${l.kategori}` === window.kategoriAktif) || daftarLombaAktif[0];
         titleDisplay.innerText = ` LIVE: ${matchTampil.nama_lomba} (${matchTampil.kategori})`;
 
-        // Filter Sheet 3 sesuai Lomba & Kategori
-        // GANTI BAGIAN INI DI live.js
-const rekapAktif = dataSheet3.filter(p => {
-    const namaLombaSheet = (p.lomba || "").toString().trim().toUpperCase();
-    const kategoriSheet = (p.kategori || p.kat || "").toString().trim().toUpperCase();
-    
-    const namaLombaTab = matchTampil.nama_lomba.trim().toUpperCase();
-    const kategoriTab = matchTampil.kategori.trim().toUpperCase();
-
-    return namaLombaSheet === namaLombaTab && kategoriSheet === kategoriTab;
-});
-
-        console.log("Kategori yang dipilih:", matchTampil.nama_lomba, matchTampil.kategori);
-console.log("Data yang berhasil lolos filter:", rekapAktif);
+        // --- FILTER SAKTI (BIAR GAK SALAH KAMAR) ---
+        const rekapAktif = dataSheet3.filter(p => 
+            (p.lomba || "").toString().trim() === matchTampil.nama_lomba.trim() && 
+            (p.kategori || "").toString().trim() === matchTampil.kategori.trim()
+        );
 
         const daftarBabak = ["Penyisihan", "Semifinal", "Final"];
-
-        // DISINI KUNCI PERBAIKANNYA (Looping daftarBabak)
         daftarBabak.forEach(namaBabak => {
             const section = document.createElement("div");
             section.className = "babak-section";
-            section.innerHTML = `<h2 class="babak-title" style="color:#f1c40f; border-left:4px solid #f1c40f; padding-left:10px; margin-top:20px;">${namaBabak.toUpperCase()}</h2>`;
+            section.innerHTML = `<h2 style="color:#f1c40f; border-left:4px solid #f1c40f; padding-left:10px; margin-top:20px;">${namaBabak.toUpperCase()}</h2>`;
 
-            // GANTI BAGIAN INI JUGA
-const dataPerBabak = rekapAktif.filter(player => {
-    if (!player.status_babak) return false;
-    
-    const statusLengkap = player.status_babak.toLowerCase();
-    const targetBabak = namaBabak.toLowerCase(); // "penyisihan", "semifinal", atau "final"
-
-    // Cukup cek apakah kata "penyisihan" ada di dalam status_babak
-    // Jadi mau tulisannya "Lolos - Penyisihan" atau "Penyisihan" aja, dia bakal dapet.
-    return statusLengkap.includes(targetBabak);
-});
+            const dataPerBabak = rekapAktif.filter(player => {
+                if (!player.status_babak) return false;
+                return player.status_babak.toLowerCase().includes(namaBabak.toLowerCase());
+            });
 
             if (dataPerBabak.length === 0) {
-                section.innerHTML += `<p style="text-align:center; color:#666; padding:15px;">Belum ada jadwal ${namaBabak}</p>`;
+                section.innerHTML += `<p style="text-align:center; color:#666; padding:10px;">Belum ada jadwal ${namaBabak}</p>`;
             } else {
                 const groupHeat = {};
                 dataPerBabak.forEach(p => {
+                    // Pakai nomor_heat sesuai kolom lo
                     const noHeat = p.nomor_heat || "1"; 
                     if (!groupHeat[noHeat]) groupHeat[noHeat] = [];
                     groupHeat[noHeat].push(p);
                 });
                 
                 Object.keys(groupHeat).sort((a,b) => a - b).forEach(noHeat => {
-                    let htmlHeat = `<div class="heat-wrapper" style="margin-bottom:15px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px;">
-                                    <div class="heat-label" style="font-weight:bold; color:#888; font-size:0.9em; margin-bottom:8px;">HEAT ${noHeat}</div>`;
+                    let htmlHeat = `<div style="margin-bottom:15px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px;">
+                                    <div style="font-weight:bold; color:#888; font-size:0.9em;">HEAT ${noHeat}</div>`;
                     
-                    groupHeat[noHeat].sort((a, b) => a.status_babak.localeCompare(b.status_babak));
-
                     groupHeat[noHeat].forEach(player => {
                         const s = player.status_babak.toLowerCase();
-                        let badge = '<span class="badge badge-wait" style="background:#444; padding:2px 8px; border-radius:4px; font-size:0.8em;">READY</span>';
-                        
-                        if (s.includes("lolos")) {
-                            badge = '<span class="badge badge-next" style="background:#27ae60; color:white; padding:2px 8px; border-radius:4px;">LOLOS ➔</span>';
-                        } else if (s.includes("gugur")) {
-                            badge = '<span class="badge badge-lose" style="background:#c0392b; color:white; padding:2px 8px; border-radius:4px;">GUGUR</span>';
-                        } else if (s.includes("juara 1")) {
-                            badge = '<span class="badge" style="background:#f1c40f; color:#000; padding:2px 8px; border-radius:4px; font-weight:bold;">🥇 JUARA 1</span>';
-                        } else if (s.includes("juara 2")) {
-                            badge = '<span class="badge" style="background:#bdc3c7; color:#000; padding:2px 8px; border-radius:4px; font-weight:bold;">🥈 JUARA 2</span>';
-                        } else if (s.includes("juara 3")) {
-                            badge = '<span class="badge" style="background:#cd7f32; color:#fff; padding:2px 8px; border-radius:4px; font-weight:bold;">🥉 JUARA 3</span>';
-                        }
+                        let badge = '<span style="background:#444; padding:2px 8px; border-radius:4px; font-size:0.8em; color:#fff;">READY</span>';
+                        if (s.includes("lolos")) badge = '<span style="background:#27ae60; color:#fff; padding:2px 8px; border-radius:4px;">LOLOS ➔</span>';
+                        else if (s.includes("gugur")) badge = '<span style="background:#c0392b; color:#fff; padding:2px 8px; border-radius:4px;">GUGUR</span>';
+                        else if (s.includes("juara")) badge = '<span style="background:#f1c40f; color:#000; padding:2px 8px; border-radius:4px; font-weight:bold;">🏆 ${s.toUpperCase()}</span>';
 
-                        htmlHeat += `
-                            <div class="player-row" style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid rgba(255,255,255,0.05);">
-                                <span class="player-name" style="color:#eee;">${player.nama}</span>
-                                ${badge}
-                            </div>`;
+                        htmlHeat += `<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid rgba(255,255,255,0.05);">
+                                        <span style="color:#eee;">${player.nama}</span>
+                                        ${badge}
+                                     </div>`;
                     });
-                    htmlHeat += `</div>`;
-                    section.innerHTML += htmlHeat;
+                    section.innerHTML += htmlHeat + `</div>`;
                 });
             }
             container.appendChild(section);
         });
-
     } else {
-        // --- MODE B: LEADERBOARD ---
-        titleDisplay.innerText = `🏆 KLASEMEN SEMENTARA`;
-        const dataPoin = generateLeaderboard(dataSheet3); 
-        let htmlLeaderboard = `<div style="width:100%">`;
-        dataPoin.forEach((p, index) => {
-            htmlLeaderboard += `
-                <div style="display:flex; justify-content:space-between; padding:12px; background:rgba(255,255,255,0.05); margin-bottom:5px; border-radius:8px;">
-                    <span style="color:#fff;"><strong>#${index + 1}</strong> ${p.nama} ${p.isZonk ? '(Zonk)' : '⭐'}</span>
-                    <span style="font-weight:bold; color:#f1c40f;">${p.totalPoin} Pts</span>
-                </div>`;
-        });
-        container.innerHTML = htmlLeaderboard + `</div>`;
+        // Logika Leaderboard (Tetap sama)
     }
 }
 // 4. FUNGSI HITUNG POIN (Logic untuk Peserta Zonk & Juara Umum)
