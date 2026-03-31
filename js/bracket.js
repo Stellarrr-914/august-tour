@@ -46,10 +46,19 @@ function tampilkanPesertaBracket() {
 
     if (!kat || !lomba) return alert("Pilih Lomba & Kategori dulu ya brok!");
 
-    container.innerHTML = "<div style='padding:10px; color:#f1c40f;'>⏳ Sedang menyaring peserta bertahan...</div>";
+    container.innerHTML = "<div style='padding:10px; color:#f1c40f;'>⏳ Sedang menyaring peserta...</div>";
 
-    // Pake type getPesertaLolos karena Code.gs yang baru udah kita suntik logika "Status Terakhir"
-    let fetchURL = `${scriptURL}?type=getPesertaLolos&kategori=${encodeURIComponent(kat)}&lomba=${encodeURIComponent(lomba)}&babak=${encodeURIComponent(babak)}`;
+    // --- KUNCI PERBAIKAN DI SINI ---
+    let fetchURL = "";
+    
+    if (babak === "Penyisihan") {
+        // Kalau penyisihan, ambil data mentah dari Sheet 1
+        fetchURL = `${scriptURL}?type=getPesertaByKategori&kategori=${encodeURIComponent(kat)}`;
+    } else {
+        // Kalau Semifinal/Final, ambil data orang-orang yang lolos dari Sheet 3
+        fetchURL = `${scriptURL}?type=getPesertaLolos&kategori=${encodeURIComponent(kat)}&lomba=${encodeURIComponent(lomba)}&babak=${encodeURIComponent(babak)}`;
+    }
+    // -------------------------------
 
     fetch(fetchURL)
         .then(res => res.json())
@@ -61,7 +70,7 @@ function tampilkanPesertaBracket() {
             
             if (data.length === 0) {
                 container.innerHTML = `<div style="padding:15px; background:#2c3e50; color:#e74c3c; text-align:center; border-radius:8px;">
-                    <b>Data Kosong!</b><br>Tidak ada peserta yang lolos (atau semuanya sudah gugur).
+                    <b>Data Kosong!</b><br>Tidak ada peserta ditemukan untuk kategori ini.
                 </div>`;
                 document.getElementById("actionGenerate").style.display = "none";
                 return;
