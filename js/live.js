@@ -35,7 +35,7 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
     
     container.innerHTML = ""; 
 
-    // 1. CARI SEMUA lomba yang statusnya Aktif (bisa lebih dari satu!)
+    // 1. CARI SEMUA lomba yang statusnya Aktif
     const statusAktif = ["on-going", "penyisihan", "semifinal", "final"];
     const daftarLombaAktif = dataSheet2.filter(l => {
         let s = (l.status || l.Status || "").toString().toLowerCase().trim();
@@ -43,144 +43,128 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
     });
 
     if (daftarLombaAktif.length > 0) {
-        // --- MODE BARU: PAKE TAB / FILTER KATEGORI ---
-        
-        // Bikin wadah buat tombol kategori (Tabs)
-        const tabWrapper = document.createElement("div");
-        tabWrapper.className = "tab-kategori-wrapper"; // Kasih CSS flex & overflow-x: auto
-        tabWrapper.style = "display:flex; gap:10px; overflow-x:auto; padding:10px 0; margin-bottom:20px;";
+        // --- MODE A: TAMPILKAN BRACKET (LOMBA AKTIF) ---
 
-        // Ambil kategori pertama buat jadi default yang tampil
+        // Bikin wadah Tab Kategori
+        const tabWrapper = document.createElement("div");
+        tabWrapper.className = "tab-kategori-wrapper";
+        tabWrapper.style = "display:flex; gap:10px; overflow-x:auto; padding:10px 5px; margin-bottom:20px; scrollbar-width: none;";
+
+        // Set default kategori kalau belum ada
         if (!window.kategoriAktif) {
             window.kategoriAktif = `${daftarLombaAktif[0].nama_lomba}-${daftarLombaAktif[0].kategori}`;
         }
 
+        // Render Tombol Tab
         daftarLombaAktif.forEach(l => {
             const keyKat = `${l.nama_lomba}-${l.kategori}`;
             const btn = document.createElement("button");
             btn.innerText = `${l.nama_lomba} (${l.kategori})`;
             
-            // Styling Tombol (Kuning kalau aktif, Gelap kalau nggak)
             const isAktif = window.kategoriAktif === keyKat;
-            btn.style = `padding:8px 15px; border-radius:20px; border:none; cursor:pointer; white-space:nowrap; font-weight:bold; 
+            btn.style = `padding:8px 15px; border-radius:20px; border:none; cursor:pointer; white-space:nowrap; font-weight:bold; transition:0.3s;
                          background:${isAktif ? '#f1c40f' : '#2c3e50'}; 
-                         color:${isAktif ? '#000' : '#fff'};`;
+                         color:${isAktif ? '#000' : '#fff'}; 
+                         box-shadow: ${isAktif ? '0 0 10px rgba(241, 196, 15, 0.5)' : 'none'};`;
 
             btn.onclick = () => {
                 window.kategoriAktif = keyKat;
-                renderLiveBracket(dataSheet2, dataSheet3); // Re-render saat diklik
+                renderLiveBracket(dataSheet2, dataSheet3); 
             };
             tabWrapper.appendChild(btn);
         });
-        
         container.appendChild(tabWrapper);
 
-        // 2. FILTER DATA berdasarkan tab yang dipilih
+        // Cari data yang mau ditampilkan sesuai Tab yang dipilih
         const matchTampil = daftarLombaAktif.find(l => `${l.nama_lomba}-${l.kategori}` === window.kategoriAktif) || daftarLombaAktif[0];
-        
         titleDisplay.innerText = ` LIVE: ${matchTampil.nama_lomba} (${matchTampil.kategori})`;
 
-        // Filter Sheet 3: HARUS COCOK LOMBA DAN KATEGORI
+        // FILTER Sheet 3: Harus cocok Lomba DAN Kategori biar gak nyampur!
         const rekapAktif = dataSheet3.filter(p => 
             p.lomba === matchTampil.nama_lomba && 
             (p.kategori === matchTampil.kategori || p.kat === matchTampil.kategori)
         );
-
-        // ... SISANYA (Looping Babak & Heat) PAKE rekapAktif YANG SUDAH DIFILTER TADI ...
-        // (Gak perlu diubah banyak, tinggal lanjutin kode lo yang lama ke bawah)    
-    if (currentMatch) {
-        // --- MODE A: TAMPILKAN BRACKET (LOMBA AKTIF) ---
-        titleDisplay.innerText = ` LIVE: ${currentMatch.nama_lomba} (${currentMatch.kategori})`;
-        
-        // Filter data Sheet 3 hanya untuk lomba yang sedang jalan
-        const rekapAktif = dataSheet3.filter(p => p.lomba === currentMatch.nama_lomba);
 
         const daftarBabak = ["Penyisihan", "Semifinal", "Final"];
 
         daftarBabak.forEach(namaBabak => {
             const section = document.createElement("div");
             section.className = "babak-section";
-            section.innerHTML = `<h2 class="babak-title">${namaBabak.toUpperCase()}</h2>`;
+            section.innerHTML = `<h2 class="babak-title" style="color:#f1c40f; border-left:4px solid #f1c40f; padding-left:10px; margin-top:20px;">${namaBabak.toUpperCase()}</h2>`;
 
             const dataPerBabak = rekapAktif.filter(player => {
                 if (!player.status_babak) return false;
-                // Pecah status (Misal: "Lolos - Semifinal")
                 const parts = player.status_babak.split(" - ");
-                const babakDiStatus = parts[1] ? parts[1].trim() : "";
+                const babakDiStatus = parts[1] ? parts[1].trim() : parts[0].trim();
                 return babakDiStatus.toLowerCase() === namaBabak.toLowerCase();
             });
 
             if (dataPerBabak.length === 0) {
-                section.innerHTML += `<p style="text-align:center; color:#999; padding:20px;">Belum ada jadwal ${namaBabak}</p>`;
+                section.innerHTML += `<p style="text-align:center; color:#666; padding:15px; background:rgba(255,255,255,0.05); border-radius:8px;">Belum ada jadwal ${namaBabak}</p>`;
             } else {
                 const groupHeat = {};
                 dataPerBabak.forEach(p => {
-                    const noHeat = p.nomor_heat || "1";
+                    const noHeat = p.heat || p.nomor_heat || "1";
                     if (!groupHeat[noHeat]) groupHeat[noHeat] = [];
                     groupHeat[noHeat].push(p);
                 });
                 
-                Object.keys(groupHeat).sort().forEach(noHeat => {
-    let htmlHeat = `<div class="heat-wrapper">
-                    <div class="heat-label">HEAT ${noHeat}</div>`;
-    
-    // Sortir biar yang Lolos/Juara ada di atas
-    groupHeat[noHeat].sort((a, b) => a.status_babak.localeCompare(b.status_babak));
+                Object.keys(groupHeat).sort((a,b) => a - b).forEach(noHeat => {
+                    let htmlHeat = `<div class="heat-wrapper" style="margin-bottom:15px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px;">
+                                    <div class="heat-label" style="font-weight:bold; color:#888; font-size:0.9em; margin-bottom:8px;">HEAT ${noHeat}</div>`;
+                    
+                    // Sortir biar yang Lolos/Juara ada di atas
+                    groupHeat[noHeat].sort((a, b) => a.status_babak.localeCompare(b.status_babak));
 
-    groupHeat[noHeat].forEach(player => {
-        const s = player.status_babak.toLowerCase();
-        let badge = '<span class="badge badge-wait">READY</span>';
-        let rowClass = "";
+                    groupHeat[noHeat].forEach(player => {
+                        const s = player.status_babak.toLowerCase();
+                        let badge = '<span class="badge badge-wait" style="background:#444; padding:2px 8px; border-radius:4px; font-size:0.8em;">READY</span>';
+                        
+                        if (s.includes("lolos")) {
+                            badge = '<span class="badge badge-next" style="background:#27ae60; color:white; padding:2px 8px; border-radius:4px; font-size:0.8em;">LOLOS ➔</span>';
+                        } else if (s.includes("gugur")) {
+                            badge = '<span class="badge badge-lose" style="background:#c0392b; color:white; padding:2px 8px; border-radius:4px; font-size:0.8em;">GUGUR</span>';
+                        } else if (s.includes("juara 1")) {
+                            badge = '<span class="badge" style="background:#f1c40f; color:#000; padding:2px 8px; border-radius:4px; font-size:0.8em; font-weight:bold;">🥇 JUARA 1</span>';
+                        } else if (s.includes("juara 2")) {
+                            badge = '<span class="badge" style="background:#bdc3c7; color:#000; padding:2px 8px; border-radius:4px; font-size:0.8em; font-weight:bold;">🥈 JUARA 2</span>';
+                        } else if (s.includes("juara 3")) {
+                            badge = '<span class="badge" style="background:#cd7f32; color:#fff; padding:2px 8px; border-radius:4px; font-size:0.8em; font-weight:bold;">🥉 JUARA 3</span>';
+                        }
 
-        // Logika Badge & Styling Baris
-        if (s.includes("lolos")) {
-            badge = '<span class="badge badge-next">LOLOS ➔</span>';
-        } else if (s.includes("gugur")) {
-            badge = '<span class="badge badge-lose">GUGUR</span>';
-        } else if (s.includes("juara 1")) {
-            badge = '<span class="badge" style="background:#f1c40f; color:#000; box-shadow: 0 0 10px #f1c40f;">🥇 JUARA 1</span>';
-        } else if (s.includes("juara 2")) {
-            badge = '<span class="badge" style="background:#bdc3c7; color:#000;">🥈 JUARA 2</span>';
-        } else if (s.includes("juara 3")) {
-            badge = '<span class="badge" style="background:#cd7f32; color:#fff;">🥉 JUARA 3</span>';
-        }
-
-        htmlHeat += `
-            <div class="player-row ${rowClass}">
-                <span class="player-name">${player.nama}</span>
-                ${badge}
-            </div>`;
-    });
-    htmlHeat += `</div>`;
-    section.innerHTML += htmlHeat;
-});
+                        htmlHeat += `
+                            <div class="player-row" style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid rgba(255,255,255,0.05);">
+                                <span class="player-name" style="color:#eee;">${player.nama}</span>
+                                ${badge}
+                            </div>`;
+                    });
+                    htmlHeat += `</div>`;
+                    section.innerHTML += htmlHeat;
+                });
             }
             container.appendChild(section);
         });
 
     } else {
-        // --- MODE B: TAMPILKAN LEADERBOARD (ISTIRAHAT / SEMUA FINISHED) ---
-        titleDisplay.innerText = `🏆 KLASEMEN SEMENTARA & PESERTA ZONK`;
-        
+        // --- MODE B: TAMPILKAN LEADERBOARD (KLASEMEN) ---
+        titleDisplay.innerText = `🏆 KLASEMEN SEMENTARA`;
         const dataPoin = generateLeaderboard(dataSheet3); 
         
         let htmlLeaderboard = `<div class="leaderboard-table" style="width:100%">`;
         dataPoin.forEach((p, index) => {
             const rank = index + 1;
-            // Peserta Zonk adalah yang poinnya ada tapi gak pernah juara
-            const statusZonk = p.isZonk ? '<span style="color:#888; font-size:12px;">(Zonk)</span>' : '⭐';
+            const statusZonk = p.isZonk ? '<span style="color:#666; font-size:12px;">(Zonk)</span>' : '⭐';
             
             htmlLeaderboard += `
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid #eee; background:white; margin-bottom:5px; border-radius:8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                    <span><strong>#${rank}</strong> ${p.nama} ${statusZonk}</span>
-                    <span style="font-weight:bold; color:#2c3e50;">${p.totalPoin} Poin</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid #333; background:rgba(255,255,255,0.05); margin-bottom:5px; border-radius:8px;">
+                    <span style="color:#fff;"><strong>#${rank}</strong> ${p.nama} ${statusZonk}</span>
+                    <span style="font-weight:bold; color:#f1c40f;">${p.totalPoin} Pts</span>
                 </div>`;
         });
         htmlLeaderboard += `</div>`;
         container.innerHTML = htmlLeaderboard;
     }
 }
-
 // 4. FUNGSI HITUNG POIN (Logic untuk Peserta Zonk & Juara Umum)
 function generateLeaderboard(rekapHasil) {
     let leaderboard = {};
