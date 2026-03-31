@@ -115,6 +115,17 @@ function renderLiveBracket(dataSheet2, dataSheet3) {
         });
     } else {
         // Logika Leaderboard (Tetap sama)
+        titleDisplay.innerText = `🏆 KLASEMEN SEMENTARA`;
+        const dataPoin = generateLeaderboard(dataSheet3); 
+        let htmlLeaderboard = `<div style="width:100%">`;
+        dataPoin.forEach((p, index) => {
+            htmlLeaderboard += `
+                <div style="display:flex; justify-content:space-between; padding:12px; background:rgba(255,255,255,0.05); margin-bottom:5px; border-radius:8px;">
+                    <span style="color:#fff;"><strong>#${index + 1}</strong> ${p.nama} ${p.isZonk ? '(Zonk)' : '⭐'}</span>
+                    <span style="font-weight:bold; color:#f1c40f;">${p.totalPoin} Pts</span>
+                </div>`;
+        });
+        container.innerHTML = htmlLeaderboard + `</div>`;
     }
 }
 // 4. FUNGSI HITUNG POIN (Logic untuk Peserta Zonk & Juara Umum)
