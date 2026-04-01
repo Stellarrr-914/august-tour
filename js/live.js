@@ -22,7 +22,7 @@ function renderLiveBracket() {
     if (!container) return;
 
     // Filter lomba yang statusnya aktif saja
-    const statusAktif = ["on-going", "penyisihan", "semifinal", "final", "aktif", "open"];
+    const statusAktif = ["on-going"];
     const daftarLombaAktif = dataSheet2.filter(l => {
         let s = (l.status || "").toString().toLowerCase().trim();
         return statusAktif.includes(s);
@@ -127,6 +127,46 @@ function renderLiveBracket() {
             container.appendChild(babakDiv);
         }
     });
+
+    // --- BAGIAN REKAP JUARA (HALL OF FAME) ---
+const dataJuara = rekapAktif.filter(p => {
+    let stat = String(p.status_babak || "").toLowerCase();
+    return stat.includes("juara");
+}).sort((a, b) => {
+    // Urutin dari Juara 1, 2, baru 3
+    return a.status_babak.localeCompare(b.status_babak);
+});
+
+if (dataJuara.length > 0) {
+    const juaraDiv = document.createElement("div");
+    juaraDiv.className = "juara-section";
+    juaraDiv.innerHTML = `
+        <div class="juara-header">
+            <span class="icon">🏆</span>
+            <h2>PODIUM PEMENANG</h2>
+            <span class="icon">🏆</span>
+        </div>
+        <div class="juara-grid"></div>
+    `;
+
+    const gridJuara = juaraDiv.querySelector(".juara-grid");
+
+    dataJuara.forEach(p => {
+        const item = document.createElement("div");
+        item.className = "juara-card";
+        
+        // Ambil label juara (misal: "Juara 1" dari "Juara 1 - Lolos")
+        const labelJuara = p.status_babak.split('-')[0].trim().toUpperCase();
+        
+        item.innerHTML = `
+            <div class="juara-badge">${labelJuara}</div>
+            <div class="juara-name">${p.nama}</div>
+        `;
+        gridJuara.appendChild(item);
+    });
+
+    container.appendChild(juaraDiv);
+}
 }
 
 fetchLiveReport();
