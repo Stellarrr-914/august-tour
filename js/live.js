@@ -128,36 +128,50 @@ function renderLiveBracket() {
         }
     });
 
-    // --- BAGIAN REKAP JUARA GLOBAL (ALL IN ONE) ---
+    // --- REKAP JUARA PER KATEGORI (BOX EDITION) ---
 const semuaJuara = dataSheet3.filter(p => 
-    String(p.status_babak).toLowerCase().includes("juara")
+    String(p.status_babak || "").toLowerCase().includes("juara")
 );
 
 if (semuaJuara.length > 0) {
-    const globalJuaraDiv = document.createElement("div");
-    globalJuaraDiv.className = "global-juara-container";
-    globalJuaraDiv.innerHTML = `
-        <div class="global-juara-header">
-            <span class="emoji">🏆</span>
-            <h2>DAFTAR PEMENANG TURNAMEN</h2>
-            <span class="emoji">🏆</span>
-        </div>
-        <div class="global-juara-grid"></div>
-    `;
+    const sectionJuara = document.createElement("div");
+    sectionJuara.className = "hall-of-fame-wrapper";
+    sectionJuara.innerHTML = `<h1 class="main-title-juara">🏆 REKAP PEMENANG 🏆</h1>`;
 
-    const grid = globalJuaraDiv.querySelector(".global-juara-grid");
-
+    // Grouping data berdasarkan Lomba + Kategori
+    const groupedJuara = {};
     semuaJuara.forEach(j => {
-        grid.innerHTML += `
-            <div class="global-juara-card">
-                <div class="lomba-tag">${j.lomba} (${j.kategori})</div>
-                <div class="rank-tag">${j.status_babak.toUpperCase()}</div>
-                <div class="winner-name">${j.nama}</div>
-            </div>
-        `;
+        const key = `${j.lomba} - ${j.kategori}`;
+        if (!groupedJuara[key]) groupedJuara[key] = [];
+        groupedJuara[key].push(j);
     });
 
-    container.appendChild(globalJuaraDiv);
+    const gridUtama = document.createElement("div");
+    gridUtama.className = "hall-of-fame-grid";
+
+    // Bikin kotak untuk setiap Lomba & Kategori
+    Object.keys(groupedJuara).forEach(lombaKat => {
+        let htmlBox = `
+            <div class="box-juara">
+                <div class="box-header">${lombaKat.toUpperCase()}</div>
+                <div class="box-body">`;
+        
+        // Urutin biar Juara 1 paling atas
+        groupedJuara[lombaKat].sort((a, b) => a.status_babak.localeCompare(b.status_babak)).forEach(p => {
+            const rank = p.status_babak.split('-')[0].trim().toUpperCase();
+            htmlBox += `
+                <div class="winner-row">
+                    <span class="winner-rank">${rank}</span>
+                    <span class="winner-name">${p.nama}</span>
+                </div>`;
+        });
+
+        htmlBox += `</div></div>`;
+        gridUtama.innerHTML += htmlBox;
+    });
+
+    sectionJuara.appendChild(gridUtama);
+    container.appendChild(sectionJuara);
 }
 }
 
