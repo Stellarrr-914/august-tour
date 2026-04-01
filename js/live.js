@@ -29,7 +29,7 @@ function renderLiveBracket() {
     });
 
     if (daftarLombaAktif.length === 0) {
-        container.innerHTML = "<p style='text-align:center; color:#888;'>Tidak ada lomba yang sedang berlangsung.</p>";
+        renderLeaderboard(container, titleDisplay);
         return;
     }
 
