@@ -60,16 +60,22 @@ function renderLiveBracket() {
 
     // --- FILTER DATA ---
     // --- FILTER DATA ---
-    const rekapAktif = dataSheet3.filter(p => {
-        // Paksa jadi String pake String(...) biar nggak error kalo isinya Angka
-        const lS3 = String(p.lomba || "").toLowerCase().trim();
-        const kS3 = String(p.kategori || "").toLowerCase().trim();
-        
-        const lT = String(matchTampil.nama_lomba || "").toLowerCase().trim();
-        const kT = String(matchTampil.kategori || "").toLowerCase().trim();
-        
-        return lS3 === lT && kS3 === kT;
-    });
+    // GANTI BAGIAN FILTER DI live.js DENGAN INI
+const rekapAktif = dataSheet3.filter(p => {
+    const lS3 = String(p.lomba || "").toLowerCase().trim();
+    const kS3 = String(p.kategori || "").toLowerCase().trim();
+    const lT = String(matchTampil.nama_lomba || "").toLowerCase().trim();
+    const kT = String(matchTampil.kategori || "").toLowerCase().trim();
+
+    // MATA-MATA: Kita liat perbandingan satu-satu di console
+    if (lS3.includes(lT.substring(0,3))) { // Cek kalo ada kemiripan dikit aja
+        console.log("--- PERBANDINGAN DATA ---");
+        console.log(`Lomba: "${lS3}" vs "${lT}" -> ${lS3 === lT}`);
+        console.log(`Kategori: "${kS3}" vs "${kT}" -> ${kS3 === kT}`);
+    }
+
+    return lS3 === lT && kS3 === kT;
+});
 
     // Tambahin ini di live.js buat ngecek
 console.log("Tombol yang diklik:", matchTampil.nama_lomba, matchTampil.kategori);
