@@ -105,3 +105,28 @@ body {
     50% { opacity: 0.3; }
     100% { opacity: 1; }
 }
+
+.tab-wrapper {
+    scrollbar-width: none; /* Hilangin scrollbar di Firefox */
+}
+.tab-wrapper::-webkit-scrollbar {
+    display: none; /* Hilangin scrollbar di Chrome */
+}
+
+.tab-btn {
+    background: #1e293b;
+    color: #94a3b8;
+    border: 1px solid #334155;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: 600;
+}
+
+.tab-btn.active {
+    background: #e74c3c;
+    color: white;
+    border-color: #e74c3c;
+    box-shadow: 0 0 10px rgba(231, 76, 60, 0.4);
+}
