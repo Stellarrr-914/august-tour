@@ -77,7 +77,13 @@ console.log("Isi Sheet 3 yang ditarik:", dataSheet3);
 console.log("Hasil Filter (Cocok):", rekapAktif.length);
 
     ["Penyisihan", "Semifinal", "Final"].forEach(namaBabak => {
-        const dataPerBabak = rekapAktif.filter(p => (p.status_babak || "").toLowerCase().includes(namaBabak.toLowerCase()));
+        // Ganti baris filter babak lo jadi gini biar lebih fleksibel
+const dataPerBabak = rekapAktif.filter(p => {
+    let stat = String(p.status_babak || "").toLowerCase();
+    let target = namaBabak.toLowerCase();
+    return stat.indexOf(target) !== -1; // Cara lama tapi paling ampuh buat nyari teks
+});
+        console.log(`Cek Babak ${namaBabak}:`, dataPerBabak.length, "orang"); // <--- TAMBAHIN LOG INI
 
         if (dataPerBabak.length > 0) {
             const babakDiv = document.createElement("div");
