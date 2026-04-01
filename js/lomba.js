@@ -69,29 +69,25 @@ function tampilLomba() {
 
     tabel.innerHTML = "";
     
-    for (const namaLomba in databaseLomba) {
-        const lomba = databaseLomba[namaLomba];
-        
-        // Tentukan class warna berdasarkan status
-        let statusClass = "status-open"; 
-        if (lomba.status === "On-Going") statusClass = "status-ongoing";
-        if (lomba.status === "Selesai") statusClass = "status-selesai";
+    // Di lomba.js (Fungsi tampilLomba)
+for (const key in databaseLomba) {
+    const lomba = databaseLomba[key];
+    const namaTampil = lomba.nama || key; // Ambil properti nama
 
-        tabel.innerHTML += `
-        <tr>
-            <td style="font-weight:bold; color:var(--secondary);">${namaLomba}</td>
-            <td><span class="badge-kat">${lomba.kategori}</span></td>
-            <td>
-                <select class="status-select ${statusClass}" 
-                    onchange="updateStatusLomba('${namaLomba}', '${lomba.kategori}', this.value)">
-                    <option value="Open" ${lomba.status === 'Open' ? 'selected' : ''}>Open</option>
-                    <option value="On-Going" ${lomba.status === 'On-Going' ? 'selected' : ''}>On-Going</option>
-                    <option value="Selesai" ${lomba.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
-                </select>
-            </td>
-        </tr>
-        `;
-    }
+    tabel.innerHTML += `
+    <tr>
+        <td style="font-weight:bold;">${namaTampil}</td>
+        <td><span class="badge-kat">${lomba.kategori}</span></td>
+        <td>
+            <select class="status-select" 
+                onchange="updateStatusLomba('${key}', '${lomba.kategori}', this.value)">
+                <option value="Open" ${lomba.status === 'Open' ? 'selected' : ''}>Open</option>
+                <option value="On-Going" ${lomba.status === 'On-Going' ? 'selected' : ''}>On-Going</option>
+                <option value="Selesai" ${lomba.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+            </select>
+        </td>
+    </tr>`;
+}
 }
 
 // 3. Update Status (Auto Color Change)
