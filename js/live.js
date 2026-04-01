@@ -177,3 +177,4 @@ if (semuaJuara.length > 0) {
 
 fetchLiveReport();
 setInterval(fetchLiveReport, 10000);
+
