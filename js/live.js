@@ -59,11 +59,15 @@ function renderLiveBracket() {
     titleDisplay.innerText = `LIVE: ${matchTampil.nama_lomba} (${matchTampil.kategori})`;
 
     // --- FILTER DATA ---
+    // --- FILTER DATA ---
     const rekapAktif = dataSheet3.filter(p => {
-        const lS3 = (p.lomba || "").toLowerCase().trim();
-        const kS3 = (p.kategori || "").toLowerCase().trim();
-        const lT = (matchTampil.nama_lomba || "").toLowerCase().trim();
-        const kT = (matchTampil.kategori || "").toLowerCase().trim();
+        // Paksa jadi String pake String(...) biar nggak error kalo isinya Angka
+        const lS3 = String(p.lomba || "").toLowerCase().trim();
+        const kS3 = String(p.kategori || "").toLowerCase().trim();
+        
+        const lT = String(matchTampil.nama_lomba || "").toLowerCase().trim();
+        const kT = String(matchTampil.kategori || "").toLowerCase().trim();
+        
         return lS3 === lT && kS3 === kT;
     });
 
