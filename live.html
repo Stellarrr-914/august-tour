@@ -7,28 +7,18 @@
 <link rel="stylesheet" href="css/live-style.css">
 </head>
 <body>
+    <div class="nav-back-container">
+    <a href="index.html" class="btn-back-home">
+        <span class="icon">🔙</span> Kembali ke Login Page
+    </a>
+</div>
+    
     <div class="container">
         <h1><span class="live-indicator"></span>🏆 Live Report Tournament</h1>
         <h1 id="live-title">Memuat Data...</h1>
         <div id="liveReportContainer"></div>
         </div>
     </div>
-
-    <div class="nav-menu">
-    <button onclick="showRekapJuara()" class="btn-nav">🏆 Rekap Juara</button>
-    <button onclick="window.close()" class="btn-nav btn-exit">🚪 Keluar</button>
-</div>
-
-<div id="rekapModal" class="modal-overlay" style="display:none;">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>🏆 HALL OF FAME - DAFTAR JUARA</h2>
-            <button onclick="closeRekapJuara()" class="btn-close">×</button>
-        </div>
-        <div id="rekapList" class="modal-body">
-            </div>
-    </div>
-</div>
 
     <script src="js/live.js"></script>
 
