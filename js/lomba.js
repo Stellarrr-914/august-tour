@@ -100,31 +100,37 @@ function tampilLomba() {
         `;
     }
 }
-// 3. Update Status (Auto Color Change)
-async function updateStatusLomba(namaLomba, kategori, statusBaru) {
+async function updateStatusLomba(keyUnik, kategori, statusBaru) {
     try {
-        // Efek loading simpel (biar admin tau lagi proses)
-        console.log(`Updating ${namaLomba} to ${statusBaru}...`);
+        // 1. Ambil Nama Lomba Asli (Tanpa tambahan kategori)
+        // Kalau keyUnik = "Mewarnai-Kat 1", namaAslinya = "Mewarnai"
+        const dataLomba = databaseLomba[keyUnik];
+        const namaLombaAsli = dataLomba.namaAsli || keyUnik.split('-')[0];
 
+        console.log(`Updating ${namaLombaAsli} (${kategori}) to ${statusBaru}...`);
+
+        // 2. Gunakan URLSearchParams (Format yang disukai Google Apps Script)
+        const params = new URLSearchParams();
+        params.append("type", "updateStatus");
+        params.append("namaLomba", namaLombaAsli);
+        params.append("kategoriLomba", kategori);
+        params.append("statusBaru", statusBaru);
+
+        // 3. Kirim ke Cloud (HAPUS mode: "no-cors")
         await fetch(urlAPILomba, {
             method: "POST",
-            mode: "no-cors",
-            body: JSON.stringify({
-                type: "updateStatus",
-                namaLomba: namaLomba,
-                kategoriLomba: kategori,
-                statusBaru: statusBaru
-            })
+            body: params // GAS bakal nerima ini di 'e.parameter'
         });
 
-        // Update Lokal & Storage
-        if (databaseLomba[namaLomba]) {
-            databaseLomba[namaLomba].status = statusBaru;
+        // 4. Update Lokal (Pake keyUnik biar gak salah sasaran)
+        if (databaseLomba[keyUnik]) {
+            databaseLomba[keyUnik].status = statusBaru;
             localStorage.setItem("databaseLomba", JSON.stringify(databaseLomba));
         }
 
-        // Refresh tabel biar warna select-nya langsung berubah
+        // 5. Refresh tampilan biar warna dropdown langsung berubah
         tampilLomba(); 
+        console.log("Sinkronisasi Cloud Berhasil (Status Sent)");
         
     } catch (error) {
         console.error("Gagal update status:", error);
