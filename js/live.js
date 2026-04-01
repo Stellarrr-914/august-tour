@@ -71,6 +71,11 @@ function renderLiveBracket() {
         return lS3 === lT && kS3 === kT;
     });
 
+    // Tambahin ini di live.js buat ngecek
+console.log("Tombol yang diklik:", matchTampil.nama_lomba, matchTampil.kategori);
+console.log("Isi Sheet 3 yang ditarik:", dataSheet3);
+console.log("Hasil Filter (Cocok):", rekapAktif.length);
+
     ["Penyisihan", "Semifinal", "Final"].forEach(namaBabak => {
         const dataPerBabak = rekapAktif.filter(p => (p.status_babak || "").toLowerCase().includes(namaBabak.toLowerCase()));
 
