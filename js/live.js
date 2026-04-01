@@ -175,6 +175,83 @@ if (semuaJuara.length > 0) {
 }
 }
 
+function renderLeaderboard(container, title) {
+    title.innerHTML = `🏆 KLASEMEN POIN TERTINGGI`;
+    container.innerHTML = ""; 
+
+    const poinPerOrang = {};
+    const statusJuara = {}; // Untuk nandain siapa yang udah dapet podium 1, 2, atau 3
+
+    dataSheet3.forEach(p => {
+        const nama = p.nama;
+        const status = (p.status_babak || "").toLowerCase();
+        
+        if (!poinPerOrang[nama]) {
+            poinPerOrang[nama] = 0;
+            statusJuara[nama] = false;
+        }
+
+        // --- LOGIKA POIN BERJENJANG ---
+        // 1. Poin Lolos (Makin tinggi babak, makin mahal)
+        if (status.includes("lolos")) {
+            if (status.includes("penyisihan")) poinPerOrang[nama] += 20;
+            else if (status.includes("semifinal")) poinPerOrang[nama] += 50;
+            else if (status.includes("final")) poinPerOrang[nama] += 100;
+        }
+
+        // 2. Poin Juara (Podium 1, 2, 3)
+        if (status.includes("juara")) {
+            statusJuara[nama] = true; // Tandai sebagai pemenang podium
+            if (status.includes("juara 1")) poinPerOrang[nama] += 500;
+            else if (status.includes("juara 2")) poinPerOrang[nama] += 300;
+            else if (status.includes("juara 3")) poinPerOrang[nama] += 150;
+        }
+    });
+
+    // Sort data
+    const sortedData = Object.keys(poinPerOrang)
+        .map(nama => ({
+            nama: nama,
+            poin: poinPerOrang[nama],
+            isWinner: statusJuara[nama]
+        }))
+        .filter(item => item.poin > 0)
+        .sort((a, b) => b.poin - a.poin);
+
+    // --- RENDER TABEL ---
+    let html = `
+        <div class="leaderboard-container">
+            <table class="lboard-table">
+                <thead>
+                    <tr>
+                        <th>RANK</th>
+                        <th>NAMA</th>
+                        <th>STATUS</th>
+                        <th>POIN</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    sortedData.forEach((item, index) => {
+        // Kasih class khusus 'row-winner' kalau dia pernah juara 1, 2, atau 3
+        const rowClass = item.isWinner ? "row-winner" : "";
+        const label = item.isWinner ? "🏅 PODIUM" : "🔥 ACTIVE";
+        
+        html += `
+            <tr class="${rowClass}">
+                <td>${index + 1}</td>
+                <td class="name-cell">${item.nama}</td>
+                <td><span class="status-tag">${label}</span></td>
+                <td class="points-cell">${item.poin}</td>
+            </tr>
+        `;
+    });
+
+    html += `</tbody></table></div>`;
+    container.innerHTML = html;
+}
+
 fetchLiveReport();
 setInterval(fetchLiveReport, 10000);
 
