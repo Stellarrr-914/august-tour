@@ -131,61 +131,69 @@ body {
     box-shadow: 0 0 10px rgba(231, 76, 60, 0.4);
 }
 
-.global-juara-container {
-    margin-top: 80px;
-    padding: 30px;
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    border: 3px solid var(--accent);
-    border-radius: 25px;
+/* Container Utama Hall of Fame */
+.hall-of-fame-wrapper {
+    margin-top: 100px;
     width: 100%;
-}
-
-.global-juara-header {
     text-align: center;
-    margin-bottom: 30px;
 }
 
-.global-juara-header h2 {
+.main-title-juara {
+    font-size: 2.5rem;
     color: var(--accent);
-    text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
-    letter-spacing: 2px;
+    margin-bottom: 40px;
+    text-shadow: 0 0 15px rgba(241, 196, 15, 0.5);
 }
 
-.global-juara-grid {
+/* Grid buat kotak-kotak lomba */
+.hall-of-fame-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.global-juara-card {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
     padding: 20px;
+}
+
+/* Kotak per Lomba */
+.box-juara {
+    background: #1e293b;
+    border: 3px solid var(--accent);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.box-header {
+    background: var(--accent);
+    color: #000;
+    padding: 15px;
+    font-weight: 900;
+    font-size: 1.4rem; /* Tulisan Lomba Gede */
     text-align: center;
-    border: 1px solid rgba(241, 196, 15, 0.3);
-    transition: 0.3s;
 }
 
-.global-juara-card:hover {
-    transform: scale(1.05);
-    background: rgba(241, 196, 15, 0.1);
+.box-body {
+    padding: 20px;
 }
 
-.lomba-tag {
-    font-size: 12px;
-    color: var(--text-dim);
-    margin-bottom: 5px;
+/* Baris Nama Juara */
+.winner-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-.rank-tag {
-    color: var(--accent);
+.winner-row:last-child { border-bottom: none; }
+
+.winner-rank {
     font-weight: 800;
-    font-size: 18px;
-    margin-bottom: 10px;
+    color: var(--accent);
+    font-size: 1.1rem;
 }
 
 .winner-name {
-    font-size: 20px;
+    font-size: 1.3rem; /* Nama pemenang juga gede */
     font-weight: bold;
     color: #fff;
 }
