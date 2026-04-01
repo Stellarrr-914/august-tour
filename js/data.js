@@ -52,20 +52,24 @@ async function loadLombaFromSheet() {
         // Kosongkan dulu biar gak double pas di-load ulang
         databaseLomba = {}; 
 
-        for (let i = 1; i < rows.length; i++) {
-            const cols = rows[i].split(",");
-            if (cols.length < 3) continue;
+        // Di data.js
+for (let i = 1; i < rows.length; i++) {
+    const cols = rows[i].split(",");
+    if (cols.length < 3) continue;
 
-            const namaLomba = cols[0].trim();
-            const kategori = cols[1].trim();
-            const status = cols[2].trim();
+    const namaLomba = cols[0].trim();
+    const kategori = cols[1].trim();
+    const status = cols[2].trim();
 
-            databaseLomba[namaLomba] = {
-                kategori: kategori,
-                status: status,
-                peserta: []
-            };
-        }
+    // PAKAI KEY UNIK GABUNGAN
+    const keyUnik = `${namaLomba}-${kategori}`; 
+
+    databaseLomba[keyUnik] = {
+        nama: namaLomba, // Simpan nama asli buat tampilan
+        kategori: kategori,
+        status: status
+    };
+}
         
         console.log("Data Lomba ter-update:", databaseLomba);
         
