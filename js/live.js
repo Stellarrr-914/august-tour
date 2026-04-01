@@ -128,44 +128,36 @@ function renderLiveBracket() {
         }
     });
 
-    // --- BAGIAN REKAP JUARA (HALL OF FAME) ---
-const dataJuara = rekapAktif.filter(p => {
-    let stat = String(p.status_babak || "").toLowerCase();
-    return stat.includes("juara");
-}).sort((a, b) => {
-    // Urutin dari Juara 1, 2, baru 3
-    return a.status_babak.localeCompare(b.status_babak);
-});
+    // --- BAGIAN REKAP JUARA GLOBAL (ALL IN ONE) ---
+const semuaJuara = dataSheet3.filter(p => 
+    String(p.status_babak).toLowerCase().includes("juara")
+);
 
-if (dataJuara.length > 0) {
-    const juaraDiv = document.createElement("div");
-    juaraDiv.className = "juara-section";
-    juaraDiv.innerHTML = `
-        <div class="juara-header">
-            <span class="icon">🏆</span>
-            <h2>PODIUM PEMENANG</h2>
-            <span class="icon">🏆</span>
+if (semuaJuara.length > 0) {
+    const globalJuaraDiv = document.createElement("div");
+    globalJuaraDiv.className = "global-juara-container";
+    globalJuaraDiv.innerHTML = `
+        <div class="global-juara-header">
+            <span class="emoji">🏆</span>
+            <h2>DAFTAR PEMENANG TURNAMEN</h2>
+            <span class="emoji">🏆</span>
         </div>
-        <div class="juara-grid"></div>
+        <div class="global-juara-grid"></div>
     `;
 
-    const gridJuara = juaraDiv.querySelector(".juara-grid");
+    const grid = globalJuaraDiv.querySelector(".global-juara-grid");
 
-    dataJuara.forEach(p => {
-        const item = document.createElement("div");
-        item.className = "juara-card";
-        
-        // Ambil label juara (misal: "Juara 1" dari "Juara 1 - Lolos")
-        const labelJuara = p.status_babak.split('-')[0].trim().toUpperCase();
-        
-        item.innerHTML = `
-            <div class="juara-badge">${labelJuara}</div>
-            <div class="juara-name">${p.nama}</div>
+    semuaJuara.forEach(j => {
+        grid.innerHTML += `
+            <div class="global-juara-card">
+                <div class="lomba-tag">${j.lomba} (${j.kategori})</div>
+                <div class="rank-tag">${j.status_babak.toUpperCase()}</div>
+                <div class="winner-name">${j.nama}</div>
+            </div>
         `;
-        gridJuara.appendChild(item);
     });
 
-    container.appendChild(juaraDiv);
+    container.appendChild(globalJuaraDiv);
 }
 }
 
