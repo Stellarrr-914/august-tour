@@ -1,5 +1,5 @@
 // ======= LOMBA.JS REVISED =======
-const urlAPILomba = "https://script.google.com/macros/s/AKfycbwGecIXz6-sh5fIWGOxHQ8xo4WQcDoYTxCo8-cKDhrlLmLdGPUYT8SNaxrgHijiyLc/exec";
+const urlAPILomba = "https://script.google.com/macros/s/AKfycbyijZepuUbuoZOXdpKJLfvEXFSm0NNzjf-AwM4MkM5iP7ly1aV34V_bgRBI3HM_pV49/exec";
 
 // 1. Fungsi Tambah Lomba
 async function tambahLomba() {
