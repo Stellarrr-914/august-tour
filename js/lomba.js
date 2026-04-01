@@ -63,33 +63,43 @@ async function tambahLomba() {
 }
 
 // 2. Tampilan Tabel Lomba dengan Warna Status Dinamis
+// ======= LOMBA.JS (BAGIAN TAMPIL TABEL) =======
 function tampilLomba() {
     const tabel = document.getElementById("tabelLomba");
     if (!tabel) return;
 
     tabel.innerHTML = "";
     
-    // Di lomba.js (Fungsi tampilLomba)
-for (const key in databaseLomba) {
-    const lomba = databaseLomba[key];
-    const namaTampil = lomba.nama || key; // Ambil properti nama
+    for (const key in databaseLomba) {
+        const lomba = databaseLomba[key];
+        
+        // 1. Ambil status dan paksa jadi huruf kecil biar cocok sama Class CSS
+        const statusMentah = (lomba.status || "Open").toLowerCase();
+        
+        // 2. Tentukan class warna berdasarkan status (SESUAI CSS LO)
+        let statusClass = "status-open"; // Default Hijau
+        if (statusMentah === "on-going") statusClass = "status-ongoing"; // Oranye
+        if (statusMentah === "selesai") statusClass = "status-selesai"; // Merah
 
-    tabel.innerHTML += `
-    <tr>
-        <td style="font-weight:bold;">${namaTampil}</td>
-        <td><span class="badge-kat">${lomba.kategori}</span></td>
-        <td>
-            <select class="status-select" 
-                onchange="updateStatusLomba('${key}', '${lomba.kategori}', this.value)">
-                <option value="Open" ${lomba.status === 'Open' ? 'selected' : ''}>Open</option>
-                <option value="On-Going" ${lomba.status === 'On-Going' ? 'selected' : ''}>On-Going</option>
-                <option value="Selesai" ${lomba.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
-            </select>
-        </td>
-    </tr>`;
-}
-}
+        // 3. Ambil Nama Asli (biar yang muncul "Kerupuk", bukan "Kerupuk-1")
+        const namaTampil = lomba.namaAsli || lomba.nama || key;
 
+        tabel.innerHTML += `
+        <tr>
+            <td style="font-weight:bold; color:var(--secondary);">${namaTampil}</td>
+            <td><span class="badge-kat">${lomba.kategori}</span></td>
+            <td>
+                <select class="status-select ${statusClass}" 
+                    onchange="updateStatusLomba('${key}', '${lomba.kategori}', this.value)">
+                    <option value="Open" ${lomba.status === 'Open' ? 'selected' : ''}>Open</option>
+                    <option value="On-Going" ${lomba.status === 'On-Going' ? 'selected' : ''}>On-Going</option>
+                    <option value="Selesai" ${lomba.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                </select>
+            </td>
+        </tr>
+        `;
+    }
+}
 // 3. Update Status (Auto Color Change)
 async function updateStatusLomba(namaLomba, kategori, statusBaru) {
     try {
