@@ -27,9 +27,12 @@ async function tambahLomba() {
         inputField.disabled = true;
         
         // POST ke Google Apps Script
+        // Update bagian fetch di fungsi tambahLomba() JS lo:
         await fetch(urlAPILomba, {
             method: "POST",
-            mode: "no-cors",
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8" // Pake trik text/plain
+            },
             body: JSON.stringify({
                 type: "tambahLomba",
                 namaLomba: nama,
