@@ -200,3 +200,54 @@ button {
     border-radius: 4px;
     font-size: 12px;
 }
+
+/* =============================================
+   MOBILE RESPONSIVE (Target: HP & Tablet)
+   ============================================= */
+@media screen and (max-width: 768px) {
+    /* 1. Reset Container Utama */
+    .container, .wrapper, body {
+        padding: 10px !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    /* 2. Grid Global (Paksa Jadi 1 Kolom) */
+    /* Ini biar semua elemen bertumpuk vertikal di HP */
+    .heat-grid-container, 
+    .hall-of-fame-grid, 
+    .admin-dashboard-grid { 
+        display: grid !important;
+        grid-template-columns: 1fr !important; 
+        gap: 15px !important;
+    }
+
+    /* 3. Tabel & Card (Biar gak kepotong samping) */
+    .table-responsive, .leaderboard-container {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* 4. Form & Input (Biar jempol enak ngetik) */
+    input, select, button {
+        width: 100% !important;
+        height: 45px; /* Standar kenyamanan jempol */
+        font-size: 16px !important; /* Mencegah auto-zoom di iPhone */
+        margin-bottom: 10px;
+    }
+
+    /* 5. Navigasi / Tab */
+    .tab-wrapper {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        gap: 8px;
+    }
+    
+    .tab-btn {
+        flex: 0 0 auto;
+        width: auto !important;
+    }
+}
