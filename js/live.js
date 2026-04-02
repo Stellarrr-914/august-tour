@@ -83,8 +83,17 @@ function renderLiveBracket() {
 
     ["Penyisihan", "Semifinal", "Final"].forEach(namaBabak => {
         const dataPerBabak = rekapAktif.filter(p => {
-            let stat = String(p.status_babak || "").toLowerCase();
-            return stat.includes(namaBabak.toLowerCase());
+            let stat = String(p.status_babak || "").toLowerCase().trim();
+            let babakCari = namaBabak.toLowerCase();
+
+            // LOGIKA FILTER KETAT:
+            // 1. Harus mengandung kata babak tersebut
+            // 2. Kalau nyari "Final", pastikan BUKAN "Semifinal"
+            if (babakCari === "final") {
+                return stat.includes("final") && !stat.includes("semi");
+            } else {
+                return stat.includes(babakCari);
+            }
         });
 
         if (dataPerBabak.length > 0) {
