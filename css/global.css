@@ -191,3 +191,46 @@ button:hover { filter: brightness(1.2); }
         width: 95%;
     }
 }
+
+/* Overlay Paksa Landscape Global */
+#orientation-overlay {
+    display: none; /* Sembunyi secara default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #121212;
+    z-index: 999999; /* Sangat tinggi biar gak ketutup apapun */
+    color: white;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+}
+
+.overlay-content { padding: 20px; }
+
+.phone-icon {
+    font-size: 60px;
+    margin-bottom: 20px;
+    display: inline-block;
+    animation: rotatePhone 2s infinite ease-in-out;
+}
+
+@keyframes rotatePhone {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+    100% { transform: rotate(0deg); }
+}
+
+/* Munculkan hanya jika layar Portrait DAN lebarnya di bawah 900px (HP/Tablet) */
+@media screen and (max-width: 900px) and (orientation: portrait) {
+    #orientation-overlay {
+        display: flex !important;
+    }
+    body {
+        overflow: hidden !important; /* Kunci scroll biar gak bisa gerak pas overlay muncul */
+    }
+}
