@@ -7,36 +7,61 @@ function updateLombaDropdown() {
     fetch(`${scriptURL}?type=getLomba`)
         .then(res => res.json())
         .then(data => {
-            listLombaFull = data;
+            // Simpan data asli buat dipake di fungsi kategori nanti
+            listLombaFull = data; 
+            
             const select = document.getElementById("lombaSelect");
             if (!select) return;
+
+            // --- JURUS UNIQUE ---
+            // Ambil semua nama, lalu saring cuma yang unik
+            const namaUnik = [...new Set(data.map(l => l.nama))];
+
             select.innerHTML = '<option value="">-- Pilih Lomba --</option>';
-            data.forEach(l => {
+            namaUnik.forEach(namaLomba => {
                 const opt = document.createElement("option");
-                opt.value = l.nama;
-                opt.textContent = l.nama;
+                opt.value = namaLomba;
+                opt.textContent = namaLomba;
                 select.appendChild(opt);
             });
-        });
+        })
+        .catch(err => console.error("Gagal load lomba:", err));
 }
-
 // 2. LOAD KATEGORI BERDASARKAN LOMBA
 function updateKategoriBerdasarkanLomba() {
     const lombaVal = document.getElementById("lombaSelect").value;
     const katSelect = document.getElementById("kategoriSelect");
-    const lombaData = listLombaFull.find(l => l.nama === lombaVal);
-    if (!lombaData) return;
+    if (!katSelect) return;
 
-    const kats = lombaData.kategori.split(';').map(k => k.trim().toUpperCase());
+    // 1. Ambil SEMUA baris yang punya nama lomba tersebut
+    const semuaBarisLomba = listLombaFull.filter(l => l.nama === lombaVal);
+    if (semuaBarisLomba.length === 0) {
+        katSelect.innerHTML = '<option value="">-- Pilih Lomba Dulu --</option>';
+        return;
+    }
+
+    // 2. Gabungin semua kategori dari baris-baris tersebut
+    let semuaKategori = [];
+    semuaBarisLomba.forEach(l => {
+        if (l.kategori) {
+            // Pecah berdasarkan ';' dan bersihkan spasi
+            const splitKat = l.kategori.split(';').map(k => k.trim().toUpperCase());
+            semuaKategori = semuaKategori.concat(splitKat);
+        }
+    });
+
+    // 3. Saring lagi biar kategorinya gak double (misal di sheet nulisnya double)
+    const kategoriUnik = [...new Set(semuaKategori)];
+
+    // 4. Render ke Dropdown Kategori
     katSelect.innerHTML = '<option value="">-- Pilih Kategori --</option>';
-    kats.forEach(k => {
+    kategoriUnik.forEach(k => {
         const opt = document.createElement("option");
         opt.value = k;
         opt.textContent = "Kategori " + k;
         katSelect.appendChild(opt);
     });
 }
-
 // 3. TAMPILKAN PESERTA (Filter Cloud)
 function tampilkanPesertaBracket() {
     const kat = document.getElementById("kategoriSelect").value;
