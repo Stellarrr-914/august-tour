@@ -247,6 +247,9 @@ function simpanKeSheet(nama, el) {
     // KUNCI PERBAIKAN: Kirim objek tunggal, bukan payload array
     fetch(scriptURL, {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
             type: "simpanJuara", // Type satuan
             lomba: lomba, 
