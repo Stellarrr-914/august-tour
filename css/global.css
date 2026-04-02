@@ -1,3 +1,6 @@
+/* =============================================
+    RESET & BASE STYLES
+   ============================================= */
 :root {
     --primary: #e74c3c;
     --secondary: #f1c40f;
@@ -7,26 +10,47 @@
     --border: #333;
 }
 
-/* Container Utama */
+* { 
+    box-sizing: border-box; /* Kunci: Padding masuk ke dalam hitungan lebar */
+} 
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden; /* Mencegah halaman goyang kanan-kiri */
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    margin: 0; 
+    padding: 0;
+}
+
+body {
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
+    padding: 20px;
+}
+
+/* =============================================
+    LAYOUT COMPONENTS
+   ============================================= */
 .main-container {
+    width: 100%;
     max-width: 800px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 10px;
     text-align: center;
 }
 
-.menu-header { margin-bottom: 40px; }
-.menu-header h1 { letter-spacing: 2px; color: var(--secondary); }
-
-/* Grid Layout */
+/* Grid & Cards */
 .menu-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
     margin-bottom: 40px;
+    width: 100%;
 }
 
-/* Card Style */
 .menu-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -37,7 +61,6 @@
     gap: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
-    text-align: left;
 }
 
 .menu-card:hover {
@@ -46,96 +69,26 @@
     box-shadow: 0 10px 20px rgba(0,0,0,0.4);
 }
 
-.card-icon { font-size: 40px; }
-.card-info h3 { margin: 0; font-size: 18px; color: #fff; }
-.card-info p { margin: 5px 0 0 0; font-size: 13px; color: #888; }
-
-/* Warna Variasi Card */
-.card-blue:hover { border-left: 5px solid #3498db; }
-.card-green:hover { border-left: 5px solid #2ecc71; }
-.card-red:hover { border-left: 5px solid #e74c3c; }
-
-/* Tombol Logout */
-.btn-logout {
-    background: #333;
-    max-width: 250px;
-    opacity: 0.7;
-}
-.btn-logout:hover { background: #c0392b; opacity: 1; }
-
-/* Container Utama biar di tengah layar */
-.login-container {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: radial-gradient(circle, #2c3e50 0%, #000000 100%);
-}
-
-/* Kotak Login-nya */
-.login-box {
-    background: #1e1e1e;
-    padding: 40px;
-    border-radius: 20px;
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    box-shadow: 0 10px 50px rgba(0,0,0,0.7);
-    border: 1px solid #333;
-}
-
-.login-logo { font-size: 50px; margin-bottom: 10px; }
-.login-box h1 { font-size: 24px; margin-bottom: 5px; color: #fff; }
-.login-box p { color: #888; margin-bottom: 30px; font-size: 14px; }
-
-/* Link ke Live Page yang lebih keren */
-.live-link-card {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
-    padding: 15px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.3s;
-}
-.live-link-card:hover { transform: scale(1.05); }
-
-/* Main Menu Button (buat menu.html biar nggak mepet) */
-.menu-container {
-    max-width: 500px;
-    margin: 50px auto;
-    display: flex;
-    flex-direction: column;
-    gap: 20px; /* Jarak antar tombol menu */
-}
-
-* { box-sizing: border-box; } /* Biar padding gak ngerusak lebar */
-
-body {
-    background-color: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    margin: 0; padding: 20px;
-    display: flex; flex-direction: column; align-items: center;
-}
-
-/* Biar Form Gak Mepet */
+/* Forms */
 .form-section, .form-group {
     background: var(--surface);
     padding: 25px;
     border-radius: 12px;
     width: 100%;
     max-width: 600px;
-    margin-bottom: 25px; /* Jarak antar bagian */
+    margin-bottom: 25px;
     border: 1px solid var(--border);
 }
 
-/* Fix Input & Tombol Mepet */
 input, select, button {
-    width: 100%; /* Full biar rapi */
-    margin-bottom: 15px; /* Kasih napas antar elemen */
+    width: 100%;
+    margin-bottom: 15px;
     padding: 14px;
     border-radius: 8px;
     font-size: 16px;
+    border: 1px solid var(--border);
+    background: #2a2a2a;
+    color: white;
 }
 
 button {
@@ -143,111 +96,98 @@ button {
     border: none;
     font-weight: bold;
     background: var(--primary);
-    color: white;
+    transition: 0.3s;
 }
 
-/* Tombol Khusus Kembali */
-.btn-back { background: #555; margin-bottom: 20px; }
+button:hover { filter: brightness(1.2); }
 
-/* Container buat Heat yang udah di-generate */
+/* =============================================
+    BRACKET & HEAT STYLES
+   ============================================= */
 .heat-grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
-    margin-top: 30px;
+    width: 100%;
 }
 
-/* Box per Heat */
 .heat-box {
-    background: #1e1e1e;
-    border: 1px solid #333;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 10px;
     padding: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    width: 100%;
 }
 
-.heat-title {
-    background: #333;
-    color: var(--secondary);
-    padding: 8px;
-    text-align: center;
-    border-radius: 5px;
-    font-weight: bold;
-    margin-bottom: 15px;
-    border-bottom: 2px solid var(--primary);
-}
-
-/* Item Peserta di dalem Heat */
 .peserta-heat-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 12px 10px;
     border-bottom: 1px solid #2a2a2a;
     gap: 10px;
 }
 
-.peserta-heat-row:last-child { border-bottom: none; }
-
-.peserta-heat-row span { color: #fff; font-weight: 500; }
-
-/* Select Menang/Kalah di Bracket */
-.select-pemenang {
-    background: #2c3e50;
-    color: white;
-    border: 1px solid #444;
-    padding: 5px;
-    border-radius: 4px;
-    font-size: 12px;
+/* Biar nama gak nendang layout di layar kecil */
+.peserta-heat-row span:first-child {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* =============================================
-   MOBILE RESPONSIVE (Target: HP & Tablet)
+    MOBILE RESPONSIVE (Target: HP & Tablet)
    ============================================= */
 @media screen and (max-width: 768px) {
-    /* 1. Reset Container Utama */
-    .container, .wrapper, body {
-        padding: 10px !important;
-        width: 100% !important;
-        box-sizing: border-box;
-    }
+    body { padding: 10px; }
 
-    /* 2. Grid Global (Paksa Jadi 1 Kolom) */
-    /* Ini biar semua elemen bertumpuk vertikal di HP */
+    /* 1. Paksa Grid jadi 1 kolom */
+    .menu-grid, 
     .heat-grid-container, 
-    .hall-of-fame-grid, 
-    .admin-dashboard-grid { 
-        display: grid !important;
-        grid-template-columns: 1fr !important; 
-        gap: 15px !important;
+    .hall-of-fame-grid {
+        grid-template-columns: 1fr !important;
+        width: 100%;
     }
 
-    /* 3. Tabel & Card (Biar gak kepotong samping) */
-    .table-responsive, .leaderboard-container {
-        display: block;
+    /* 2. Jinakkan Nama Peserta */
+    .player-name, .peserta-heat-row span:first-child {
+        font-size: 14px;
+        max-width: 180px; /* Batasi lebar nama agar status tetap kelihatan */
+    }
+
+    /* 3. Tabel & Leaderboard Scrollable */
+    .leaderboard-container, .table-responsive {
         width: 100%;
         overflow-x: auto;
+        display: block;
         -webkit-overflow-scrolling: touch;
+        border-radius: 10px;
     }
 
-    /* 4. Form & Input (Biar jempol enak ngetik) */
-    input, select, button {
-        width: 100% !important;
-        height: 45px; /* Standar kenyamanan jempol */
-        font-size: 16px !important; /* Mencegah auto-zoom di iPhone */
-        margin-bottom: 10px;
+    .lboard-table {
+        min-width: 450px; /* Paksa tabel punya lebar minimal biar bisa di-swipe */
     }
 
-    /* 5. Navigasi / Tab */
+    /* 4. Tab Navigasi agar bisa di-swipe jempol */
     .tab-wrapper {
-        display: flex;
-        overflow-x: auto;
-        white-space: nowrap;
+        display: flex !important;
+        overflow-x: auto !important;
         gap: 8px;
+        padding-bottom: 10px;
+        width: 100%;
     }
-    
+
     .tab-btn {
         flex: 0 0 auto;
+        white-space: nowrap;
+        padding: 10px 15px !important;
         width: auto !important;
+    }
+
+    /* 5. Login Box adjustment */
+    .login-box {
+        padding: 25px;
+        width: 95%;
     }
 }
