@@ -245,17 +245,20 @@ function simpanKeSheet(nama, el) {
     el.disabled = true;
 
     fetch(scriptURL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify({
-            type: "simpanJuara",
-            lomba: lomba, kategori: kategori, nama: nama,
-            status: `${el.value} - ${babak}`, heat: heat
-        })
-    }).then(() => {
-        el.disabled = false;
-        el.style.borderColor = "#27ae60";
-    });
+    method: 'POST',
+    // HAPUS mode: 'no-cors'
+    body: JSON.stringify({
+        type: "batchSimpanJuara",
+        lomba: lomba,
+        kategori: kategori,
+        data: payload 
+    })
+})
+.then(res => res.text()) // Sekarang lo bisa baca respon "BERHASIL SIMPAN"
+.then(txt => {
+    console.log(txt);
+    alert("Sakti! Data masuk ke Sheets.");
+});
 }
 
 function kirimSatuHeat(nomorHeat) {
@@ -285,25 +288,27 @@ function kirimSatuHeat(nomorHeat) {
 
     // KIRIM SEKALI JALAN (Batch)
     fetch(scriptURL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify({
-            type: "batchSimpanJuara", // Kita buat fungsi baru di Apps Script
-            lomba: lomba,
-            kategori: kategori,
-            data: dataHeat // Kirim array langsung
-        })
+    method: 'POST',
+    // HAPUS mode: 'no-cors'
+    body: JSON.stringify({
+        type: "batchSimpanJuara",
+        lomba: lomba,
+        kategori: kategori,
+        data: payload 
     })
-    .then(() => {
-        alert(`Heat ${nomorHeat} Beres!`);
-        btn.innerText = "✅ Tersimpan";
-    })
+})
+.then(res => res.text()) // Sekarang lo bisa baca respon "BERHASIL SIMPAN"
+.then(txt => {
+    console.log(txt);
+    alert("Sakti! Data masuk ke Sheets.");
+})
     .catch(err => {
         console.error(err);
         btn.innerText = "Gagal!";
         btn.disabled = false;
     });
 }
+
 function publikasikanHeat() {
     const lomba = document.getElementById("lombaSelect").value;
     const kategori = document.getElementById("kategoriSelect").value;
@@ -337,20 +342,20 @@ function publikasikanHeat() {
 
     // KIRIM BATCH (SATU REQUEST UNTUK SEMUA)
     fetch(scriptURL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify({
-            type: "batchSimpanJuara", // Pastikan type ini ada di Code.gs
-            lomba: lomba,
-            kategori: kategori,
-            data: payload 
-        })
+    method: 'POST',
+    // HAPUS mode: 'no-cors'
+    body: JSON.stringify({
+        type: "batchSimpanJuara",
+        lomba: lomba,
+        kategori: kategori,
+        data: payload 
     })
-    .then(() => {
-        alert("Sakti! Semua jadwal Heat berhasil dipublikasikan tanpa ada yang ketinggalan.");
-        btn.innerText = teksAsli;
-        btn.disabled = false;
-    })
+})
+.then(res => res.text()) // Sekarang lo bisa baca respon "BERHASIL SIMPAN"
+.then(txt => {
+    console.log(txt);
+    alert("Sakti! Data masuk ke Sheets.");
+})
     .catch(err => {
         console.error(err);
         alert("Aduh, gagal publikasi masal. Cek koneksi!");
