@@ -244,18 +244,18 @@ function simpanKeSheet(nama, el) {
     if (!el.value) return;
     el.disabled = true;
 
-    // KUNCI PERBAIKAN: Kirim objek tunggal, bukan payload array
     fetch(scriptURL, {
         method: 'POST',
+        // PENTING: Pake text/plain biar GAK kena CORS
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'text/plain;charset=utf-8'
         },
         body: JSON.stringify({
-            type: "simpanJuara", // Type satuan
-            lomba: lomba, 
-            kategori: kategori, 
+            type: "simpanJuara",
+            lomba: lomba,
+            kategori: kategori,
             nama: nama,
-            status: `${el.value} - ${babak}`, 
+            status: `${el.value} - ${babak}`,
             heat: heat
         })
     })
@@ -263,14 +263,15 @@ function simpanKeSheet(nama, el) {
     .then(txt => {
         console.log("Respon Server:", txt);
         el.disabled = false;
-        el.style.borderColor = "#27ae60"; // Hijau kalau sukses
+        el.style.borderColor = "#27ae60";
     })
     .catch(err => {
         console.error("Gagal simpan:", err);
         el.disabled = false;
-        el.style.borderColor = "#e74c3c"; // Merah kalau gagal
+        alert("Gagal koneksi ke server, brok!");
     });
 }
+
 function kirimSatuHeat(nomorHeat) {
     const heatBox = document.getElementById(`heat-${nomorHeat}`);
     const semuaSelect = heatBox.querySelectorAll('.select-status');
@@ -346,29 +347,30 @@ function publikasikanHeat() {
 
     // Kasih proteksi biar gak diklik dua kali
     const btn = document.getElementById("btnPublikasi");
-    const teksAsli = btn.innerText;
-    btn.innerText = "⏳ Memproses Publikasi...";
     btn.disabled = true;
+    btn.innerText = "⏳ Memproses...";
 
-    // KIRIM BATCH (SATU REQUEST UNTUK SEMUA)
     fetch(scriptURL, {
-    method: 'POST',
-    // HAPUS mode: 'no-cors'
-    body: JSON.stringify({
-        type: "batchSimpanJuara",
-        lomba: lomba,
-        kategori: kategori,
-        data: payload 
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+            type: "batchSimpanJuara",
+            lomba: lomba,
+            kategori: kategori,
+            data: payload 
+        })
     })
-})
-.then(res => res.text()) // Sekarang lo bisa baca respon "BERHASIL SIMPAN"
-.then(txt => {
-    console.log(txt);
-    alert("Sakti! Data masuk ke Sheets.");
-})
+    .then(res => res.text())
+    .then(txt => {
+        alert(txt); // Akan muncul "BERHASIL SIMPAN PESERTA"
+        btn.disabled = false;
+        btn.innerText = "✅ Selesai";
+    })
     .catch(err => {
         console.error(err);
-        alert("Aduh, gagal publikasi masal. Cek koneksi!");
+        alert("Gagal koneksi!");
         btn.disabled = false;
     });
 }
