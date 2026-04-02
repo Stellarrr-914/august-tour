@@ -244,23 +244,30 @@ function simpanKeSheet(nama, el) {
     if (!el.value) return;
     el.disabled = true;
 
+    // KUNCI PERBAIKAN: Kirim objek tunggal, bukan payload array
     fetch(scriptURL, {
-    method: 'POST',
-    // HAPUS mode: 'no-cors'
-    body: JSON.stringify({
-        type: "batchSimpanJuara",
-        lomba: lomba,
-        kategori: kategori,
-        data: payload 
+        method: 'POST',
+        body: JSON.stringify({
+            type: "simpanJuara", // Type satuan
+            lomba: lomba, 
+            kategori: kategori, 
+            nama: nama,
+            status: `${el.value} - ${babak}`, 
+            heat: heat
+        })
     })
-})
-.then(res => res.text()) // Sekarang lo bisa baca respon "BERHASIL SIMPAN"
-.then(txt => {
-    console.log(txt);
-    alert("Sakti! Data masuk ke Sheets.");
-});
+    .then(res => res.text())
+    .then(txt => {
+        console.log("Respon Server:", txt);
+        el.disabled = false;
+        el.style.borderColor = "#27ae60"; // Hijau kalau sukses
+    })
+    .catch(err => {
+        console.error("Gagal simpan:", err);
+        el.disabled = false;
+        el.style.borderColor = "#e74c3c"; // Merah kalau gagal
+    });
 }
-
 function kirimSatuHeat(nomorHeat) {
     const heatBox = document.getElementById(`heat-${nomorHeat}`);
     const semuaSelect = heatBox.querySelectorAll('.select-status');
