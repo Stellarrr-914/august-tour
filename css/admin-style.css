@@ -1,130 +1,61 @@
-/* =============================================
-   ADMIN STYLE - OFFICIAL PANITIA EDITION
-   ============================================= */
-
-/* Container Utama Admin */
+/* Container Admin */
 .admin-container {
-    padding: 20px;
+    max-width: 1000px; width: 100%;
 }
 
-/* Header Utama (BRACKET & HEAT MANAGER) */
-.main-header {
-    margin-bottom: 30px;
-    border-bottom: 3px solid var(--border-gold);
-    padding-bottom: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    /* Kita kasih nuansa emas tipis */
-    background: linear-gradient(to right, rgba(201, 160, 80, 0.05), transparent);
-    border-radius: 8px;
-    padding: 10px;
-}
-
-.page-title {
-    color: var(--primary-red) !important;
-    margin: 0;
-    font-weight: 900;
+/* Judul Section (Gaya Minimalis Berwibawa) */
+.section-title {
+    background: transparent !important;
+    color: var(--text) !important;
+    padding: 10px 0 !important;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+    letter-spacing: 2px;
+    border-bottom: 3px solid var(--primary-red); /* Garis Merah Tajam */
+    margin-bottom: 25px !important;
+    display: inline-block;
 }
 
-/* Panel/Card (Mirip tekstur nametag putih) */
-.card, .form-group {
-    background: #ffffff;
+/* Panel Box (Glassmorphism) */
+.form-group, .heat-box {
+    background: #1a1a1a;
     padding: 25px;
-    border-radius: 12px;
-    border: 1px solid #eee;
+    border-radius: 16px;
+    border: 1px solid #2a2a2a;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     margin-bottom: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    position: relative;
-    overflow: hidden;
+    /* Aksen Merah Tipis di Atas */
+    border-top: 4px solid var(--primary-red);
 }
 
-/* Aksen Emas tipis di pojok kartu (Vibe Logo Emas) */
-.card::after, .form-group::after {
-    content: "";
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    width: 40px;
-    height: 40px;
-    background: var(--accent-gold);
-    border-radius: 50%;
-    opacity: 0.2;
-}
-
-.card h3 {
-    margin-top: 0;
-    color: var(--text-dark);
-    font-size: 1.2em;
-    margin-bottom: 15px;
-    border-left: 4px solid var(--accent-gold); /* Garis emas di samping judul */
-    padding-left: 10px;
-}
-
-/* Tabel Modern Official */
+/* Tabel (Simple & Dark) */
 table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    background: #ffffff;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid #eee;
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    background: #1a1a1a; border-radius: 12px; overflow: hidden;
     margin-bottom: 30px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
 }
 
 th {
-    background-color: var(--primary-red);
-    color: #ffffff;
-    padding: 18px;
-    text-align: center;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    background: #222;
+    color: var(--accent-gold); /* Pakai warna emas buat header biar mewah */
+    padding: 15px; font-size: 13px; text-transform: uppercase;
 }
 
 td {
-    padding: 15px;
-    border-bottom: 1px solid #f4f4f4;
-    text-align: center;
-    color: #555;
-    font-weight: 500;
+    padding: 12px; border-bottom: 1px solid #222;
+    text-align: center; color: #ccc;
 }
 
-tr:hover td { 
-    background: rgba(201, 160, 80, 0.05); /* Highlight emas tipis */
-}
-
-/* Box per Heat (Bracket) */
-.heat-box {
-    background: #ffffff;
-    border: 2px solid var(--border-gold); /* Kotak Heat pake border emas */
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
+/* Heat Bracket Styling */
 .heat-header {
-    background: linear-gradient(to bottom, #ffffff, #f4f4f4);
     color: var(--primary-red);
-    padding: 12px;
+    font-weight: 900;
     text-align: center;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    border-bottom: 2px solid var(--border-gold);
+    margin-bottom: 15px;
+    font-size: 1.1rem;
 }
 
-/* Menang/Kalah Select */
-.select-pemenang {
-    background: #ffffff;
-    color: #333;
-    border: 2px solid #ddd;
-}
-.select-pemenang:focus {
-    border-color: var(--primary-red);
+.heat-item {
+    display: flex; justify-content: space-between;
+    padding: 10px; border-bottom: 1px solid #222;
 }
