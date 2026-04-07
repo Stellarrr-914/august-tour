@@ -7,16 +7,11 @@ function updateLombaDropdown() {
     fetch(`${scriptURL}?type=getLomba`)
         .then(res => res.json())
         .then(data => {
-            // Simpan data asli buat dipake di fungsi kategori nanti
             listLombaFull = data; 
-            
             const select = document.getElementById("lombaSelect");
             if (!select) return;
 
-            // --- JURUS UNIQUE ---
-            // Ambil semua nama, lalu saring cuma yang unik
             const namaUnik = [...new Set(data.map(l => l.nama))];
-
             select.innerHTML = '<option value="">-- Pilih Lomba --</option>';
             namaUnik.forEach(namaLomba => {
                 const opt = document.createElement("option");
@@ -27,33 +22,28 @@ function updateLombaDropdown() {
         })
         .catch(err => console.error("Gagal load lomba:", err));
 }
+
 // 2. LOAD KATEGORI BERDASARKAN LOMBA
 function updateKategoriBerdasarkanLomba() {
     const lombaVal = document.getElementById("lombaSelect").value;
     const katSelect = document.getElementById("kategoriSelect");
     if (!katSelect) return;
 
-    // 1. Ambil SEMUA baris yang punya nama lomba tersebut
     const semuaBarisLomba = listLombaFull.filter(l => l.nama === lombaVal);
     if (semuaBarisLomba.length === 0) {
         katSelect.innerHTML = '<option value="">-- Pilih Lomba Dulu --</option>';
         return;
     }
 
-    // 2. Gabungin semua kategori dari baris-baris tersebut
     let semuaKategori = [];
     semuaBarisLomba.forEach(l => {
         if (l.kategori) {
-            // Pecah berdasarkan ';' dan bersihkan spasi
             const splitKat = l.kategori.split(';').map(k => k.trim().toUpperCase());
             semuaKategori = semuaKategori.concat(splitKat);
         }
     });
 
-    // 3. Saring lagi biar kategorinya gak double (misal di sheet nulisnya double)
     const kategoriUnik = [...new Set(semuaKategori)];
-
-    // 4. Render ke Dropdown Kategori
     katSelect.innerHTML = '<option value="">-- Pilih Kategori --</option>';
     kategoriUnik.forEach(k => {
         const opt = document.createElement("option");
@@ -62,7 +52,8 @@ function updateKategoriBerdasarkanLomba() {
         katSelect.appendChild(opt);
     });
 }
-// 3. TAMPILKAN PESERTA (Filter Cloud)
+
+// 3. TAMPILKAN PESERTA
 function tampilkanPesertaBracket() {
     const kat = document.getElementById("kategoriSelect").value;
     const lomba = document.getElementById("lombaSelect").value;
@@ -71,43 +62,32 @@ function tampilkanPesertaBracket() {
 
     if (!kat || !lomba) return alert("Pilih Lomba & Kategori dulu ya brok!");
 
-    container.innerHTML = "<div style='padding:10px; color:#f1c40f;'>⏳ Sedang menyaring peserta...</div>";
+    container.innerHTML = "<div class='loading-text'>⏳ Sedang menyaring peserta...</div>";
 
-    // --- KUNCI PERBAIKAN DI SINI ---
-    let fetchURL = "";
-    
-    if (babak === "Penyisihan") {
-        // Kalau penyisihan, ambil data mentah dari Sheet 1
-        fetchURL = `${scriptURL}?type=getPesertaByKategori&kategori=${encodeURIComponent(kat)}`;
-    } else {
-        // Kalau Semifinal/Final, ambil data orang-orang yang lolos dari Sheet 3
-        fetchURL = `${scriptURL}?type=getPesertaLolos&kategori=${encodeURIComponent(kat)}&lomba=${encodeURIComponent(lomba)}&babak=${encodeURIComponent(babak)}`;
-    }
-    // -------------------------------
+    let fetchURL = (babak === "Penyisihan") 
+        ? `${scriptURL}?type=getPesertaByKategori&kategori=${encodeURIComponent(kat)}`
+        : `${scriptURL}?type=getPesertaLolos&kategori=${encodeURIComponent(kat)}&lomba=${encodeURIComponent(lomba)}&babak=${encodeURIComponent(babak)}`;
 
     fetch(fetchURL)
         .then(res => res.json())
         .then(data => {
-            if (!Array.isArray(data)) return console.error("Data bukan Array");
-
+            if (!Array.isArray(data)) return;
             dataPesertaCloud = data; 
             container.innerHTML = "";
             
             if (data.length === 0) {
-                container.innerHTML = `<div style="padding:15px; background:#2c3e50; color:#e74c3c; text-align:center; border-radius:8px;">
-                    <b>Data Kosong!</b><br>Tidak ada peserta ditemukan untuk kategori ini.
-                </div>`;
+                container.innerHTML = `<div class='alert-empty'><b>Data Kosong!</b><br>Tidak ada peserta ditemukan.</div>`;
                 document.getElementById("actionGenerate").style.display = "none";
                 return;
             }
 
-            let htmlList = `<div style="margin-bottom:10px; font-weight:bold; color:white;">Peserta Siap Tanding (${data.length} Orang):</div>`;
+            let htmlList = `<div class='list-title'>Peserta Siap Tanding (${data.length} Orang):</div>`;
             data.forEach((p, index) => {
                 htmlList += `
-                <div class="peserta-item" style="display:flex; align-items:center; gap:10px; margin-bottom:8px; padding:8px; background:#1e1e1e; border-radius:5px; border:1px solid #333;">
-                    <input type="checkbox" class="peserta-check" id="check-${index}" value="${p.nama}" checked style="width:18px; height:18px;">
-                    <label for="check-${index}" style="color:white; cursor:pointer; flex-grow:1;">
-                        <strong>${p.nama}</strong> <small style="color:#888;">${p.level ? '('+p.level+')' : ''}</small>
+                <div class="peserta-selection-item">
+                    <input type="checkbox" class="peserta-check" id="check-${index}" value="${p.nama}" checked>
+                    <label for="check-${index}">
+                        <strong>${p.nama}</strong> <small>${p.level ? '('+p.level+')' : ''}</small>
                     </label>
                 </div>`;
             });
@@ -116,11 +96,11 @@ function tampilkanPesertaBracket() {
             document.getElementById("actionGenerate").style.display = "block";
         })
         .catch(err => {
-            console.error(err);
-            container.innerHTML = "<div style='color:red;'>❌ Gagal narik data dari server!</div>";
+            container.innerHTML = "<div class='alert-error'>❌ Gagal narik data server!</div>";
         });
 }
-// 4. GENERATE HEAT (LOGIKA 4-3-5) - VERSI RAPI TOTAL
+
+// 4. GENERATE HEAT
 function generateBracket() {
     const checkboxes = document.querySelectorAll(".peserta-check:checked");
     let pesertaTerpilih = [];
@@ -132,56 +112,44 @@ function generateBracket() {
 
     if (pesertaTerpilih.length < 3) return alert("Minimal 3 orang buat bikin Heat, brok!");
 
-    // A. URUTKAN BERDASARKAN LEVEL (Seeding)
+    // Urutkan (Seeding)
     const bobot = { "A+": 9, "A": 8, "A-": 7, "B+": 6, "B": 5, "B-": 4, "C+": 3, "C": 2, "C-": 1 };
-    pesertaTerpilih.sort((a, b) => {
-        let levelA = bobot[a.level] || 0;
-        let levelB = bobot[b.level] || 0;
-        if (levelA !== levelB) return levelB - levelA;
-        return Math.random() - 0.5; 
-    });
+    pesertaTerpilih.sort((a, b) => (bobot[b.level] || 0) - (bobot[a.level] || 0) || Math.random() - 0.5);
 
-    // B. LOGIKA PEMBAGIAN
+    // Pembagian Grup
     let total = pesertaTerpilih.length;
     let hasilGrup = [];
     let i = 0;
     while (i < total) {
         let sisa = total - i;
-        let ukuranGrup = 4; 
-        if (sisa === 5) { ukuranGrup = 5; } 
-        else if (sisa === 6 || sisa === 3) { ukuranGrup = 3; }
+        let ukuranGrup = (sisa === 5) ? 5 : (sisa === 6 || sisa === 3) ? 3 : 4;
         hasilGrup.push(pesertaTerpilih.slice(i, i + ukuranGrup));
         i += ukuranGrup;
     }
 
-    // C. RENDER KE LAYAR (Tampilan Diperhalus)
+    // Render Heat Box
     const container = document.getElementById("hasilBracket");
     container.innerHTML = ""; 
     
     hasilGrup.forEach((grup, index) => {
         const nomorHeat = index + 1;
-        
         let html = `
-            <div class="heat-box" id="heat-${nomorHeat}" style="background:#1e1e1e; border:1px solid #333; border-radius:12px; margin-bottom:20px; color:white; overflow:hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-                <div style="background:#333; color:#f1c40f; padding:12px; font-weight:bold; text-align:center; border-bottom: 2px solid #444; text-transform: uppercase; letter-spacing: 1px;">
-                    HEAT ${nomorHeat}
-                </div>
-                <div style="padding:10px;">
+            <div class="heat-box" id="heat-${nomorHeat}">
+                <div class="heat-header">HEAT ${nomorHeat}</div>
+                <div class="heat-body">
         `;
 
         grup.forEach(p => {
             html += `
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 5px; border-bottom:1px solid #2a2a2a; gap: 15px;">
-                    <span style="color:white; font-size:14px; flex-grow:1; text-align:left;">
-                        <strong style="text-transform: uppercase;">${p.nama}</strong> 
-                        <br><small style="color:#888; font-size:11px;">Level: ${p.level || '-'}</small>
+                <div class="heat-player-row">
+                    <span class="player-info">
+                        <strong>${p.nama}</strong> 
+                        <small>Level: ${p.level || '-'}</small>
                     </span>
-                    
                     <select class="select-status" 
                             data-nama="${p.nama}" 
                             data-heat="${nomorHeat}" 
-                            onchange="simpanKeSheet('${p.nama}', this)"
-                            style="background:#2c3e50; color:white; border:1px solid #444; padding:8px; border-radius:6px; width:130px; min-width:130px; cursor:pointer; font-size:13px; outline:none;">
+                            onchange="simpanKeSheet('${p.nama}', this)">
                         <option value="">-- Set --</option>
                         <option value="Lolos">🏆 Lolos</option>
                         <option value="Gugur">❌ Gugur</option>
@@ -196,45 +164,11 @@ function generateBracket() {
         container.innerHTML += html;
     });
 
-    // Munculkan tombol publikasi di paling bawah
     const btnPub = document.getElementById("btnPublikasi");
-    if(btnPub) {
-        btnPub.style.display = "block";
-        btnPub.style.width = "100%";
-        btnPub.style.padding = "15px";
-        btnPub.style.fontWeight = "bold";
-    }
-}
-// 5. RENDER BOX HEAT (Unified Dark Mode)
-function renderHeatBox(grup, nomor) {
-    const container = document.getElementById("hasilBracket");
-    let html = `
-        <div class="heat-box" id="heat-${nomor}" style="background:#1e1e1e; border:1px solid #333; border-radius:12px; margin-bottom:20px; overflow:hidden;">
-            <div style="background:#333; color:#f1c40f; padding:10px; font-weight:bold; display:flex; justify-content:space-between; align-items:center;">
-                <span>HEAT ${nomor}</span>
-            </div>
-            <div style="padding:10px;">
-    `;
-
-    grup.forEach(p => {
-        html += `
-            <div class="player-row" style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #2a2a2a;">
-                <span style="color:white;">${p.nama} <small style="color:#888;">(${p.level})</small></span>
-                <select class="select-status" data-nama="${p.nama}" data-heat="${nomor}" 
-                        onchange="simpanKeSheet('${p.nama}', this)"
-                        style="background:#2c3e50; color:white; border:1px solid #444; border-radius:4px; padding:4px;">
-                    <option value="">-- Set --</option>
-                    <option value="Lolos">🏆 Lolos</option>
-                    <option value="Gugur">❌ Gugur</option>
-                    <option value="Juara 1">🥇 Juara 1</option>
-                    <option value="Juara 2">🥈 Juara 2</option>
-                    <option value="Juara 3">🥉 Juara 3</option>
-                </select>
-            </div>`;
-    });
+    if(btnPub) btnPub.style.display = "block";
 }
 
-// 6. FUNGSI SIMPAN & PUBLIKASI
+// 5. SIMPAN KE SERVER
 function simpanKeSheet(nama, el) {
     const lomba = document.getElementById("lombaSelect").value;
     const kategori = document.getElementById("kategoriSelect").value;
@@ -246,10 +180,7 @@ function simpanKeSheet(nama, el) {
 
     fetch(scriptURL, {
         method: 'POST',
-        // PENTING: Pake text/plain biar GAK kena CORS
-        headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-        },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({
             type: "simpanJuara",
             lomba: lomba,
@@ -261,81 +192,30 @@ function simpanKeSheet(nama, el) {
     })
     .then(res => res.text())
     .then(txt => {
-        console.log("Respon Server:", txt);
         el.disabled = false;
-        el.style.borderColor = "#27ae60";
+        el.classList.add('is-saved'); // Class buat kasih border hijau di CSS
     })
     .catch(err => {
-        console.error("Gagal simpan:", err);
         el.disabled = false;
-        alert("Gagal koneksi ke server, brok!");
+        alert("Gagal koneksi server!");
     });
 }
 
-function kirimSatuHeat(nomorHeat) {
-    const heatBox = document.getElementById(`heat-${nomorHeat}`);
-    const semuaSelect = heatBox.querySelectorAll('.select-status');
-    const lomba = document.getElementById("lombaSelect").value;
-    const kategori = document.getElementById("kategoriSelect").value;
-    const babak = document.getElementById("babakSelect").value;
-
-    let dataHeat = [];
-
-    semuaSelect.forEach(select => {
-        if (select.value !== "") {
-            dataHeat.push({
-                nama: select.getAttribute('data-nama'),
-                status: `${select.value} - ${babak}`,
-                heat: nomorHeat
-            });
-        }
-    });
-
-    if (dataHeat.length === 0) return alert("Pilih status dulu!");
-
-    const btn = event.target;
-    btn.innerText = "⏳ Sinkronisasi...";
-    btn.disabled = true;
-
-    // KIRIM SEKALI JALAN (Batch)
-    fetch(scriptURL, {
-    method: 'POST',
-    // HAPUS mode: 'no-cors'
-    body: JSON.stringify({
-        type: "batchSimpanJuara",
-        lomba: lomba,
-        kategori: kategori,
-        data: payload 
-    })
-})
-.then(res => res.text()) // Sekarang lo bisa baca respon "BERHASIL SIMPAN"
-.then(txt => {
-    console.log(txt);
-    alert("Sakti! Data masuk ke Sheets.");
-})
-    .catch(err => {
-        console.error(err);
-        btn.innerText = "Gagal!";
-        btn.disabled = false;
-    });
-}
-
+// 6. PUBLIKASI MASSAL
 function publikasikanHeat() {
     const lomba = document.getElementById("lombaSelect").value;
     const kategori = document.getElementById("kategoriSelect").value;
     const babak = document.getElementById("babakSelect").value;
 
-    if (!lomba || !kategori) return alert("Pilih Lomba & Kategori dulu brok!");
+    if (!lomba || !kategori) return alert("Pilih Lomba & Kategori dulu!");
 
     const konfirmasi = confirm(`Publikasikan SEMUA Heat ${babak} ini ke Live Report?`);
     if (!konfirmasi) return;
 
-    // Ambil semua dropdown status yang ada di layar
     const allSelects = document.querySelectorAll(".select-status"); 
     let payload = [];
 
     allSelects.forEach(sel => {
-        // Kita kirim status "Menunggu" sebagai tanda jadwal sudah rilis
         payload.push({
             nama: sel.getAttribute("data-nama"),
             status: `Menunggu - ${babak}`,
@@ -343,18 +223,15 @@ function publikasikanHeat() {
         });
     });
 
-    if (payload.length === 0) return alert("Gak ada data peserta buat dipublikasi, brok!");
+    if (payload.length === 0) return alert("Gak ada data!");
 
-    // Kasih proteksi biar gak diklik dua kali
     const btn = document.getElementById("btnPublikasi");
     btn.disabled = true;
     btn.innerText = "⏳ Memproses...";
 
     fetch(scriptURL, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-        },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({
             type: "batchSimpanJuara",
             lomba: lomba,
@@ -364,14 +241,14 @@ function publikasikanHeat() {
     })
     .then(res => res.text())
     .then(txt => {
-        alert(txt); // Akan muncul "BERHASIL SIMPAN PESERTA"
+        alert(txt);
         btn.disabled = false;
         btn.innerText = "✅ Selesai";
     })
     .catch(err => {
-        console.error(err);
-        alert("Gagal koneksi!");
         btn.disabled = false;
+        alert("Gagal!");
     });
 }
+
 document.addEventListener("DOMContentLoaded", updateLombaDropdown);
