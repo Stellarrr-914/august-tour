@@ -1,205 +1,130 @@
 /* =============================================
-   ADMIN STRATEGY STYLE - MODERN DARK MODE
+   ADMIN STYLE - OFFICIAL PANITIA EDITION
    ============================================= */
 
-:root {
-    --primary: #e74c3c;
-    --secondary: #f1c40f;
-    --bg: #121212;
-    --surface: #1e1e1e;
-    --text: #ffffff;
-    --border: #333;
-    --success: #27ae60;
-}
-
+/* Container Utama Admin */
 .admin-container {
-    max-width: 1000px;
-    margin: 0 auto;
     padding: 20px;
 }
 
-/* --- JUDUL SECTION --- */
-.section-title {
-    background: linear-gradient(90deg, var(--primary), transparent) !important;
-    color: #fff !important;
-    padding: 12px 20px !important;
-    border-radius: 8px 8px 0 0;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 30px !important;
-}
-
-/* --- FORM & INPUT --- */
-.form-group {
-    background: var(--surface);
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    margin-bottom: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
-
-.form-group h3 {
-    margin-top: 0;
-    color: var(--secondary);
-    font-size: 1.1em;
-    margin-bottom: 15px;
-}
-
-input, select {
-    background: #2c3e50;
-    color: white;
-    border: 1px solid #444;
-    padding: 10px;
+/* Header Utama (BRACKET & HEAT MANAGER) */
+.main-header {
+    margin-bottom: 30px;
+    border-bottom: 3px solid var(--border-gold);
+    padding-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* Kita kasih nuansa emas tipis */
+    background: linear-gradient(to right, rgba(201, 160, 80, 0.05), transparent);
     border-radius: 8px;
-    outline: none;
+    padding: 10px;
 }
 
-/* --- SELECTION LIST (PESERTA SEBELUM GENERATE) --- */
-.list-title {
+.page-title {
+    color: var(--primary-red) !important;
+    margin: 0;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+}
+
+/* Panel/Card (Mirip tekstur nametag putih) */
+.card, .form-group {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Aksen Emas tipis di pojok kartu (Vibe Logo Emas) */
+.card::after, .form-group::after {
+    content: "";
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 40px;
+    height: 40px;
+    background: var(--accent-gold);
+    border-radius: 50%;
+    opacity: 0.2;
+}
+
+.card h3 {
+    margin-top: 0;
+    color: var(--text-dark);
+    font-size: 1.2em;
     margin-bottom: 15px;
-    font-weight: bold;
-    color: var(--secondary);
-    border-left: 3px solid var(--primary);
+    border-left: 4px solid var(--accent-gold); /* Garis emas di samping judul */
     padding-left: 10px;
 }
 
-.peserta-selection-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
-    padding: 10px;
-    background: #181818;
-    border-radius: 8px;
-    border: 1px solid #2a2a2a;
-    transition: 0.2s;
-}
-
-.peserta-selection-item:hover {
-    border-color: #444;
-    background: #222;
-}
-
-.peserta-check {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-}
-
-/* --- BRACKET / HEAT SYSTEM (UTAMA) --- */
-#hasilBracket {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    margin-top: 25px;
-}
-
-.heat-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
+/* Tabel Modern Official */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #ffffff;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-    height: fit-content;
+    border: 1px solid #eee;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+th {
+    background-color: var(--primary-red);
+    color: #ffffff;
+    padding: 18px;
+    text-align: center;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #f4f4f4;
+    text-align: center;
+    color: #555;
+    font-weight: 500;
+}
+
+tr:hover td { 
+    background: rgba(201, 160, 80, 0.05); /* Highlight emas tipis */
+}
+
+/* Box per Heat (Bracket) */
+.heat-box {
+    background: #ffffff;
+    border: 2px solid var(--border-gold); /* Kotak Heat pake border emas */
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .heat-header {
-    background: #2a2a2a;
-    color: var(--secondary);
+    background: linear-gradient(to bottom, #ffffff, #f4f4f4);
+    color: var(--primary-red);
     padding: 12px;
     text-align: center;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    border-bottom: 3px solid var(--primary);
+    letter-spacing: 1.5px;
+    border-bottom: 2px solid var(--border-gold);
 }
 
-.heat-body {
-    padding: 5px 0;
+/* Menang/Kalah Select */
+.select-pemenang {
+    background: #ffffff;
+    color: #333;
+    border: 2px solid #ddd;
 }
-
-.heat-player-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 15px;
-    border-bottom: 1px solid #2a2a2a;
-    gap: 10px;
-}
-
-.heat-player-row:last-child {
-    border-bottom: none;
-}
-
-.player-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.player-info strong {
-    color: #fff;
-    font-size: 14px;
-    text-transform: uppercase;
-}
-
-.player-info small {
-    color: #888;
-    font-size: 11px;
-}
-
-/* --- DROPDOWN STATUS --- */
-.select-status {
-    width: 130px;
-    padding: 6px;
-    font-size: 12px;
-    cursor: pointer;
-    border: 1px solid #444;
-    transition: 0.3s;
-}
-
-.select-status.is-saved {
-    border-color: var(--success) !important;
-    background: #1b3d2a;
-}
-
-/* --- RESPONSIVE MOBILE (HP) --- */
-@media (max-width: 600px) {
-    .admin-container {
-        padding: 10px;
-    }
-
-    #hasilBracket {
-        grid-template-columns: 1fr; /* Paksa satu kolom di HP */
-    }
-
-    .form-group {
-        padding: 15px;
-    }
-
-    .heat-player-row {
-        padding: 10px;
-    }
-
-    .select-status {
-        width: 110px; /* Sedikit lebih kecil di HP */
-    }
-}
-
-/* --- LOADING & ALERTS --- */
-.loading-text {
-    padding: 20px;
-    color: var(--secondary);
-    text-align: center;
-    font-style: italic;
-}
-
-.alert-empty {
-    padding: 20px;
-    background: #2c1a1a;
-    color: var(--primary);
-    text-align: center;
-    border-radius: 10px;
-    border: 1px solid var(--primary);
+.select-pemenang:focus {
+    border-color: var(--primary-red);
 }
