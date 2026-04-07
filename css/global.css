@@ -1,5 +1,5 @@
 /* =============================================
-    1. RESET & VARIABLES
+    RESET & BASE STYLES (Style Lama Lo)
    ============================================= */
 :root {
     --primary: #e74c3c;
@@ -8,12 +8,10 @@
     --surface: #1e1e1e;
     --text: #ffffff;
     --border: #333;
-    --success: #2ecc71;
 }
 
 * { 
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent; /* Hapus shadow biru pas klik di HP */
+    box-sizing: border-box; 
 } 
 
 html, body {
@@ -21,90 +19,73 @@ html, body {
     overflow-x: hidden;
     background-color: var(--bg);
     color: var(--text);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Inter', sans-serif;
     margin: 0; 
     padding: 0;
 }
 
-/* =============================================
-    2. LAYOUT ENGINE
-   ============================================= */
 body {
     display: flex; 
     flex-direction: column; 
     align-items: center;
-    min-height: 100vh;
+    padding: 20px; /* Balik ke padding lega kesukaan lo */
 }
 
-/* Container untuk halaman umum (Login/Menu) */
+/* =============================================
+    LAYOUT COMPONENTS
+   ============================================= */
 .main-container {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 10px;
     text-align: center;
 }
 
-/* Container untuk halaman Admin (Lebih Lebar) */
+/* Container Admin (Kita bikin tetep lebar tapi estetik) */
 .admin-container {
     width: 100%;
-    max-width: 1100px;
+    max-width: 1000px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 10px;
 }
 
-/* =============================================
-    3. GLOBAL COMPONENTS (UI)
-   ============================================= */
-input, select, textarea {
+/* Grid & Cards (Style Legend lo) */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
     width: 100%;
-    background: #2a2a2a;
-    border: 1px solid var(--border);
-    color: white;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 16px; /* 16px mencegah auto-zoom di iPhone */
-    outline: none;
-    transition: border-color 0.3s;
 }
 
-input:focus, select:focus {
-    border-color: var(--primary);
+/* Forms & Inputs (Balik ke style lama yang solid) */
+input, select, button {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 16px;
+    border: 1px solid var(--border);
+    background: #2a2a2a;
+    color: white;
 }
 
 button {
     cursor: pointer;
     border: none;
     font-weight: bold;
-    border-radius: 8px;
-    padding: 12px 20px;
-    transition: all 0.3s ease;
-    font-size: 14px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
     background: var(--primary);
-    color: white;
+    transition: 0.3s;
 }
 
-button:hover { filter: brightness(1.2); transform: translateY(-1px); }
-button:active { transform: translateY(0) scale(0.98); }
-button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-/* utility untuk tabel responsif */
-.table-responsive {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    margin-bottom: 20px;
-}
+button:hover { filter: brightness(1.2); }
 
 /* =============================================
-    4. SMART ORIENTATION OVERLAY
+    SMART OVERLAY (Tetap Ada Tapi Gak Ganggu Admin)
    ============================================= */
 #orientation-overlay {
-    display: none; /* Sembunyi secara default */
+    display: none;
     position: fixed;
     top: 0; left: 0;
     width: 100vw; height: 100vh;
@@ -120,6 +101,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .phone-icon {
     font-size: 60px;
     margin-bottom: 20px;
+    display: inline-block;
     animation: rotatePhone 2s infinite ease-in-out;
 }
 
@@ -129,28 +111,12 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     100% { transform: rotate(0deg); }
 }
 
-/* LOGIKA: Aktifkan overlay HANYA jika:
-   1. Layar Portrait (Tegak)
-   2. Lebar layar di bawah 900px (HP/Tablet)
-   3. Body TIDAK memiliki class .admin-page */
+/* Overlay muncul kecuali di halaman admin */
 @media screen and (max-width: 900px) and (orientation: portrait) {
     body:not(.admin-page) #orientation-overlay {
         display: flex !important;
     }
     body:not(.admin-page) {
         overflow: hidden !important; 
-    }
-}
-
-/* =============================================
-    5. MOBILE REFINEMENT
-   ============================================= */
-@media screen and (max-width: 600px) {
-    body { padding: 10px 0; }
-    .main-container, .admin-container { padding: 15px; }
-    
-    .section-title {
-        font-size: 14px;
-        padding: 10px !important;
     }
 }
