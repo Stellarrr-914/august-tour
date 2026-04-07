@@ -1,36 +1,75 @@
 /* =============================================
-   RESET & THEME COLORS (AMBIL DARI NAMETAG)
+   1. RESET & VARIABLES (WARNA MERDEKA MEWAH)
    ============================================= */
 :root {
-    --primary-red: #a80000;    /* Merah Gelap Khas Panitia */
-    --accent-gold: #c9a050;    /* Emas Logo */
-    --bg-dark: #0f0f0f;       /* Hitam Pekat biar mewah */
-    --surface: #1a1a1a;       /* Abu-abu panel */
+    --primary: #d63031;    /* Merah Bendera Berani (Ambil dari kodingan tadi) */
+    --primary-soft: #ff7675;
+    --secondary: #f1c40f;  /* Kuning Emas Juara */
+    --bg: #121212;        /* Hitam Carbon Mewah (Pekat) */
+    --surface: #1e1e1e;   /* Abu Gelap Panel */
     --text: #ffffff;
     --border: #333;
+    --shadow: rgba(0, 0, 0, 0.5);
 }
 
-* { box-sizing: border-box; }
+* { 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent;
+} 
 
 html, body {
-    margin: 0; padding: 0;
-    background-color: var(--bg-dark);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
+    max-width: 100%;
+    overflow-x: hidden;
+    margin: 0; 
+    padding: 0;
     min-height: 100vh;
-}
-
-body {
-    display: flex; flex-direction: column; align-items: center;
-    padding: 20px;
-    /* Background: Hitam Polos dengan Gradient Merah Tipis di pojok */
-    background: radial-gradient(circle at top right, rgba(168, 0, 0, 0.15), transparent 400px),
-                radial-gradient(circle at bottom left, rgba(168, 0, 0, 0.1), transparent 400px),
-                #0f0f0f;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
 }
 
 /* =============================================
-   UI COMPONENTS (CLEAN & MODERN)
+   2. THE PREMIUM AGUSTUSAN BACKGROUND (NO WATERMARK)
+   ============================================= */
+body {
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
+    padding: 20px;
+    position: relative;
+    
+    /* GANTI GARUDA PAKE GRADIENT HALUS */
+    /* Lapis 1: Warna Dasar Hitam Mewah */
+    background-color: var(--bg); 
+
+    /* Lapis 2: Tekstur Halus (Vibe Semangat Lomba) */
+    background-image: 
+        /* Pola Titik-titik Halus (samar banget) */
+        radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        /* Gradient Merah Tipis di Pojok Kanan Atas */
+        radial-gradient(circle at top right, rgba(214, 48, 49, 0.1), transparent 300px),
+        /* Gradient Merah Tipis di Pojok Kiri Bawah */
+        radial-gradient(circle at bottom left, rgba(214, 48, 49, 0.05), transparent 400px);
+        
+    background-size: 25px 25px, cover, cover;
+    background-attachment: fixed; /* Diem pas di-scroll */
+}
+
+/* =============================================
+   3. LAYOUT & CONTAINERS
+   ============================================= */
+.main-container, .admin-container {
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.main-container { max-width: 800px; text-align: center; }
+.admin-container { max-width: 1050px; }
+
+/* =============================================
+   4. UI COMPONENTS (CLEAN AGUSTUSAN STYLE)
    ============================================= */
 input, select {
     width: 100%;
@@ -39,31 +78,88 @@ input, select {
     border-radius: 12px;
     font-size: 16px;
     border: 1px solid var(--border);
-    background: #151515;
+    background: #1a1a1a;
     color: white;
     outline: none;
     transition: 0.3s;
 }
 
 input:focus, select:focus {
-    border-color: var(--primary-red);
-    box-shadow: 0 0 15px rgba(168, 0, 0, 0.2);
+    border-color: var(--primary);
+    box-shadow: 0 0 10px rgba(214, 48, 49, 0.2);
 }
 
+/* Tombol Perjuangan (Tanpa Shadow Bawah yang Kaku) */
 button {
-    cursor: pointer; border: none;
-    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1px;
-    background: var(--primary-red);
+    background: var(--primary);
     color: white;
     padding: 15px 25px;
     border-radius: 12px;
     transition: 0.3s;
-    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 button:hover {
+    filter: brightness(1.1);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(168, 0, 0, 0.4);
+    box-shadow: 0 8px 20px rgba(214, 48, 49, 0.3);
+}
+
+button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 5px rgba(214, 48, 49, 0.2);
+}
+
+/* utility untuk tabel responsif */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 20px;
+}
+
+/* =============================================
+   5. SMART ORIENTATION OVERLAY (TETAP ADA)
+   ============================================= */
+#orientation-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: #121212;
+    z-index: 999999;
+    color: white;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.phone-icon {
+    font-size: 60px;
+    margin-bottom: 20px;
+    animation: rotatePhone 2s infinite ease-in-out;
+}
+
+@keyframes rotatePhone {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@media screen and (max-width: 900px) and (orientation: portrait) {
+    body:not(.admin-page) #orientation-overlay {
+        display: flex !important;
+    }
+    body:not(.admin-page) {
+        overflow: hidden !important; 
+    }
 }
