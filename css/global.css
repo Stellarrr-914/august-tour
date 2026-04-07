@@ -1,88 +1,134 @@
 /* =============================================
-    RESET & BASE STYLES (Style Lama Lo)
+   1. RESET & VARIABLE (INDONESIA PRIDE)
    ============================================= */
 :root {
-    --primary: #e74c3c;
-    --secondary: #f1c40f;
-    --bg: #121212;
-    --surface: #1e1e1e;
+    --primary: #d63031;    /* Merah Bendera Berani */
+    --primary-soft: #ff7675;
+    --secondary: #f1c40f;  /* Kuning Emas Juara */
+    --bg: #1a1a1a;        /* Hitam Carbon Mewah */
+    --surface: #262626;   /* Abu Gelap Panel */
     --text: #ffffff;
-    --border: #333;
+    --border: #3d3d3d;
+    --shadow: rgba(0, 0, 0, 0.5);
 }
 
 * { 
     box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent;
 } 
 
 html, body {
     max-width: 100%;
     overflow-x: hidden;
-    background-color: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
     margin: 0; 
     padding: 0;
+    min-height: 100vh;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
 }
 
+/* =============================================
+   2. THE SACRED BACKGROUND (GARUDA & TEXTURE)
+   ============================================= */
 body {
     display: flex; 
     flex-direction: column; 
     align-items: center;
-    padding: 20px; /* Balik ke padding lega kesukaan lo */
+    padding: 20px;
+    position: relative;
+    /* Tekstur Titik-titik Halus (Vibe Mading) */
+    background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 30px 30px;
+    background-attachment: fixed;
+}
+
+/* Watermark Garuda Pancasila di Tengah */
+body::before {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%; 
+    height: 70%;
+    /* Pastikan lo ada file ini di folder images */
+    background-image: url('../images/garuda-watermark.svg'); 
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.02; /* Super tipis biar elegan */
+    z-index: -1;
+    pointer-events: none;
 }
 
 /* =============================================
-    LAYOUT COMPONENTS
+   3. LAYOUT & CONTAINERS
    ============================================= */
-.main-container {
+.main-container, .admin-container {
     width: 100%;
-    max-width: 800px;
     margin: 0 auto;
-    padding: 10px;
-    text-align: center;
+    position: relative;
+    z-index: 1;
 }
 
-/* Container Admin (Kita bikin tetep lebar tapi estetik) */
-.admin-container {
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 10px;
-}
+.main-container { max-width: 800px; text-align: center; }
+.admin-container { max-width: 1050px; }
 
-/* Grid & Cards (Style Legend lo) */
-.menu-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    margin-bottom: 40px;
-    width: 100%;
-}
-
-/* Forms & Inputs (Balik ke style lama yang solid) */
-input, select, button {
+/* =============================================
+   4. UI COMPONENTS (AGUSTUSAN STYLE)
+   ============================================= */
+/* Input & Select (Style Solid) */
+input, select, textarea {
     width: 100%;
     margin-bottom: 15px;
     padding: 14px;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 16px;
-    border: 1px solid var(--border);
+    border: 2px solid var(--border);
     background: #2a2a2a;
     color: white;
+    outline: none;
+    transition: all 0.3s;
 }
 
+input:focus, select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 10px rgba(214, 48, 49, 0.3);
+}
+
+/* Tombol Perjuangan */
 button {
     cursor: pointer;
     border: none;
-    font-weight: bold;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     background: var(--primary);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
     transition: 0.3s;
+    box-shadow: 0 4px 0 #8a1d1d; /* Hard shadow bawah */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
-button:hover { filter: brightness(1.2); }
+button:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #8a1d1d;
+}
+
+button:active {
+    transform: translateY(2px);
+    box-shadow: 0 0px 0 #8a1d1d;
+}
 
 /* =============================================
-    SMART OVERLAY (Tetap Ada Tapi Gak Ganggu Admin)
+   5. SMART ORIENTATION OVERLAY
    ============================================= */
 #orientation-overlay {
     display: none;
@@ -101,7 +147,6 @@ button:hover { filter: brightness(1.2); }
 .phone-icon {
     font-size: 60px;
     margin-bottom: 20px;
-    display: inline-block;
     animation: rotatePhone 2s infinite ease-in-out;
 }
 
@@ -111,7 +156,7 @@ button:hover { filter: brightness(1.2); }
     100% { transform: rotate(0deg); }
 }
 
-/* Overlay muncul kecuali di halaman admin */
+/* Overlay OFF untuk Admin & Page Tertentu */
 @media screen and (max-width: 900px) and (orientation: portrait) {
     body:not(.admin-page) #orientation-overlay {
         display: flex !important;
@@ -119,4 +164,13 @@ button:hover { filter: brightness(1.2); }
     body:not(.admin-page) {
         overflow: hidden !important; 
     }
+}
+
+/* =============================================
+   6. RESPONSIVE REFINEMENT
+   ============================================= */
+@media screen and (max-width: 600px) {
+    body { padding: 15px; }
+    .main-container, .admin-container { padding: 10px; }
+    button { width: 100%; } /* Tombol full width di HP */
 }
