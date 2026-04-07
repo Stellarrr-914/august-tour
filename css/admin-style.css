@@ -1,61 +1,135 @@
-/* Container Admin */
+/* =============================================
+   ADMIN STYLE - PROFESSIONAL AGUSTUSAN
+   ============================================= */
+
+/* 1. Container Utama Admin */
 .admin-container {
-    max-width: 1000px; width: 100%;
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    padding-bottom: 50px;
 }
 
-/* Judul Section (Gaya Minimalis Berwibawa) */
+/* 2. Judul Section (Gaya Minimalis Berwibawa) */
 .section-title {
     background: transparent !important;
     color: var(--text) !important;
     padding: 10px 0 !important;
-    font-weight: 800;
+    font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 2px;
-    border-bottom: 3px solid var(--primary-red); /* Garis Merah Tajam */
-    margin-bottom: 25px !important;
+    /* Garis Merah Tajam khas Bendera */
+    border-bottom: 4px solid var(--primary); 
+    margin-bottom: 30px !important;
     display: inline-block;
+    font-size: 1.2rem;
 }
 
-/* Panel Box (Glassmorphism) */
-.form-group, .heat-box {
+/* 3. Panel Box (Card Style) */
+.form-group, .heat-box, .card {
     background: #1a1a1a;
     padding: 25px;
     border-radius: 16px;
     border: 1px solid #2a2a2a;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    margin-bottom: 20px;
-    /* Aksen Merah Tipis di Atas */
-    border-top: 4px solid var(--primary-red);
+    margin-bottom: 25px;
+    /* Aksen Merah Tebal di Atas biar tegas */
+    border-top: 5px solid var(--primary);
+    transition: transform 0.3s ease, border-color 0.3s ease;
 }
 
-/* Tabel (Simple & Dark) */
+.heat-box:hover {
+    border-color: var(--primary-soft);
+    transform: translateY(-5px);
+}
+
+/* 4. Tabel (Clean & High Contrast) */
 table {
-    width: 100%; border-collapse: separate; border-spacing: 0;
-    background: #1a1a1a; border-radius: 12px; overflow: hidden;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
     margin-bottom: 30px;
+    border: 1px solid #2a2a2a;
 }
 
 th {
-    background: #222;
-    color: var(--accent-gold); /* Pakai warna emas buat header biar mewah */
-    padding: 15px; font-size: 13px; text-transform: uppercase;
+    background: #252525;
+    /* Warna Emas Juara untuk Header */
+    color: var(--secondary); 
+    padding: 18px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid var(--primary);
 }
 
 td {
-    padding: 12px; border-bottom: 1px solid #222;
-    text-align: center; color: #ccc;
+    padding: 15px;
+    border-bottom: 1px solid #252525;
+    text-align: center;
+    color: #dfdfdf;
+    font-weight: 500;
 }
 
-/* Heat Bracket Styling */
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background: rgba(214, 48, 49, 0.05); /* Highlight Merah Tipis */
+    color: #fff;
+}
+
+/* 5. Heat Bracket Styling */
 .heat-header {
-    color: var(--primary-red);
+    color: var(--primary);
     font-weight: 900;
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .heat-item {
-    display: flex; justify-content: space-between;
-    padding: 10px; border-bottom: 1px solid #222;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #252525;
+    transition: 0.2s;
+}
+
+.heat-item:last-child {
+    border-bottom: none;
+}
+
+.heat-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* 6. Form Specifics */
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: var(--secondary); /* Label warna emas biar eye-catching */
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+/* 7. Search & Filter Bar */
+.filter-section {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+@media screen and (max-width: 768px) {
+    .filter-section {
+        flex-direction: column;
+    }
 }
