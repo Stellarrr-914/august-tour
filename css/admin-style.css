@@ -133,3 +133,22 @@ tr:hover td {
         flex-direction: column;
     }
 }
+
+/* Pastikan ada jarak antara header (tombol menu) dengan konten di bawahnya */
+.main-header {
+    display: flex;
+    flex-direction: column; /* Biar judul & tombol rapi ke bawah di mobile */
+    align-items: flex-start;
+    gap: 20px; /* Spasi antar elemen di dalam header */
+    margin-bottom: 40px !important; /* INI KUNCINYA: Jarak ke box bawahnya */
+}
+
+/* Khusus buat tombol Menu Utama biar gak nempel */
+.btn-back, button[onclick*="menu"] {
+    margin-bottom: 10px; /* Tambahan spasi biar shadow bawahnya gak nabrak */
+}
+
+/* Opsional: Biar "Pilih Pertandingan" gak terlalu mepet ke atas border merah */
+.form-group .section-title {
+    margin-top: 5px !important;
+}
