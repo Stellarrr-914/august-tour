@@ -216,18 +216,18 @@ function publikasikanHeat() {
     let payload = [];
 
     allSelects.forEach(sel => {
-    let statusTerpilih = sel.value; // Ambil Juara / Lolos / Gugur / Menunggu
 
-    // Gabungkan status dengan babaknya, misal: "Lolos - Penyisihan" atau "Gugur - Semifinal"
-    let statusFinal = `${statusTerpilih} - ${babak}`; 
+        payload.push({
 
-    payload.push({
-        nama: sel.getAttribute("data-nama"),
-        status: statusFinal, // <--- Kirim format gabungan yang aman ke Google Sheets
-        heat: sel.getAttribute("data-heat")
+            nama: sel.getAttribute("data-nama"),
+
+            status: `${statusTerpilih} - ${babak}`,
+
+            heat: sel.getAttribute("data-heat")
+
+        });
+
     });
-});
-
     if (payload.length === 0) return alert("Gak ada data!");
 
     const btn = document.getElementById("btnPublikasi");
