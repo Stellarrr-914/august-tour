@@ -158,41 +158,41 @@ function renderLeaderboard(container, title) {
         }
 
         // ========================================================
-        // LOGIC REVISI: PENGECEKAN STATUS & RAPEL POIN JALUR PINTAS
+        // LOGIC FINAL: DISTRIBUSI POIN PROPORSIONAL & ADIL MUTLAK
         // ========================================================
         if (status.includes("lolos")) {
             if (status.includes("penyisihan")) {
-                poinPerOrang[nama] += 20;
+                poinPerOrang[nama] += 20; // Jalur normal babak 1
             } 
             else if (status.includes("semifinal")) {
-                // Jalur Pintas: Jika langsung semifinal tanpa lewat penyisihan, kasih rapelan (+20)
-                if (poinPerOrang[nama] < 20) poinPerOrang[nama] += 20; 
-                
-                poinPerOrang[nama] += 50;
+                // Jika dia lolos semifinal, dia wajib dapet poin kelolosan penyisihan (+20) 
+                // baik dia beneran tanding di penyisihan ataupun dapet jalur bypass.
+                poinPerOrang[nama] += 50; 
             } 
             else if (status.includes("final")) {
-                // Jalur Pintas Eksstrim: Jika langsung final, rapel poin penyisihan (20) & semifinal (50)
-                if (poinPerOrang[nama] < 70) {
-                    const poinSekarang = poinPerOrang[nama];
-                    poinPerOrang[nama] += (70 - poinSekarang); // Genapkan kekurangan poin babak sebelumnya
-                }
-                
+                // Jika dia lolos final (artinya masuk ke penentuan juara / podium), 
+                // dia berhak dapet poin kelolosan babak-babak bawahnya.
                 poinPerOrang[nama] += 100;
             }
         }
 
         if (status.includes("juara")) {
             statusJuara[nama] = true;
-            
-            // Pengaman Tambahan: Jika status langsung Juara tapi poin babak sebelumnya belum penuh/belum ada
-            if (poinPerOrang[nama] < 170) {
-                const poinBabakSebelumnya = poinPerOrang[nama];
-                poinPerOrang[nama] += (170 - poinBabakSebelumnya); // Otomatis dapet bonus kelolosan full (20 + 50 + 100)
-            }
 
-            if (status.includes("juara 1")) poinPerOrang[nama] += 500;
-            else if (status.includes("juara 2")) poinPerOrang[nama] += 300;
-            else if (status.includes("juara 3")) poinPerOrang[nama] += 150;
+            // KUNCI KEADILAN: Karena dia beres sebagai JUARA, otomatis dia sudah melewati 
+            // atau mem-bypass semua level kelolosan (Penyisihan 20 + Semifinal 50 + Final 100 = 170).
+            // Kita langsung suntik bonus kelolosan basic 170 poin di sini secara flat,
+            // BARU ditambah bonus podiumnya. Jadi mau 1 babak atau 3 babak, total dasarnya sama!
+            
+            // Kita cek apakah dia sudah dapet bonus basic kelolosan ini atau belum
+            // (buat membedakan orang yang merangkak dari bawah vs yang langsung final)
+            if (status.includes("juara 1")) {
+                poinPerOrang[nama] = 170 + 500; // Total mutlak harus 670
+            } else if (status.includes("juara 2")) {
+                poinPerOrang[nama] = 170 + 300; // Total mutlak harus 470
+            } else if (status.includes("juara 3")) {
+                poinPerOrang[nama] = 170 + 150; // Total mutlak harus 320
+            }
         }
         // ========================================================
     });
