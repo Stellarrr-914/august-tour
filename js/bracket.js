@@ -221,7 +221,7 @@ function publikasikanHeat() {
 
             nama: sel.getAttribute("data-nama"),
 
-            status: `${statusTerpilih} - ${babak}`,
+            status: `Menunggu - ${babak}`,
 
             heat: sel.getAttribute("data-heat")
 
