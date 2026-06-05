@@ -216,12 +216,15 @@ function publikasikanHeat() {
     let payload = [];
 
     allSelects.forEach(sel => {
-        payload.push({
-            nama: sel.getAttribute("data-nama"),
-            status: `Menunggu - ${babak}`,
-            heat: sel.getAttribute("data-heat")
-        });
+    // Ambil nilai yang sedang aktif dipilih di dropdown (Juara / Lolos / Gugur / Menunggu)
+    let statusTerpilih = sel.value; 
+
+    payload.push({
+        nama: sel.getAttribute("data-nama"),
+        status: statusTerpilih, // <--- GANTI DI SINI: Pake nilai asli dari dropdown
+        heat: sel.getAttribute("data-heat")
     });
+});
 
     if (payload.length === 0) return alert("Gak ada data!");
 
