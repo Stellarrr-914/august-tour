@@ -216,18 +216,13 @@ function publikasikanHeat() {
     let payload = [];
 
     allSelects.forEach(sel => {
-
         payload.push({
-
             nama: sel.getAttribute("data-nama"),
-
-            status: `Menunggu - ${babak}`,
-
+            status: `Menunggu - ${babak}`, // Tetap pake format lama lo biar gak ribet di Sheet
             heat: sel.getAttribute("data-heat")
-
         });
-
     });
+
     if (payload.length === 0) return alert("Gak ada data!");
 
     const btn = document.getElementById("btnPublikasi");
@@ -247,12 +242,15 @@ function publikasikanHeat() {
     .then(res => res.text())
     .then(txt => {
         alert(txt);
-        btn.disabled = false;
-        btn.innerText = "✅ Selesai";
+        
+        // KUNCI PERUBAHAN: Setelah sukses, hilangkan tombol secara permanen dari layar
+        btn.style.display = 'none'; 
     })
     .catch(err => {
+        // Kalau gagal/RTO, tombol diaktifkan lagi biar admin bisa coba klik ulang
         btn.disabled = false;
-        alert("Gagal!");
+        btn.innerText = "🚀 Publikasikan ke Heat"; // Balikin ke teks awal
+        alert("Gagal mengirim data! Silakan coba lagi.");
     });
 }
 
