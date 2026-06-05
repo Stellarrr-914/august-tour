@@ -216,12 +216,14 @@ function publikasikanHeat() {
     let payload = [];
 
     allSelects.forEach(sel => {
-    // Ambil nilai yang sedang aktif dipilih di dropdown (Juara / Lolos / Gugur / Menunggu)
-    let statusTerpilih = sel.value; 
+    let statusTerpilih = sel.value; // Ambil Juara / Lolos / Gugur / Menunggu
+
+    // Gabungkan status dengan babaknya, misal: "Lolos - Penyisihan" atau "Gugur - Semifinal"
+    let statusFinal = `${statusTerpilih} - ${babak}`; 
 
     payload.push({
         nama: sel.getAttribute("data-nama"),
-        status: statusTerpilih, // <--- GANTI DI SINI: Pake nilai asli dari dropdown
+        status: statusFinal, // <--- Kirim format gabungan yang aman ke Google Sheets
         heat: sel.getAttribute("data-heat")
     });
 });
