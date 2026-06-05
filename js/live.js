@@ -152,7 +152,6 @@ function renderLeaderboard(container, title) {
         const nama = p.nama;
         const lomba = p.lomba || "";
         const kategori = p.kategori || "";
-        // .trim() buat ngebuang spasi liar di ujung kata kalau ada
         const status = (p.status_babak || "").toLowerCase().trim(); 
         
         if (!nama) return;
@@ -166,23 +165,21 @@ function renderLeaderboard(container, title) {
 
         const statusLama = trackLombaPerOrang[nama][keyLomba] || "";
 
-        // HIERARKI BERDASARKAN FORMAT ASLI: Juara > Gugur Final > Lolos Semifinal > Gugur Semifinal > Lolos Penyisihan > Gugur Penyisihan
+        // HIERARKI BARU (Bebas Masalah Semifinal Gaib): Juara > Gugur Final > Lolos Semifinal > Gugur Semifinal > Lolos Penyisihan > Gugur Penyisihan
         if (status.includes("juara")) {
-            trackLombaPerOrang[nama][keyLomba] = status; // Kasta tertinggi (Juara 1/2/3 - Final)
+            trackLombaPerOrang[nama][keyLomba] = status; 
             statusJuaraGlobal[nama] = true;
         } 
-        // 1. Level Babak Final
         else if (status === "gugur - final" && !statusLama.includes("juara")) {
             trackLombaPerOrang[nama][keyLomba] = "final_gugur";
         } 
-        // 2. Level Babak Semifinal
         else if (status === "lolos - semifinal" && !statusLama.includes("juara") && statusLama !== "final_gugur") {
+            // Lolos semifinal artinya dia berhak tanding di final
             trackLombaPerOrang[nama][keyLomba] = "semifinal_lolos";
         } 
         else if (status === "gugur - semifinal" && !statusLama.includes("juara") && statusLama !== "final_gugur" && statusLama !== "semifinal_lolos") {
             trackLombaPerOrang[nama][keyLomba] = "semifinal_gugur";
         } 
-        // 3. Level Babak Penyisihan
         else if (status === "lolos - penyisihan" && !trackLombaPerOrang[nama][keyLomba]) {
             trackLombaPerOrang[nama][keyLomba] = "penyisihan_lolos";
         }
@@ -200,27 +197,24 @@ function renderLeaderboard(container, title) {
         Object.keys(trackLombaPerOrang[nama]).forEach(keyLomba => {
             const statusTertinggi = trackLombaPerOrang[nama][keyLomba];
 
-            // HITUNG POIN BERDASARKAN KEY YANG SUDAH DISERAGAMKAN
+            // HITUNG POIN DENGAN MATEMATIKA PAKET FLAT BARU
             if (statusTertinggi.includes("juara 1")) {
-                poinPerOrang[nama] += (70 + 500); // 70 (Poin masuk final) + 500 (Bonus Juara 1) = 570
+                poinPerOrang[nama] += (20 + 500); // Lolos Penyisihan (20) + Juara 1 (500) = 520
             } 
             else if (statusTertinggi.includes("juara 2")) {
-                poinPerOrang[nama] += (70 + 300); // 70 (Poin masuk final) + 300 (Bonus Juara 2) = 370
+                poinPerOrang[nama] += (20 + 300); // Lolos Penyisihan (20) + Juara 2 (300) = 320
             } 
             else if (statusTertinggi.includes("juara 3")) {
-                poinPerOrang[nama] += (70 + 150); // 70 (Poin masuk final) + 150 (Bonus Juara 3) = 220
+                poinPerOrang[nama] += (20 + 150); // Lolos Penyisihan (20) + Juara 3 (150) = 170
             } 
-            else if (statusTertinggi === "final_gugur") {
-                poinPerOrang[nama] += 70;  // Gugur - Final dapet 0, tapi dapet paket kelolosan bawahnya (20 + 50)
-            } 
-            else if (statusTertinggi === "semifinal_lolos") {
-                poinPerOrang[nama] += 70;  // Lolos - Semifinal artinya masuk final (20 + 50)
+            else if (statusTertinggi === "final_gugur" || statusTertinggi === "semifinal_lolos") {
+                poinPerOrang[nama] += 20;  // Masuk final tapi gak podium (Peringkat 4) cuma dapet poin kelolosan Penyisihan
             } 
             else if (statusTertinggi === "semifinal_gugur") {
-                poinPerOrang[nama] += 20;  // Gugur - Semifinal dapet 0, tapi dapet paket lolos penyisihan (20)
+                poinPerOrang[nama] += 20;  // Gugur di semifinal, dapet poin kelolosan Penyisihan
             } 
             else if (statusTertinggi === "penyisihan_lolos") {
-                poinPerOrang[nama] += 20;  // Lolos - Penyisihan dasar
+                poinPerOrang[nama] += 20;  // Lolos penyisihan dasar
             } 
             else if (statusTertinggi === "penyisihan_gugur") {
                 poinPerOrang[nama] += 0;   // Kalah di awal beneran 0 Poin
