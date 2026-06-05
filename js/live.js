@@ -157,20 +157,47 @@ function renderLeaderboard(container, title) {
             statusJuara[nama] = false;
         }
 
+        // ========================================================
+        // LOGIC REVISI: PENGECEKAN STATUS & RAPEL POIN JALUR PINTAS
+        // ========================================================
         if (status.includes("lolos")) {
-            if (status.includes("penyisihan")) poinPerOrang[nama] += 20;
-            else if (status.includes("semifinal")) poinPerOrang[nama] += 50;
-            else if (status.includes("final")) poinPerOrang[nama] += 100;
+            if (status.includes("penyisihan")) {
+                poinPerOrang[nama] += 20;
+            } 
+            else if (status.includes("semifinal")) {
+                // Jalur Pintas: Jika langsung semifinal tanpa lewat penyisihan, kasih rapelan (+20)
+                if (poinPerOrang[nama] < 20) poinPerOrang[nama] += 20; 
+                
+                poinPerOrang[nama] += 50;
+            } 
+            else if (status.includes("final")) {
+                // Jalur Pintas Eksstrim: Jika langsung final, rapel poin penyisihan (20) & semifinal (50)
+                if (poinPerOrang[nama] < 70) {
+                    const poinSekarang = poinPerOrang[nama];
+                    poinPerOrang[nama] += (70 - poinSekarang); // Genapkan kekurangan poin babak sebelumnya
+                }
+                
+                poinPerOrang[nama] += 100;
+            }
         }
 
         if (status.includes("juara")) {
             statusJuara[nama] = true;
+            
+            // Pengaman Tambahan: Jika status langsung Juara tapi poin babak sebelumnya belum penuh/belum ada
+            if (poinPerOrang[nama] < 170) {
+                const poinBabakSebelumnya = poinPerOrang[nama];
+                poinPerOrang[nama] += (170 - poinBabakSebelumnya); // Otomatis dapet bonus kelolosan full (20 + 50 + 100)
+            }
+
             if (status.includes("juara 1")) poinPerOrang[nama] += 500;
             else if (status.includes("juara 2")) poinPerOrang[nama] += 300;
             else if (status.includes("juara 3")) poinPerOrang[nama] += 150;
         }
+        // ========================================================
     });
 
+    // SISA KODE DI BAWAH INI SAMA PERSIS (TIDAK ADA YANG DIUBAH)
     const sortedData = Object.keys(poinPerOrang)
         .map(nama => ({
             nama: nama,
@@ -197,7 +224,6 @@ function renderLeaderboard(container, title) {
     html += `</tbody></table></div>`;
     container.innerHTML = html;
 }
-
 // --- 4. RENDER WALL OF FAME (SELALU MUNCUL DI BAWAH) ---
 function renderWallOfFame() {
     const wfContainer = document.getElementById("wallOfFameContainer");
