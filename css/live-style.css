@@ -313,3 +313,84 @@ body {
     font-size: 0.95rem;
 }
 
+
+/* ==========================================================================
+   PERBAIKAN TOTAL: SELECTOR SUPER SPESIFIK UNTUK TOP 3 BESAR (ANTI-GAGAL)
+   ========================================================================== */
+
+/* 1. ATURAN UTMA UNTUK SEMUA PEMENANG LOMBA (BADGE EMAS TETEP NYALA) */
+.lboard-table tr.row-winner {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.02), transparent) !important;
+    border-left: 4px solid #475569 !important;
+}
+
+.lboard-table tr.row-winner .status-tag {
+    background: linear-gradient(135deg, #ffca28 0%, #ff8f00 100%) !important;
+    color: #000000 !important;
+    font-weight: 900 !important;
+    box-shadow: 0 2px 10px rgba(255, 202, 40, 0.2) !important;
+}
+
+
+/* 2. PAKSA TOTAL WARNA KHUSUS TOP 3 BESAR KLASEMEN UMUM */
+
+/* --- RANK 1 UMUM (EMAS SUPREME) --- */
+.lboard-table tr:nth-child(1) {
+    background: linear-gradient(90deg, rgba(255, 202, 40, 0.08), transparent) !important;
+}
+.lboard-table tr:nth-child(1) td,
+.lboard-table tr:nth-child(1) .rank-cell,
+.lboard-table tr:nth-child(1) .name-cell,
+.lboard-table tr:nth-child(1) .points-cell {
+    color: #ffca28 !important; /* Paksa semua text di baris 1 jadi Emas */
+    font-weight: 900 !important;
+}
+.lboard-table tr:nth-child(1) .name-cell {
+    font-size: 1.1rem !important;
+    text-shadow: 0 0 12px rgba(255, 202, 40, 0.5) !important; /* Efek Glow Emas */
+}
+
+/* --- RANK 2 UMUM (PERAK PLATINUM) --- */
+.lboard-table tr:nth-child(2) {
+    background: linear-gradient(90deg, rgba(236, 239, 241, 0.06), transparent) !important;
+}
+.lboard-table tr:nth-child(2) td,
+.lboard-table tr:nth-child(2) .rank-cell,
+.lboard-table tr:nth-child(2) .name-cell,
+.lboard-table tr:nth-child(2) .points-cell {
+    color: #eceff1 !important; /* Paksa semua text di baris 2 jadi Perak */
+    font-weight: 800 !important;
+}
+.lboard-table tr:nth-child(2) .name-cell {
+    font-size: 1.05rem !important;
+    text-shadow: 0 0 10px rgba(236, 239, 241, 0.4) !important; /* Efek Glow Perak */
+}
+
+/* --- RANK 3 UMUM (PERUNGGU PREMIUM) --- */
+.lboard-table tr:nth-child(3) {
+    background: linear-gradient(90deg, rgba(255, 143, 0, 0.06), transparent) !important;
+}
+.lboard-table tr:nth-child(3) td,
+.lboard-table tr:nth-child(3) .rank-cell,
+.lboard-table tr:nth-child(3) .name-cell,
+.lboard-table tr:nth-child(3) .points-cell {
+    color: #ff8f00 !important; /* Paksa semua text di baris 3 jadi Perunggu */
+    font-weight: 800 !important;
+}
+.lboard-table tr:nth-child(3) .name-cell {
+    font-size: 1rem !important;
+    text-shadow: 0 0 10px rgba(255, 143, 0, 0.4) !important; /* Efek Glow Perunggu */
+}
+
+
+/* 3. REKAP UNTUK YANG TIDAK DAPET JUARA LOMBA (HADIAH HIBURAN) */
+.lboard-table tr:not(.row-winner) .status-tag {
+    background: #262626 !important;
+    color: #888888 !important;
+    font-weight: 700 !important;
+    box-shadow: none !important;
+}
+.lboard-table tr:not(.row-winner) .name-cell {
+    color: #cbd5e1 !important;
+    font-weight: 500 !important;
+}
