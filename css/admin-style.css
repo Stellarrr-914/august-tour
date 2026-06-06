@@ -827,7 +827,7 @@ body {
 }
 
 /* ==========================================================================
-   13. FIX TOTAL PAMUNGKAS: AREA PESERTA SIAP TANDING (ANTI-RENGGANG & GANDENGAN)
+   13. FIX TOTAL ABADI: AREA PESERTA SIAP TANDING (FORMASI STANDAR NO-MELAR)
    ========================================================================== */
 
 /* Kotak Container Utama Pembungkus */
@@ -840,15 +840,14 @@ body {
     position: relative;
     border-left: 4px solid var(--primary) !important; /* Garis aksen merah gahar */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    display: block !important; /* Reset dari grid biar gak merusak judul */
+    text-align: left !important;
 }
 
-/* GANTI BAGIAN INI DI CSS LO BROK (Biar teks judulnya gak gepeng ke bawah) */
-
+/* Memperbaiki Judul Biar Lebar Sempurna & Gak Gepeng */
 .grid-peserta p,
 .grid-peserta h3,
-.grid-peserta .ready-title,
-.grid-peserta font,
-.grid-peserta strong {
+.grid-peserta .ready-title {
     color: #ffffff !important;
     font-weight: 800 !important;
     font-size: 1.05rem !important;
@@ -856,71 +855,59 @@ body {
     margin-bottom: 20px !important;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    
-    /* TRICK SAKTI: Paksa teks apapun yang jadi judul untuk ngebentang penuh dari kiri ke kanan */
-    grid-column: 1 / -1 !important; 
     display: block !important;
     width: 100% !important;
 }
-/* Sembunyikan tag <br> bawaan render script yang bikin barisnya patah */
+
+/* Sembunyikan tag <br> bawaan script lo biar gak bikin jarak kosong ketinggian */
 .grid-peserta br {
     display: none !important;
 }
 
-/* ==========================================================================
-   FORMASI SAKTI: Menggunakan Grid Otomatis untuk Menyandingkan Input & Teks
-   ========================================================================== */
-.grid-peserta div,
-.grid-peserta form,
-.grid-peserta {
-    display: grid !important;
-    /* Kolom 1: Checkbox (auto), Kolom 2: Teks Nama (Sisa Space) */
-    grid-template-columns: min-content 1fr !important;
-    gap: 12px 10px !important; /* Jarak antar baris 12px, jarak checkbox ke nama 10px */
-    align-items: center !important;
-}
-
-/* Memastikan Judul tetep ngebentang penuh di atas (gak ikut kena grid samping) */
-.grid-peserta p, 
-.grid-peserta h3, 
-.grid-peserta .ready-title {
-    grid-column: 1 / -1 !important;
-}
-
-/* Styling Checkbox biar simetris di sebelah kiri */
+/* KUNCI FORMASI: Karena JS lo ngerender text polosan, kita bungkus 
+   semua element (input & text nama) agar mengalir horizontal normal per baris */
 .grid-peserta input[type="checkbox"] {
-    grid-column: 1 !important; /* Paksa di kolom pertama */
+    display: inline-block !important;
+    vertical-align: middle !important;
     width: 18px !important;
     height: 18px !important;
     accent-color: var(--primary) !important; /* Centangan Merah Crimson */
     cursor: pointer;
-    margin: 0 !important;
+    margin: 12px 10px 12px 0 !important; /* Atur jarak antar baris & jarak ke nama */
 }
 
-/* Styling Teks Nama yang dimuntahin polosan biar dapet kotak background premium */
-.grid-peserta text,
-.grid-peserta span,
+/* Menjinakkan Teks Nama & Level yang dimuntahin polosan biar sejajar di kanan checkbox */
+.grid-peserta,
 .grid-peserta label,
-.grid-peserta {
-    grid-column: 2 !important; /* Paksa di kolom kedua (sebelah kanan checkbox) */
+.grid-peserta span,
+.grid-peserta text {
+    display: inline-block !important;
+    vertical-align: middle !important;
     color: #ffffff !important;
     font-weight: 700 !important;
     font-size: 0.95rem !important;
-    
-    /* Sentuhan box premium per baris nama */
-    background: #1c1c1c !important;
-    border: 1px solid #2d2d2d !important;
-    border-radius: 6px !important;
-    padding: 10px 14px !important;
-    display: block !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
     margin: 0 !important;
+    padding: 0 !important;
+    background: none !important;
+    border: none !important;
 }
 
-/* Efek Hover di teks biar interaktif pas mau diklik */
-.grid-peserta text:hover,
-.grid-peserta span:hover {
-    background: #222 !important;
-    border-color: #3e3e3e !important;
+/* TRIK BREAKING: Karena teks & checkbox lo mengalir inline, 
+   kita paksa setiap setelah nama (atau teks level) untuk ganti baris secara otomatis */
+.grid-peserta input[type="checkbox"] {
+    clear: left !important;
+}
+
+/* Tambahkan pembatas tipis otomatis berupa background box abu di text 
+   jika browser membaca formatnya sebagai kesatuan */
+.grid-peserta [style*="border"], 
+.grid-peserta div div {
+    background: #1c1c1c !important;
+    border: 1px solid #2d2d2d !important;
+    border-radius: 8px !important;
+    padding: 10px 15px !important;
+    margin-bottom: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
 }
