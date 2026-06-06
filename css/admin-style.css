@@ -881,15 +881,8 @@ body {
 .grid-peserta label,
 .grid-peserta span,
 .grid-peserta text {
-    display: inline-block !important;
     vertical-align: middle !important;
-    color: #ffffff !important;
-    font-weight: 700 !important;
-    font-size: 0.95rem !important;
     margin: 0 !important;
-    padding: 0 !important;
-    background: none !important;
-    border: none !important;
 }
 
 /* TRIK BREAKING: Karena teks & checkbox lo mengalir inline, 
