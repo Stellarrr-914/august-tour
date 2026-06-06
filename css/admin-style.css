@@ -176,20 +176,36 @@ body.login-page-body {
 }
 
 /* Komponen Foto Full Layar di Belakang */
+/* Komponen Foto Full Layar di Belakang + Efek Animasi Sinematik */
 .login-bg-fullscreen {
-    position: absolute; /* Ubah ke absolute biar dia nempel di dalam body */
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('2025.jpeg'); /* Tetap arahkan ke file di folder css/ */
+    background-image: url('2025.jpeg');
     background-size: cover;
-    background-position: center;
+    /* Ubah ke center-top atau sesuaikan biar awalnya pas di muka */
+    background-position: center top; 
     background-repeat: no-repeat;
-    /* Kita naikkan z-index-side ke 1 agar berada di atas background body hitam */
     z-index: 1; 
+    
+    /* KUNCINYA DI SINI: Jalankan animasi bernama 'panFoto' selama 20 detik, 
+       bergerak mulus (linear), bolak-balik (alternate), dan jalan terus tanpa henti (infinite) */
+    animation: panFoto 20s linear infinite alternate;
 }
 
+/* Animasi Pergeseran Foto Biar Wajah Panitia Bergantian Kelihatan */
+@keyframes panFoto {
+    0% {
+        background-position: 20% top; /* Geser agak ke kiri */
+        transform: scale(1.05);       /* Zoom dikit biar pas geser gak bocor background hitamnya */
+    }
+    100% {
+        background-position: 80% top; /* Geser halus ke kanan */
+        transform: scale(1.05);
+    }
+}
 /* Overlay Gelap Halus biar Box Login Kontras & Nyaman Dibaca */
 .login-bg-overlay {
     position: absolute;
