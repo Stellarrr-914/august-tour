@@ -324,10 +324,27 @@ body {
     border-left: 4px solid #475569 !important;
 }
 
+/* ==========================================================================
+   PERBAIKAN BADGE: MERAPIKAN KOTAK KUNING PODIUM BIAR PROPORSIONAL
+   ========================================================================== */
+
 .lboard-table tr.row-winner .status-tag {
     background: linear-gradient(135deg, #ffca28 0%, #ff8f00 100%) !important;
     color: #000000 !important;
+    
+    /* Perbaikan Struktur Kotak & Teks */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    padding: 6px 14px !important;    /* Ditambah biar kotak punya ruang napas atas-bawah & kiri-kanan */
+    font-size: 11px !important;      /* Ukuran font disesuaikan sedikit */
     font-weight: 900 !important;
+    letter-spacing: 0.5px !important; /* Kasih jarak antar-huruf biar rapi gak dempet */
+    border-radius: 6px !important;
+    
+    min-width: 75px !important;      /* Jaga lebar minimal kotak biar seragam rapi */
+    text-align: center !important;
     box-shadow: 0 2px 10px rgba(255, 202, 40, 0.2) !important;
 }
 
