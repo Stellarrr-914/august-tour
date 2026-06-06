@@ -10,59 +10,38 @@
 
 </head>
 
-<body class="login-page-body"> <!-- 1. Ditambah class login-page-body -->
+<body class="login-page-body">
 
-<div class="login-page-wrapper"> <!-- 2. Wrapper Utama Pembagi 2 Kolom -->
-    
-    <!-- SISI KIRI: Tempat Foto Dokumentasi Tahun Lalu -->
-    <div class="login-split-image">
-        <div class="login-image-overlay"></div>
-        <div class="login-image-text">
-            <h2>Dokumentasi Turnamen</h2>
-            <p>Keseruan dan semangat perjuangan warga RT 1 RW 1 tahun lalu.</p>
-        </div>
+  <div class="login-bg-fullscreen">
+    <div class="login-bg-overlay"></div>
+  </div>
+
+  <div class="login-wrapper-center">
+    <div class="login-card-box">
+      
+      <div class="login-brand-header">
+        <div class="brand-icon">🏆</div>
+        <h1>ADMIN LOGIN</h1>
+        <p>Turnamen Agustus RT</p>
+      </div>
+      
+      <input type="text" id="username" placeholder="Username">
+      <input type="password" id="password" placeholder="Password">
+      
+      <button onclick="login()" style="width: 100%;">Masuk ke Dashboard</button>
+      
+      <p id="loginError" style="color:#ff7675; font-size: 13px; margin-top: 10px; text-align: center;"></p>
+      
+      <div class="login-divider"></div>
+      
+      <div class="login-public-link" onclick="window.location.href='live.html'" style="cursor: pointer;">
+          <span>📢 Buka Live Report (Publik)</span>
+      </div>
+      
     </div>
+  </div>
 
-    <!-- SISI KANAN: Tempat Form Login Utama -->
-    <div class="login-split-form">
-        
-        <!-- Box Form Utama (Mewarisi style box milikmu & global) -->
-        <div class="login-card-box">
-            <div class="login-brand-header">
-                <div class="brand-icon">🏆</div> <!-- Icon trofi asli lo -->
-                <h1>ADMIN LOGIN</h1>
-                <p>Turnamen Agustusan RT</p>
-            </div>
-            
-            <!-- Elemen Input & Button Asli Lo (Fungsi JS Tetap Aman) -->
-            <input type="text" id="username" placeholder="Username">
-            <input type="password" id="password" placeholder="Password">
-            
-            <!-- Fungsi onclick="login()" tetep nempel aman -->
-            <button onclick="login()" style="width: 100%;">Masuk ke Dashboard</button>
-            
-            <!-- Tempat pesan error dari auth.js lo -->
-            <p id="loginError" style="color:#ff7675; font-size: 13px; margin-top: 10px; text-align: center;"></p>
-            
-            <div class="login-divider"></div>
-            
-            <!-- Tombol Link Live Report asli lo dengan fungsi pindah halaman -->
-            <div class="login-public-link" onclick="window.location.href='live.html'" style="cursor: pointer;">
-                <span>📢 Buka Live Report (Publik)</span>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-<!-- Semua file JavaScript lo tetep utuh gak kesentuh, ditaruh paling bawah -->
-<script src="js/data.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/navigation.js"></script>
-<script src="js/peserta.js"></script>
-<script src="js/lomba.js"></script>
-<script src="js/bracket.js"></script>
-<script src="js/main.js"></script>
+  <div id="orientation-overlay"> ... </div>
 
 </body>
 </html>
