@@ -602,3 +602,226 @@ body {
         text-align: center;
     }
 }
+
+/* ==========================================================================
+   12. STYLING PREMIUM BRACKET & HEAT MANAGER (RESPONSIVE & SAT-SET)
+   ========================================================================== */
+
+/* Header Area Bracket */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #252525;
+    padding-bottom: 12px;
+}
+
+.page-title {
+    color: #ffffff !important;
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+/* Mempercantik Dropdown Select Filter */
+.filter-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.filter-grid select {
+    background-color: #141414 !important;
+    border: 1px solid #282828 !important;
+    color: #fff !important;
+    padding: 12px 15px !important;
+    border-radius: 8px !important;
+    font-size: 0.95rem;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.filter-grid select:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 10px rgba(214, 48, 49, 0.2);
+}
+
+/* Tombol Tampilkan Daftar Peserta */
+.btn-primary.btn-full {
+    background: var(--primary) !important;
+    border: none !important;
+    color: #fff !important;
+    padding: 14px !important;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s ease;
+    width: 100%;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary.btn-full:hover {
+    background: var(--primary-soft) !important;
+    box-shadow: 0 5px 15px rgba(214, 48, 49, 0.3);
+    transform: translateY(-1px);
+}
+
+/* --- KOTAK GENERATE HEAT (SEJAJAR & RAPI) --- */
+.card-action {
+    background: #141414 !important;
+    border: 1px solid #252525 !important;
+    border-radius: 12px !important;
+    padding: 20px !important;
+    margin: 20px 0;
+}
+
+.action-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.input-setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    background: #1c1c1c;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #282828;
+}
+
+.input-setting label {
+    font-weight: 700;
+    color: #aaa;
+    font-size: 0.95rem;
+}
+
+.input-setting input[type="number"] {
+    background: #101010 !important;
+    border: 1px solid #333 !important;
+    color: #fff !important;
+    padding: 8px 12px !important;
+    border-radius: 6px !important;
+    width: 70px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+/* Button Group Utama biar gak jomplang */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.button-group button {
+    padding: 12px 20px !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    border-radius: 8px !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-success {
+    background: #27ae60 !important;
+    color: #fff !important;
+}
+
+.btn-success:hover {
+    background: #2ecc71 !important;
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.25);
+}
+
+.btn-warning {
+    background: var(--primary) !important; /* Disinkronkan ke merah andalan lo */
+    color: #fff !important;
+}
+
+.btn-warning:hover {
+    background: var(--primary-soft) !important;
+    box-shadow: 0 4px 12px rgba(214, 48, 49, 0.25);
+}
+
+/* --- GRID AREA UNTUK BOX HEAT --- */
+.heat-grid-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: 25px;
+}
+
+/* Desain Box Heat Kardus (Contoh: HEAT 1, HEAT 2) */
+.heat-grid-container .card, 
+.heat-grid-container [class*="heat-box"] {
+    background: #141414 !important;
+    border: 1px solid #252525 !important;
+    border-radius: 12px !important;
+    padding: 20px !important;
+    border-top: 4px solid var(--primary) !important; /* Garis aksen merah gahar di atas */
+}
+
+/* Judul Heat (HEAT 1, HEAT 2) */
+.heat-grid-container h3,
+.heat-grid-container [class*="heat-title"] {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 900 !important;
+    letter-spacing: 2px;
+    color: var(--primary-soft) !important;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.15rem;
+}
+
+/* Susunan Baris Peserta di dalam Heat */
+.heat-grid-container select {
+    background: #1c1c1c !important;
+    border: 1px solid #2d2d2d !important;
+    color: #fff !important;
+    padding: 10px 12px !important;
+    border-radius: 6px !important;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+
+/* CSS RESPONSIVE TABLET & DESKTOP (Biar Layout-nya Auto Menyamping) */
+@media (min-width: 768px) {
+    .filter-grid {
+        flex-direction: row; /* Dropdown menyamping di laptop */
+    }
+    
+    .filter-grid select {
+        flex: 1;
+    }
+
+    .action-wrapper {
+        flex-direction: row; /* Setingan per heat & tombol sejajar horizontal */
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .button-group {
+        flex-direction: row; /* Tombol generate & live berdampingan */
+    }
+
+    .heat-grid-container {
+        grid-template-columns: repeat(2, 1fr); /* Heat 1 & Heat 2 jajar kanan-kiri di laptop */
+    }
+}
