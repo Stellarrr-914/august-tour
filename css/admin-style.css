@@ -337,3 +337,197 @@ body.myut-style-body {
         max-width: 100%;
     }
 }
+
+/* ==========================================================================
+   10. REVISI PANEL KONTROL - MODERN GRID & AUTOMATIC RESPONSIVE
+   ========================================================================== */
+
+/* Pastikan Body Halaman Menu sinkron dengan tema gahar */
+body {
+    background-color: var(--bg) !important;
+    color: var(--text);
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px !important;
+    margin: 0 !important;
+}
+
+/* Container Utama bawaan HTML lo */
+.main-container {
+    width: 100%;
+    max-width: 800px;
+    animation: menuFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Header Section */
+.menu-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.menu-header h1 {
+    font-size: 2.4rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin: 0 0 6px 0;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.menu-header p {
+    color: #888;
+    font-size: 1rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Tambahan aksen garis pemisah merah estetik di bawah header */
+.menu-header::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 4px;
+    background-color: var(--primary);
+    margin: 15px auto 0 auto;
+    border-radius: 2px;
+}
+
+/* GRID LAYOUT - Otomatis rapi vertikal */
+.menu-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 35px;
+}
+
+/* Komponen Card Menu Asli lo kita sulap jadi Premium */
+.menu-card {
+    background: #141414 !important; /* Hitam karbon solid maskulin */
+    border: 1px solid #222 !important;
+    border-radius: 14px !important;
+    padding: 22px 28px !important;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Beri tanda panah samar di pojok kanan card buat indikator klik */
+.menu-card::after {
+    content: '→';
+    font-size: 1.3rem;
+    color: #333;
+    position: absolute;
+    right: 25px;
+    transition: 0.25s ease;
+    font-weight: bold;
+}
+
+/* Styling Ikon Emoji */
+.card-icon {
+    font-size: 1.8rem;
+    background: #1c1c1c;
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    transition: all 0.25s ease;
+}
+
+/* Area Info Teks */
+.card-info {
+    flex: 1;
+}
+
+.card-info h3 {
+    margin: 0 0 4px 0 !important;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ffffff;
+    transition: color 0.2s ease;
+}
+
+.card-info p {
+    margin: 0 !important;
+    font-size: 0.88rem;
+    color: #999 !important;
+    line-height: 1.4;
+}
+
+/* --- HOVER EFFECT SAKTI KHAS AGUSTUSAN RT (GLOW MERAH) --- */
+.menu-card:hover {
+    background: #181818 !important;
+    border-color: #333 !important;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* Saat didekati, ikon otomatis berubah warna latar jadi merah menyala lo */
+.menu-card:hover .card-icon {
+    background: var(--primary) !important;
+    transform: scale(1.05);
+}
+
+.menu-card:hover .card-info h3 {
+    color: var(--primary-soft) !important; /* Judul menu berubah kemerahan */
+}
+
+/* Panah indikator bergeser maju dan menyala merah */
+.menu-card:hover::after {
+    color: var(--primary);
+    transform: translateX(5px);
+}
+
+/* Variasi khusus border-left bawaan kelas asli lo biar tetep sinkron */
+.menu-card.card-red {
+    border-left: 4px solid var(--primary) !important; /* Live report dapet highlight utama */
+}
+
+/* Tombol Logout Keluar Sistem Bawaan HTML Lo */
+.btn-logout {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #161616 !important;
+    border: 1px solid #282828 !important;
+    color: #ff7675 !important; /* Warna merah soft pastel biar ga norak */
+    width: auto !important;
+    margin: 0 auto !important;
+    padding: 12px 30px !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    font-size: 0.9rem !important;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s ease !important;
+}
+
+.btn-logout:hover {
+    background: #ff7675 !important;
+    color: #ffffff !important;
+    border-color: #ff7675 !important;
+    box-shadow: 0 6px 20px rgba(255, 118, 117, 0.25);
+    transform: translateY(-1px);
+}
+
+/* Animasi Smooth Muncul Pertama Kali */
+@keyframes menuFadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* RESPONSIVE: Jarak padding disesuaikan saat dibuka via HP panitia di lapangan */
+@media (max-width: 600px) {
+    .menu-header h1 { font-size: 2rem; }
+    .menu-card { padding: 18px 20px !important; gap: 16px; }
+    .menu-card::after { display: none; } /* Sembunyikan panah di HP biar lega */
+}
