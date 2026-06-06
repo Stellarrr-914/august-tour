@@ -1,19 +1,25 @@
+/* ==========================================================================
+   LIVE-STYLE.CSS: EDISI PREMIUM CYBERPUNK CRIMSON & GOLD PODIUM
+   ========================================================================== */
+
 :root {
-    --bg-body: #0f172a;
-    --surface: #1e293b;
-    --border: #334155;
+    --bg-body: #0a0a0a;          /* Hitam pekat cyberpunk */
+    --surface: #141414;          /* Hitam dof premium untuk card */
+    --border: #262626;           /* Border tipis gelap elegan */
     --text-main: #f8fafc;
-    --text-dim: #94a3b8;
-    --accent: #f1c40f;
+    --text-dim: #888888;         /* Abu-abu soft */
+    --accent: #ffca28;           /* Emas Mewah untuk Podium/Juara */
     --success: #22c55e;
     --danger: #ef4444;
+    --primary: #c92222;          /* Merah Crimson khas Panitia */
 }
 
 body {
     background-color: var(--bg-body);
     color: var(--text-main);
-    font-family: 'Inter', sans-serif;
-    margin: 0; padding: 20px;
+    font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    margin: 0; 
+    padding: 20px;
 }
 
 .nav-back-container {
@@ -21,29 +27,32 @@ body {
     max-width: 900px;
     margin: 20px auto;
     display: flex;
-    justify-content: flex-start; /* Biar di kiri, ganti 'center' kalau mau di tengah */
+    justify-content: flex-start;
 }
 
+/* Tombol Kembali Lebih Modern & Interaktif */
 .btn-back-home {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-dim);
+    background: #1a1a1a;
+    color: #ffffff;
     text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 12px;
+    padding: 10px 22px;
+    border-radius: 8px;
     border: 1px solid var(--border);
     font-weight: 600;
-    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
 .btn-back-home:hover {
-    background: var(--accent);
-    color: #000;
-    border-color: var(--accent);
-    transform: translateX(-5px); /* Efek geser dikit pas di-hover */
-    box-shadow: 0 0 15px rgba(241, 196, 15, 0.3);
+    background: var(--primary); /* Hover berubah jadi merah panitia */
+    color: #fff;
+    border-color: var(--primary);
+    transform: translateY(-2px); /* Efek naik dikit lebih elegan */
+    box-shadow: 0 5px 15px rgba(201, 34, 34, 0.4);
 }
 
 .btn-back-home .icon {
@@ -56,11 +65,14 @@ body {
 }
 
 .babak-title {
-    color: var(--accent);
-    border-bottom: 2px solid var(--accent);
+    color: #ffffff;
+    border-bottom: 3px solid var(--primary); /* Aksen bawah merah gahar */
     display: inline-block;
     padding-bottom: 5px;
     margin-bottom: 20px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 /* Card Heat */
@@ -70,15 +82,18 @@ body {
     border-radius: 12px;
     margin-bottom: 20px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    border-top: 3px solid var(--primary); /* Garis atas merah di tiap heat */
 }
 
 .heat-label {
-    background: #334155;
-    color: var(--accent);
-    padding: 10px 15px;
-    font-weight: bold;
+    background: #1c1c1c;
+    color: #ffffff;
+    padding: 12px 15px;
+    font-weight: 800;
     text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.5px;
 }
 
 /* Baris Player */
@@ -86,17 +101,17 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 15px;
+    padding: 14px 15px;
     border-bottom: 1px solid var(--border);
     transition: background 0.2s;
 }
 
 .player-row:last-child { border-bottom: none; }
-.player-name { font-weight: 500; color: var(--text-main); }
+.player-name { font-weight: 600; color: var(--text-main); }
 
 /* Badge Status */
 .badge {
-    padding: 4px 12px;
+    padding: 5px 12px;
     border-radius: 6px;
     font-size: 11px;
     font-weight: 800;
@@ -105,11 +120,11 @@ body {
     text-align: center;
 }
 
-.badge-wait { background: #475569; color: #cbd5e1; }
-.badge-next { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; }
-.badge-lose { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid #991b1b; opacity: 0.7; }
+.badge-wait { background: #262626; color: #888888; border: 1px solid #333; }
+.badge-next { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid #22c55e; }
+.badge-lose { background: rgba(239, 68, 68, 0.08); color: #f87171; border: 1px solid #7f1d1d; opacity: 0.6; }
 
-/* Leaderboard / Klasemen */
+/* Leaderboard / Klasemen Lama (Jika Terpakai) */
 .leaderboard-table div {
     background: var(--surface) !important;
     color: var(--text-main) !important;
@@ -120,125 +135,157 @@ body {
     display: flex;
     justify-content: space-between;
 }
-
 .leaderboard-table strong { color: var(--accent); }
 
+/* Indikator LIVE Berkedip */
 .live-indicator {
     width: 10px;
     height: 10px;
-    background-color: #ff4b2b;
+    background-color: var(--danger);
     border-radius: 50%;
     display: inline-block;
     margin-right: 8px;
-    box-shadow: 0 0 8px #ff4b2b;
+    box-shadow: 0 0 10px var(--danger);
     animation: blink 1.5s infinite;
 }
 
 @keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.3; }
-    100% { opacity: 1; }
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
 }
 
+/* Navigasi Tab Kategori */
 .tab-wrapper {
-    scrollbar-width: none; /* Hilangin scrollbar di Firefox */
+    scrollbar-width: none;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
 }
 .tab-wrapper::-webkit-scrollbar {
-    display: none; /* Hilangin scrollbar di Chrome */
+    display: none;
 }
 
 .tab-btn {
-    background: #1e293b;
-    color: #94a3b8;
-    border: 1px solid #334155;
-    padding: 8px 16px;
+    background: #141414;
+    color: #888888;
+    border: 1px solid var(--border);
+    padding: 10px 20px;
     border-radius: 20px;
     cursor: pointer;
-    transition: 0.3s;
-    font-weight: 600;
+    transition: 0.2s;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.tab-btn:hover {
+    border-color: #444;
+    color: #fff;
 }
 
 .tab-btn.active {
-    background: #e74c3c;
+    background: var(--primary); /* Tab aktif warna merah panitia gahar */
     color: white;
-    border-color: #e74c3c;
-    box-shadow: 0 0 10px rgba(231, 76, 60, 0.4);
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(201, 34, 34, 0.4);
 }
 
-/* Container Utama Hall of Fame */
+/* Container Utama Hall of Fame / Rekap Pemenang */
 .hall-of-fame-wrapper {
-    margin-top: 100px;
+    margin-top: 50px;
     width: 100%;
     text-align: center;
 }
 
 .main-title-juara {
-    font-size: 2.5rem;
-    color: var(--accent);
+    font-size: 2rem;
+    font-weight: 900;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     margin-bottom: 40px;
-    text-shadow: 0 0 15px rgba(241, 196, 15, 0.5);
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 
-/* Grid buat kotak-kotak lomba */
+/* Grid Rekap Lomba */
 .hall-of-fame-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 30px;
-    padding: 20px;
+    gap: 25px;
+    padding: 10px;
 }
 
-/* Kotak per Lomba */
+/* Kotak Box per Lomba (REVISI ANTI-NGEJRENG) */
 .box-juara {
-    background: #1e293b;
-    border: 3px solid var(--accent);
-    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    border-top: 4px solid var(--primary); /* Gantian dikasih aksen top border merah */
 }
 
 .box-header {
-    background: var(--accent);
-    color: #000;
-    padding: 15px;
+    background: #1c1c1c; /* Ganti dari kuning silau jadi hitam elegan */
+    color: #ffffff;      /* Teks jadi putih bersih */
+    padding: 18px;
     font-weight: 900;
-    font-size: 1.4rem; /* Tulisan Lomba Gede */
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
     text-align: center;
 }
 
 .box-body {
-    padding: 20px;
+    padding: 15px 20px;
 }
 
-/* Baris Nama Juara */
+/* Baris Nama Juara di Rekap */
 .winner-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 14px 0;
+    border-bottom: 1px solid #1c1c1c;
 }
-
 .winner-row:last-child { border-bottom: none; }
 
 .winner-rank {
     font-weight: 800;
-    color: var(--accent);
-    font-size: 1.1rem;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+}
+
+/* Pewarnaan Khusus Juara 1, 2, 3 di Box Rekap */
+.winner-row:nth-child(1) .winner-rank,
+.winner-row:nth-child(1) .winner-name {
+    color: var(--accent) !important; /* Juara 1 EMAS */
+}
+.winner-row:nth-child(2) .winner-rank,
+.winner-row:nth-child(2) .winner-name {
+    color: #eceff1 !important;        /* Juara 2 PERAK */
+}
+.winner-row:nth-child(3) .winner-rank,
+.winner-row:nth-child(3) .winner-name {
+    color: #ff8f00 !important;        /* Juara 3 PERUNGGU */
 }
 
 .winner-name {
-    font-size: 1.3rem; /* Nama pemenang juga gede */
-    font-weight: bold;
-    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
 }
 
-/* Container Tabel */
+/* Container Tabel Klasemen Poin */
 .leaderboard-container {
     background: var(--surface);
-    border-radius: 15px;
+    border-radius: 16px;
     padding: 10px;
     border: 1px solid var(--border);
     overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 .lboard-table {
@@ -248,47 +295,70 @@ body {
 }
 
 .lboard-table th {
-    background: rgba(0,0,0,0.2);
-    padding: 15px;
+    background: rgba(0,0,0,0.3);
+    padding: 16px;
     text-align: left;
     font-size: 12px;
-    color: var(--accent);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #888888;
+    border-bottom: 2px solid var(--border);
 }
 
 .lboard-table td {
-    padding: 15px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 16px;
+    border-bottom: 1px solid #1c1c1c;
+    font-weight: 600;
+    font-size: 0.95rem;
 }
 
-/* PEMBEDA: Baris untuk para Juara 1, 2, 3 */
+/* PEMBEDA BARIS: Efek gradasi premium buat yang masuk zona PODIUM */
 .row-winner {
-    background: linear-gradient(90deg, rgba(241, 196, 15, 0.1), transparent);
+    background: linear-gradient(90deg, rgba(255, 202, 40, 0.05), transparent) !important;
     border-left: 4px solid var(--accent);
 }
 
+/* Penajaman teks nama di klasemen podium */
 .row-winner .name-cell {
-    color: var(--accent);
-    font-weight: bold;
+    color: #ffffff;
+    font-weight: 700;
 }
 
-/* Tag Status */
+/* Beri warna emas khusus untuk pimpinan klasemen nomor 1 */
+.lboard-table tr:nth-child(1).row-winner .name-cell {
+    color: var(--accent);
+}
+
+/* Tag Status BANNER PODIUM */
 .status-tag {
     font-size: 10px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    background: #334155;
-    color: #94a3b8;
+    font-weight: 800;
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: #262626;
+    color: #888888;
+    text-transform: uppercase;
 }
 
+/* Banner Podium Emas Mengkilap */
 .row-winner .status-tag {
-    background: var(--accent);
-    color: #000;
-    font-weight: bold;
+    background: linear-gradient(135deg, #ffca28 0%, #ff8f00 100%) !important;
+    color: #000000 !important;
+    font-weight: 900;
+    box-shadow: 0 2px 10px rgba(255, 202, 40, 0.2);
 }
 
+/* Kolom Poin Bergaya Digital Bold */
 .points-cell {
-    font-family: 'Courier New', monospace;
-    font-weight: 900;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
     color: var(--accent);
     text-align: right;
+    font-size: 1.05rem;
+}
+
+/* Hover effect antar baris biar interaktif */
+.lboard-table tr:hover td {
+    background: #1c1c1c;
 }
