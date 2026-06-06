@@ -827,10 +827,10 @@ body {
 }
 
 /* ==========================================================================
-   13. STYLING AREA PESERTA SIAP TANDING (BOX CHECKBOX PREMIUM)
+   13. PERBAIKAN TOTAL AREA PESERTA SIAP TANDING (ANTI-KEBALIK & TEMA MERAH)
    ========================================================================== */
 
-/* Kotak Utama pembungkus area Peserta Siap Tanding */
+/* Kotak Container Utama */
 .grid-peserta {
     background: #141414 !important;
     border: 1px solid #252525 !important;
@@ -838,83 +838,85 @@ body {
     padding: 22px !important;
     margin: 20px 0 !important;
     position: relative;
-    border-left: 4px solid #27ae60 !important; /* Kasih aksen garis hijau penanda "Siap/Ready" */
+    border-left: 4px solid var(--primary) !important; /* Ganti ijo jadi MERAH AGUSTUSAN lo */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Mengubah gaya teks judul "Peserta Siap Tanding (... Orang):" */
-.grid-peserta p, 
+/* Judul "Peserta Siap Tanding (... Orang):" */
+.grid-peserta h3,
+.grid-peserta p,
 .grid-peserta .ready-title {
     color: #ffffff !important;
     font-weight: 800 !important;
     font-size: 1.05rem !important;
     margin-top: 0 !important;
-    margin-bottom: 18px !important;
+    margin-bottom: 20px !important;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
 }
 
-/* Jika script lo nge-render checkbox & nama di dalam label/div */
-.grid-peserta label, 
-.grid-peserta .peserta-item {
-    display: flex;
-    align-items: center;
-    background: #1c1c1c;
-    border: 1px solid #2d2d2d;
-    padding: 10px 15px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    color: #fff;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
+/* JALUR PENYELAMAT: Karena JS lo ngerender input & text terpisah, 
+   kita paksa container di dalamnya untuk berbaris rapi secara vertikal / flex */
+.grid-peserta br {
+    display: none !important; /* Buang tag <br> bawaan render yang bikin berantakan */
 }
 
-/* Efek hover pas baris nama peserta didekati kursor */
-.grid-peserta label:hover, 
-.grid-peserta .peserta-item:hover {
-    background: #222;
-    border-color: #444;
+/* Memperbaiki susunan checkbox & nama bawaan render script lo */
+.grid-peserta div, 
+.grid-peserta form {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
 }
 
-/* Memperbesar ukuran Checkbox bawaan biar gampang di-tap di HP */
+/* Styling element input (checkbox) dan teks nama agar nempel sejajar */
 .grid-peserta input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    margin-right: 12px;
-    accent-color: #27ae60; /* Mengubah warna centang standar jadi hijau estetik */
+    width: 18px !important;
+    height: 18px !important;
+    accent-color: var(--primary) !important; /* Centangan berubah jadi MERAH */
     cursor: pointer;
+    margin: 0 !important;
 }
 
-/* Kategori level kecil (seperti A, B+, B) di samping nama biar rapi */
-.grid-peserta span {
-    color: #888;
-    font-size: 0.85rem;
-    margin-left: 5px;
-    font-weight: normal;
+/* Mengatur teks nama/label bawaan render lo biar dapet kotak background premium */
+.grid-peserta text,
+.grid-peserta span,
+.grid-peserta label {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
 }
 
-/* BIAR MEYAMPING DI LAYAR BESAR (Otomatis bagi kolom) */
-@media (min-width: 600px) {
-    /* Konten di dalam box otomatis terbagi rapi */
-    .grid-peserta {
-        display: block;
-    }
-    
-    /* Membikin daftar checkbox berjejer rapi 2 kolom kalau layarnya lebar */
-    .grid-peserta .checkbox-container, 
-    .grid-peserta form,
-    .grid-peserta div:not(.ready-title) {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-    
-    .grid-peserta label, 
-    .grid-peserta .peserta-item {
-        margin-bottom: 0; /* Jarak digantikan oleh gap grid */
+/* TRICK SAKTI: Jika JS lo ngerender nama-nama itu pakai tag ber-border 
+   seperti di kanan layar kemarin, kita buat dia nempel dan responsif */
+.grid-peserta [style*="border"], 
+.grid-peserta div div {
+    background: #1c1c1c !important;
+    border: 1px solid #2d2d2d !important;
+    border-radius: 8px !important;
+    padding: 10px 15px !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Mengembalikan teks level (A-, B+, dll) biar warnanya abu-abu soft gak balapan sama nama */
+.grid-peserta [style*="border"] small,
+.grid-peserta [style*="border"] span:last-child {
+    color: #777 !important;
+    font-size: 0.85rem !important;
+    font-weight: normal !important;
+}
+
+/* Tampilan Desktop: Otomatis bagi 2 kolom biar gak kepanjangan ke bawah */
+@media (min-width: 768px) {
+    .grid-peserta div, 
+    .grid-peserta form {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
     }
 }
