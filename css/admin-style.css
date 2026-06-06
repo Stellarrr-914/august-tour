@@ -191,8 +191,8 @@ body.login-page-body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle, rgba(18, 18, 18, 0.4) 30%, var(--bg) 100%),
-                rgba(18, 18, 18, 0.5); 
+    /* Kita pake hitam transparan murni aja biar gak tabrakan sama var(--bg) */
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7));
 }
 
 /* Wrapper Penyelaras Box ke Tengah */
