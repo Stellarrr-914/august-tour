@@ -400,13 +400,12 @@ body {
 }
 
 
-/* 3. REKAP UNTUK YANG TIDAK DAPET JUARA LOMBA (HADIAH HIBURAN) */
+/* 2. ATURAN NON-PODIUM: Kosong bersih total tanpa tulisan atau kotak abu-abu */
 .lboard-table tr:not(.row-winner) .status-tag {
-    background: #262626 !important;
-    color: #888888 !important;
-    font-weight: 700 !important;
-    box-shadow: none !important;
+    display: none !important; /* Hilangkan total dari element tabel */
 }
+
+/* Warna text nama standar yang rapi untuk peserta non-podium */
 .lboard-table tr:not(.row-winner) .name-cell {
     color: #cbd5e1 !important;
     font-weight: 500 !important;
