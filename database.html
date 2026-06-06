@@ -5,80 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Database Peserta</title>
     <link rel="stylesheet" href="css/global.css">
-<link rel="stylesheet" href="css/admin-style.css">
+    <link rel="stylesheet" href="css/admin-style.css">
 </head>
 <body>
 
     <div class="admin-container">
-    <header style="margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-        <h2 style="color: var(--secondary); margin: 0;">📁 DATABASE MANAGEMENT</h2>
-        <button onclick="location.href='menu.html'" class="btn-back" style="width: auto; margin: 0;">⬅️ Menu Utama</button>
-    </header>
+        <header style="margin-bottom: 25px; border-bottom: 2px solid #333; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="color: var(--secondary); margin: 0;">📁 DATABASE MANAGEMENT</h2>
+            <button onclick="location.href='menu.html'" class="btn-back" style="width: auto; margin: 0;">⬅️ Menu Utama</button>
+        </header>
 
-    <div class="form-group">
-        <h3>Input / Cari Peserta</h3>
-        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-            <input id="inputPeserta" placeholder="Nama, Kategori, Level (Contoh: Budi, 1, A)" style="flex: 2; min-width: 250px;">
-            <button onclick="tambahPeserta()" style="flex: 1;">➕ Tambah</button>
-            <button onclick="cariPeserta()" class="btn-search" style="flex: 1;">🔍 Cari</button>
+        <div class="database-tabs">
+            <button class="db-tab-btn active" onclick="switchDatabaseTab(event, 'tab-peserta')">🏃 Kelola Peserta</button>
+            <button class="db-tab-btn" onclick="switchDatabaseTab(event, 'tab-lomba')">🏆 Pengaturan Lomba</button>
         </div>
-    </div>
 
-    <div class="section-title">👶 DAFTAR PESERTA ANAK-ANAK</div>
-    <table>
-        <thead>
-            <tr>
-                <th width="50">No</th>
-                <th>Nama</th>
-                <th>Kat</th>
-                <th>Level</th>
-            </tr>
-        </thead>
-        <tbody id="tabelAnak"></tbody>
-    </table>
+        <div id="tab-peserta" class="db-tab-content active-content">
+            <div class="form-group">
+                <h3>Input / Cari Peserta</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <input id="inputPeserta" placeholder="Nama, Kategori, Level (Contoh: Budi, 1, A)" style="flex: 2; min-width: 250px;">
+                    <button onclick="tambahPeserta()" style="flex: 1;">➕ Tambah</button>
+                    <button onclick="cariPeserta()" class="btn-search" style="flex: 1;">🔍 Cari</button>
+                </div>
+            </div>
 
-    <div class="section-title">👩 DAFTAR PESERTA IBU-IBU / DEWASA</div>
-    <table>
-        <thead>
-            <tr>
-                <th width="50">No</th>
-                <th>Nama</th>
-                <th>Kat</th>
-                <th>Level</th>
-            </tr>
-        </thead>
-        <tbody id="tabelIbu"></tbody>
-    </table>
+            <div class="section-title">👶 DAFTAR PESERTA ANAK-ANAK</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th width="50">No</th>
+                        <th>Nama</th>
+                        <th>Kat</th>
+                        <th>Level</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelAnak"></tbody>
+            </table>
 
-
-    <div style="margin-top: 80px;"></div> <div class="section-title" style="background: linear-gradient(90deg, #2980b9, transparent) !important;">
-        🏗️ PENGATURAN JENIS LOMBA
-    </div>
-    
-    <div class="form-group" style="border-radius: 0 0 12px 12px; border-top: none;">
-        <h3>Tambah Lomba Baru</h3>
-        <div style="display: flex; gap: 10px;">
-            <input type="text" id="inputLomba" placeholder="Nama Lomba, Kategori (Contoh: Balap Karung, 1, 2, M)" style="flex: 3;">
-            <button onclick="tambahLomba()" style="flex: 1; background: #2980b9;">➕ Daftarkan Lomba</button>
+            <div class="section-title">👩 DAFTAR PESERTA IBU-IBU / DEWASA</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th width="50">No</th>
+                        <th>Nama</th>
+                        <th>Kat</th>
+                        <th>Level</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelIbu"></tbody>
+            </table>
         </div>
-    </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>NAMA PERTANDINGAN</th>
-                <th>TARGET KATEGORI</th>
-                <th width="180">STATUS LIVE</th>
-            </tr>
-        </thead>
-        <tbody id="tabelLomba"></tbody>
-    </table>
-</div>
-    
+        <div id="tab-lomba" class="db-tab-content">
+            <div class="section-title" style="background: linear-gradient(90deg, #2980b9, transparent) !important; margin-top: 0;">
+                🏗️ PENGATURAN JENIS LOMBA
+            </div>
+            
+            <div class="form-group" style="border-radius: 0 0 12px 12px; border-top: none; margin-bottom: 25px;">
+                <h3>Tambah Lomba Baru</h3>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="inputLomba" placeholder="Nama Lomba, Kategori (Contoh: Balap Karung, 1, 2, M)" style="flex: 3;">
+                    <button onclick="tambahLomba()" style="flex: 1; background: #2980b9;">➕ Daftarkan Lomba</button>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>NAMA PERTANDINGAN</th>
+                        <th>TARGET KATEGORI</th>
+                        <th width="180">STATUS LIVE</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelLomba"></tbody>
+            </table>
+        </div>
+
+    </div>
+        
     <script src="js/peserta.js"></script>  
     <script src="js/data.js"></script>
     <script src="js/lomba.js"></script>
     <script src="js/bracket.js"></script>
     <script src="js/main.js"></script>
+
+    <script>
+        function switchDatabaseTab(evt, tabId) {
+            // Sembunyikan semua blok tab content
+            const contents = document.getElementsByClassName("db-tab-content");
+            for (let i = 0; i < contents.length; i++) {
+                contents[i].classList.remove("active-content");
+            }
+
+            // Matikan warna aktif di tombol lama
+            const buttons = document.getElementsByClassName("db-tab-btn");
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+
+            // Aktifkan tab dan tombol yang baru di-klik
+            document.getElementById(tabId).classList.add("active-content");
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
 </body>
 </html>
