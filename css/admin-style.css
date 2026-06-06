@@ -827,10 +827,10 @@ body {
 }
 
 /* ==========================================================================
-   13. PERBAIKAN TOTAL AREA PESERTA SIAP TANDING (ANTI-KEBALIK & TEMA MERAH)
+   13. REVISI FINAL SAKTI: AREA PESERTA SIAP TANDING (ANTI-RENGGANG)
    ========================================================================== */
 
-/* Kotak Container Utama */
+/* Kotak Container Utama Pembungkus */
 .grid-peserta {
     background: #141414 !important;
     border: 1px solid #252525 !important;
@@ -838,13 +838,13 @@ body {
     padding: 22px !important;
     margin: 20px 0 !important;
     position: relative;
-    border-left: 4px solid var(--primary) !important; /* Ganti ijo jadi MERAH AGUSTUSAN lo */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    border-left: 4px solid var(--primary) !important; /* Garis aksen merah gahar */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
 /* Judul "Peserta Siap Tanding (... Orang):" */
-.grid-peserta h3,
 .grid-peserta p,
+.grid-peserta h3,
 .grid-peserta .ready-title {
     color: #ffffff !important;
     font-weight: 800 !important;
@@ -853,65 +853,67 @@ body {
     margin-bottom: 20px !important;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    width: 100% !important;
+    display: block !important;
 }
 
-/* JALUR PENYELAMAT: Karena JS lo ngerender input & text terpisah, 
-   kita paksa container di dalamnya untuk berbaris rapi secara vertikal / flex */
+/* Sembunyikan tag <br> bawaan render script lo yang bikin barisnya patah renggang */
 .grid-peserta br {
-    display: none !important; /* Buang tag <br> bawaan render yang bikin berantakan */
+    display: none !important;
 }
 
-/* Memperbaiki susunan checkbox & nama bawaan render script lo */
+/* TRIK UTAMA: Atur pembungkus bawaan JS lo biar ngebentuk layout inline-flex */
 .grid-peserta div, 
 .grid-peserta form {
     display: flex !important;
     flex-direction: column !important;
-    gap: 10px !important;
+    gap: 8px !important;
+    width: 100% !important;
+    align-items: stretch !important;
 }
 
-/* Styling element input (checkbox) dan teks nama agar nempel sejajar */
+/* Kunci Formasi Peserta: Jika JS lo ngerender teks kosongan di sebelah input,
+   kita paksa element input & element teksnya menyatu jadi row box premium */
 .grid-peserta input[type="checkbox"] {
+    display: inline-block !important;
+    vertical-align: middle !important;
     width: 18px !important;
     height: 18px !important;
-    accent-color: var(--primary) !important; /* Centangan berubah jadi MERAH */
+    accent-color: var(--primary) !important; /* Centangan Merah Crimson */
     cursor: pointer;
-    margin: 0 !important;
+    margin: 0 12px 0 0 !important; /* Kasih jarak pas ke kanan teks */
 }
 
-/* Mengatur teks nama/label bawaan render lo biar dapet kotak background premium */
-.grid-peserta text,
+/* Memaksa elemen teks atau label yang dimuntahin JS lo biar punya background box */
+.grid-peserta label,
 .grid-peserta span,
-.grid-peserta label {
+.grid-peserta text {
+    display: inline-block !important;
+    vertical-align: middle !important;
     color: #ffffff !important;
     font-weight: 700 !important;
     font-size: 0.95rem !important;
 }
 
-/* TRICK SAKTI: Jika JS lo ngerender nama-nama itu pakai tag ber-border 
-   seperti di kanan layar kemarin, kita buat dia nempel dan responsif */
+/* TRICK FIX MEPEET: Bungkus setiap pasang checkbox + nama yang punya border 
+   bawaan dari kodingan lo kemarin biar gak renggang kanan-kiri */
 .grid-peserta [style*="border"], 
-.grid-peserta div div {
+.grid-peserta div div,
+.grid-peserta form div {
     background: #1c1c1c !important;
     border: 1px solid #2d2d2d !important;
     border-radius: 8px !important;
-    padding: 10px 15px !important;
+    padding: 12px 16px !important;
     margin: 0 !important;
     display: flex !important;
+    flex-direction: row !important; /* Paksa checkbox & nama sejajar ke samping */
     align-items: center !important;
-    gap: 12px !important;
+    justify-content: flex-start !important; /* Nempel ke kiri, anti-tengah */
     width: 100% !important;
     box-sizing: border-box !important;
 }
 
-/* Mengembalikan teks level (A-, B+, dll) biar warnanya abu-abu soft gak balapan sama nama */
-.grid-peserta [style*="border"] small,
-.grid-peserta [style*="border"] span:last-child {
-    color: #777 !important;
-    font-size: 0.85rem !important;
-    font-weight: normal !important;
-}
-
-/* Tampilan Desktop: Otomatis bagi 2 kolom biar gak kepanjangan ke bawah */
+/* Setelan Responsive Laptop/Monitor: Bagi jadi 2 kolom sejajar biar hemat space */
 @media (min-width: 768px) {
     .grid-peserta div, 
     .grid-peserta form {
