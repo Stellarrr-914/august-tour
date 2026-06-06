@@ -531,3 +531,74 @@ body {
     .menu-card { padding: 18px 20px !important; gap: 16px; }
     .menu-card::after { display: none; } /* Sembunyikan panah di HP biar lega */
 }
+
+/* ==========================================================================
+   11. CSS TAB KONTROL UNTUK DATABASE KONTEN
+   ========================================================================== */
+
+/* Area baris tombol tab */
+.database-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #252525;
+    padding-bottom: 12px;
+}
+
+/* Tombol Tab Polos */
+.db-tab-btn {
+    background: #141414 !important;
+    border: 1px solid #222 !important;
+    color: #888 !important;
+    padding: 12px 22px !important;
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+    cursor: pointer;
+    width: auto !important;
+    margin: 0 !important;
+    transition: all 0.2s ease;
+}
+
+.db-tab-btn:hover {
+    color: #fff !important;
+    background: #1c1c1c !important;
+    border-color: #333 !important;
+}
+
+/* Keadaan Tombol Pas Aktif (Menyala Merah Khas Agustusan) */
+.db-tab-btn.active {
+    background: var(--primary) !important;
+    color: #fff !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 4px 15px rgba(214, 48, 49, 0.25);
+}
+
+/* Logika Show/Hide Konten Tab */
+.db-tab-content {
+    display: none; /* Sembunyi default */
+    animation: dbTabFade 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.db-tab-content.active-content {
+    display: block; /* Tampil kalau aktif */
+}
+
+/* Animasi transisi smooth bergeser naik tipis pas tab di-klik */
+@keyframes dbTabFade {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Penyelarasan responsive layar HP */
+@media (max-width: 600px) {
+    .database-tabs {
+        gap: 6px;
+    }
+    .db-tab-btn {
+        flex: 1;
+        padding: 10px 5px !important;
+        font-size: 0.85rem !important;
+        text-align: center;
+    }
+}
