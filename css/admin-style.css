@@ -842,10 +842,13 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
-/* Judul "Peserta Siap Tanding (... Orang):" */
+/* GANTI BAGIAN INI DI CSS LO BROK (Biar teks judulnya gak gepeng ke bawah) */
+
 .grid-peserta p,
 .grid-peserta h3,
-.grid-peserta .ready-title {
+.grid-peserta .ready-title,
+.grid-peserta font,
+.grid-peserta strong {
     color: #ffffff !important;
     font-weight: 800 !important;
     font-size: 1.05rem !important;
@@ -853,8 +856,12 @@ body {
     margin-bottom: 20px !important;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    
+    /* TRICK SAKTI: Paksa teks apapun yang jadi judul untuk ngebentang penuh dari kiri ke kanan */
+    grid-column: 1 / -1 !important; 
+    display: block !important;
+    width: 100% !important;
 }
-
 /* Sembunyikan tag <br> bawaan render script yang bikin barisnya patah */
 .grid-peserta br {
     display: none !important;
