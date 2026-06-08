@@ -153,6 +153,7 @@ function generateBracket() {
                         <option value="">-- Set --</option>
                         <option value="Lolos">🏆 Lolos</option>
                         <option value="Gugur">❌ Gugur</option>
+                        <option value="Diskualifikasi">🚫 Diskualifikasi</option>
                         <option value="Juara 1">🥇 Juara 1</option>
                         <option value="Juara 2">🥈 Juara 2</option>
                         <option value="Juara 3">🥉 Juara 3</option>
