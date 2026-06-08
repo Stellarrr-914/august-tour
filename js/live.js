@@ -86,9 +86,6 @@ function renderLiveBracket() {
             let stat = String(p.status_babak || "").toLowerCase().trim();
             let babakCari = namaBabak.toLowerCase();
 
-            // LOGIKA FILTER KETAT:
-            // 1. Harus mengandung kata babak tersebut
-            // 2. Kalau nyari "Final", pastikan BUKAN "Semifinal"
             if (babakCari === "final") {
                 return stat.includes("final") && !stat.includes("semi");
             } else {
@@ -148,22 +145,20 @@ function renderLeaderboard(container, title) {
 
     // 1. KUMPULKAN STATUS TERTINGGI PER PESERTA PER LOMBA
     dataSheet3.forEach(p => {
-        const nama = p.nama ? p.nama.trim() : ""; // Bersihkan spasi gaib di nama
+        const nama = p.nama ? p.nama.trim() : ""; 
         const lomba = p.lomba || "";
         const kategori = p.kategori || "";
         const status = (p.status_babak || "").toLowerCase().trim(); 
         
-        if (!nama) return; // Lewati hanya jika kolom nama di sheet bener-bener kosong
+        if (!nama) return; 
 
         const keyLomba = `${lomba}_${kategori}`;
 
-        // PASTIKAN SEMUA NAMA YANG ADA DI DATABASE TERDAFTAR DULUAN
         if (!trackLombaPerOrang[nama]) {
             trackLombaPerOrang[nama] = {};
             statusJuaraGlobal[nama] = false;
         }
 
-        // Jika baris database ada namanya tapi status_babak kosong/belum main, daftarkan status default
         if (!status) {
             if (!trackLombaPerOrang[nama]["default_key"]) {
                 trackLombaPerOrang[nama]["default_key"] = "belum_tanding";
@@ -175,7 +170,6 @@ function renderLeaderboard(container, title) {
 
         // HIERARKI STATUS LOMBA
         if (status.includes("diskualifikasi")) {
-            // Langsung kunci status lomba ini jadi diskualifikasi, mengabaikan status lama
             trackLombaPerOrang[nama][keyLomba] = "diskualifikasi";
         }
         else if (status.includes("juara")) {
@@ -208,9 +202,8 @@ function renderLeaderboard(container, title) {
         Object.keys(trackLombaPerOrang[nama]).forEach(keyLomba => {
             const statusTertinggi = trackLombaPerOrang[nama][keyLomba];
 
-            // HITUNG POIN DENGAN MATEMATIKA PAKET FLAT
             if (statusTertinggi === "diskualifikasi") {
-                poinPerOrang[nama] += 0; // Zonk 0 poin khusus di lomba yang dilanggar, lomba lain aman!
+                poinPerOrang[nama] += 0; 
             }
             else if (statusTertinggi.includes("juara 1")) {
                 poinPerOrang[nama] += (20 + 500);
@@ -231,12 +224,12 @@ function renderLeaderboard(container, title) {
                 poinPerOrang[nama] += 20; 
             } 
             else if (statusTertinggi === "penyisihan_gugur" || statusTertinggi === "belum_tanding") {
-                poinPerOrang[nama] += 0; // Dipaksa masuk klasemen dengan 0 poin
+                poinPerOrang[nama] += 0; 
             }
         });
     });
 
-    // 3. MAPPING DAN SORTING (TOTAL ALL OUT DATA)
+    // 3. MAPPING DAN SORTING
     const sortedData = Object.keys(poinPerOrang)
         .map(nama => ({
             nama: nama,
@@ -248,27 +241,25 @@ function renderLeaderboard(container, title) {
     let html = `<div class="leaderboard-container"><table class="lboard-table">
                 <thead><tr><th>RANK</th><th>NAMA</th><th>STATUS</th><th>POIN</th></tr></thead><tbody>`;
 
-    // Di live.js bagian render HTML tabel klasemen:
-sortedData.forEach((item, index) => {
-    const rowClass = item.isWinner ? "row-winner" : "";
-    const label = item.isWinner ? "🏅 PODIUM" : ""; 
-    
-    // Kirim item.nama dan item.logBukti (yang dipisah pake karakter '|') ke fungsi pop-up
-    const logEscaped = item.logBukti.replace(/\n/g, "|");
-
-    html += `<tr class="${rowClass}">
-                <td>${index + 1}</td>
-                <td class="name-cell" onclick="bukaPopUpLive('${item.nama}', '${logEscaped}', '${item.poin}')" style="cursor:pointer; color:#2563eb;">
-                    ${item.nama} 🔍
-                </td>
-                <td><span class="status-tag">${label}</span></td>
-                <td class="points-cell">${item.poin}</td>
-            </tr>`;
-});
+    // 🔥 FIX UTAMA: replace dihilangkan karena data riwayat langsung di-kalkulasi live dari dataSheet3 pas di-klik!
+    sortedData.forEach((item, index) => {
+        const rowClass = item.isWinner ? "row-winner" : "";
+        const label = item.isWinner ? "🏅 PODIUM" : ""; 
+        
+        html += `<tr class="${rowClass}">
+                    <td>${index + 1}</td>
+                    <td class="name-cell" onclick="bukaPopUpLive('${item.nama}', '', '${item.poin}')" style="cursor:pointer; color:#2563eb; font-weight:bold;">
+                        ${item.nama} 🔍
+                    </td>
+                    <td><span class="status-tag">${label}</span></td>
+                    <td class="points-cell">${item.poin}</td>
+                </tr>`;
+    });
 
     html += `</tbody></table></div>`;
     container.innerHTML = html;
 }
+
 // --- 4. RENDER WALL OF FAME (SELALU MUNCUL DI BAWAH) ---
 function renderWallOfFame() {
     const wfContainer = document.getElementById("wallOfFameContainer");
@@ -310,39 +301,67 @@ function renderWallOfFame() {
     });
 
     htmlContent += `</div></div>`;
-    wfContainer.innerHTML = htmlContent;
+    wfContainer.appendChild(document.createElement("div")).innerHTML = htmlContent;
 }
 
+// 🔥 CORE UTAMA GLOBAL POP-UP (Aman di-load dari halaman mana aja!)
 function bukaPopUpLive(nama, logBuktiMentah, totalPoin) {
     const modal = document.getElementById("modalPeserta");
     const container = document.querySelector(".modal-body-detail");
+    if(!modal || !container) return;
     
-    // Kembalikan karakter '|' jadi baris baru HTML (<br>) atau struktur div
-    const barisLog = logBuktiMentah.split("|");
+    const namaClean = String(nama).trim();
+    let hitungUlangPoin = 0;
     let htmlRiwayat = "";
     
-    barisLog.forEach(log => {
-        if(!log) return;
-        let badgeStyle = "badge-process-modal";
-        if(log.includes("❌") || log.includes("DQ")) badgeStyle = "badge-dq-modal";
-        if(log.includes("🥇") || log.includes("🥈") || log.includes("🥉")) badgeStyle = "badge-win-modal";
+    // Tarik langsung histori dari dataSheet3 secara real-time
+    if (typeof dataSheet3 !== "undefined" && dataSheet3.length > 0) {
+        const riwayatAnak = dataSheet3.filter(p => String(p.nama || "").trim() === namaClean);
+        
+        riwayatAnak.forEach(row => {
+            const s = String(row.status_babak || "").toLowerCase().trim();
+            if(!s || s.includes("belum_tanding")) return;
+            
+            const lombaNama = `${row.lomba || ""} (${row.kategori || ""})`;
+            let badgeStyle = "badge-process-modal";
+            let labelPoin = "+20 Poin";
+            let labelStatus = row.status_babak;
 
-        htmlRiwayat += `
-            <div class="log-item" style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f3f4f6;">
-                <span>${log}</span>
-            </div>`;
-    });
+            if (s.includes("diskualifikasi")) {
+                badgeStyle = "badge-dq-modal"; labelPoin = "+0 Poin"; labelStatus = "Diskualifikasi ❌";
+            } else if (s.includes("juara 1")) {
+                badgeStyle = "badge-win-modal"; labelPoin = "+520 Poin"; labelStatus = "Juara 1 🥇";
+            } else if (s.includes("juara 2")) {
+                badgeStyle = "badge-win-modal"; labelPoin = "+320 Poin"; labelStatus = "Juara 2 🥈";
+            } else if (s.includes("juara 3")) {
+                badgeStyle = "badge-win-modal"; labelPoin = "+170 Poin"; labelStatus = "Juara 3 🥉";
+            } else if (s.includes("gugur - penyisihan")) {
+                badgeStyle = "badge-lose"; labelPoin = "+0 Poin"; labelStatus = "Gugur Penyisihan 🍂";
+            }
+
+            htmlRiwayat += `
+                <div class="log-item" style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #f3f4f6; font-size:14px;">
+                    <span style="font-weight:500; color:#374151;">${lombaNama}</span>
+                    <span class="badge ${badgeStyle}" style="font-size:11px; padding:2px 6px; border-radius:4px; font-weight:bold;">${labelStatus.toUpperCase()}</span>
+                    <span style="color:#10b981; font-weight:bold;">${labelPoin}</span>
+                </div>`;
+        });
+    }
+
+    if (htmlRiwayat === "") {
+        htmlRiwayat = `<p style="color:#9ca3af; text-align:center; padding: 15px 0;">Belum ada riwayat tanding aktif.</p>`;
+    }
 
     container.innerHTML = `
-        <div class="profile-header" style="text-align:center;">
-            <div style="font-size:50px;">👦</div>
-            <h2>${nama}</h2>
-            <div class="total-poin-box" style="background:#eff6ff; padding:10px; font-size:24px; font-weight:bold; display:inline-block; border-radius:8px;">
-                ${totalPoin} <span>TOTAL POIN</span>
+        <div class="profile-header" style="text-align:center; padding-bottom:15px; border-bottom:2px dashed #f3f4f6;">
+            <div style="font-size:55px; margin-bottom:5px;">👦</div>
+            <h2 style="margin:5px 0; font-size:22px; color:#1f2937;">${namaClean}</h2>
+            <div class="total-poin-box" style="background:#eff6ff; color:#1e40af; padding:8px 15px; font-size:20px; font-weight:bold; display:inline-block; border-radius:30px; margin-top:5px; border:1px solid #bfdbfe;">
+                ${totalPoin} <span style="font-size:11px; color:#60a5fa; block; font-weight:normal;">TOTAL POIN LIVE</span>
             </div>
         </div>
-        <h3 style="margin-top:20px;">📊 DETAIL LOG PERHITUNGAN</h3>
-        <div class="log-container">${htmlRiwayat}</div>
+        <h3 style="margin-top:15px; font-size:14px; color:#4b5563; text-transform:uppercase; letter-spacing:0.5px;">📊 PROGRES & BUKTI RIWAYAT</h3>
+        <div class="log-container" style="max-height:220px; overflow-y:auto; margin-top:10px;">${htmlRiwayat}</div>
     `;
     modal.style.display = "flex";
 }
