@@ -174,7 +174,11 @@ function renderLeaderboard(container, title) {
         const statusLama = trackLombaPerOrang[nama][keyLomba] || "";
 
         // HIERARKI STATUS LOMBA
-        if (status.includes("juara")) {
+        if (status.includes("diskualifikasi")) {
+            // Langsung kunci status lomba ini jadi diskualifikasi, mengabaikan status lama
+            trackLombaPerOrang[nama][keyLomba] = "diskualifikasi";
+        }
+        else if (status.includes("juara")) {
             trackLombaPerOrang[nama][keyLomba] = status; 
             statusJuaraGlobal[nama] = true;
         } 
@@ -205,7 +209,10 @@ function renderLeaderboard(container, title) {
             const statusTertinggi = trackLombaPerOrang[nama][keyLomba];
 
             // HITUNG POIN DENGAN MATEMATIKA PAKET FLAT
-            if (statusTertinggi.includes("juara 1")) {
+            if (statusTertinggi === "diskualifikasi") {
+                poinPerOrang[nama] += 0; // Zonk 0 poin khusus di lomba yang dilanggar, lomba lain aman!
+            }
+            else if (statusTertinggi.includes("juara 1")) {
                 poinPerOrang[nama] += (20 + 500);
             } 
             else if (statusTertinggi.includes("juara 2")) {
