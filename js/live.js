@@ -248,16 +248,23 @@ function renderLeaderboard(container, title) {
     let html = `<div class="leaderboard-container"><table class="lboard-table">
                 <thead><tr><th>RANK</th><th>NAMA</th><th>STATUS</th><th>POIN</th></tr></thead><tbody>`;
 
-    sortedData.forEach((item, index) => {
-        const rowClass = item.isWinner ? "row-winner" : "";
-        const label = item.isWinner ? "🏅 PODIUM" : ""; // Kosongkan label default agar CSS display:none bekerja bersih
-        html += `<tr class="${rowClass}">
-                    <td>${index + 1}</td>
-                    <td class="name-cell">${item.nama}</td>
-                    <td><span class="status-tag">${label}</span></td>
-                    <td class="points-cell">${item.poin}</td>
-                </tr>`;
-    });
+    // Di live.js bagian render HTML tabel klasemen:
+sortedData.forEach((item, index) => {
+    const rowClass = item.isWinner ? "row-winner" : "";
+    const label = item.isWinner ? "🏅 PODIUM" : ""; 
+    
+    // Kirim item.nama dan item.logBukti (yang dipisah pake karakter '|') ke fungsi pop-up
+    const logEscaped = item.logBukti.replace(/\n/g, "|");
+
+    html += `<tr class="${rowClass}">
+                <td>${index + 1}</td>
+                <td class="name-cell" onclick="bukaPopUpLive('${item.nama}', '${logEscaped}', '${item.poin}')" style="cursor:pointer; color:#2563eb;">
+                    ${item.nama} 🔍
+                </td>
+                <td><span class="status-tag">${label}</span></td>
+                <td class="points-cell">${item.poin}</td>
+            </tr>`;
+});
 
     html += `</tbody></table></div>`;
     container.innerHTML = html;
@@ -304,6 +311,40 @@ function renderWallOfFame() {
 
     htmlContent += `</div></div>`;
     wfContainer.innerHTML = htmlContent;
+}
+
+function bukaPopUpLive(nama, logBuktiMentah, totalPoin) {
+    const modal = document.getElementById("modalPeserta");
+    const container = document.querySelector(".modal-body-detail");
+    
+    // Kembalikan karakter '|' jadi baris baru HTML (<br>) atau struktur div
+    const barisLog = logBuktiMentah.split("|");
+    let htmlRiwayat = "";
+    
+    barisLog.forEach(log => {
+        if(!log) return;
+        let badgeStyle = "badge-process-modal";
+        if(log.includes("❌") || log.includes("DQ")) badgeStyle = "badge-dq-modal";
+        if(log.includes("🥇") || log.includes("🥈") || log.includes("🥉")) badgeStyle = "badge-win-modal";
+
+        htmlRiwayat += `
+            <div class="log-item" style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f3f4f6;">
+                <span>${log}</span>
+            </div>`;
+    });
+
+    container.innerHTML = `
+        <div class="profile-header" style="text-align:center;">
+            <div style="font-size:50px;">👦</div>
+            <h2>${nama}</h2>
+            <div class="total-poin-box" style="background:#eff6ff; padding:10px; font-size:24px; font-weight:bold; display:inline-block; border-radius:8px;">
+                ${totalPoin} <span>TOTAL POIN</span>
+            </div>
+        </div>
+        <h3 style="margin-top:20px;">📊 DETAIL LOG PERHITUNGAN</h3>
+        <div class="log-container">${htmlRiwayat}</div>
+    `;
+    modal.style.display = "flex";
 }
 
 // Jalankan Fetch Pertama Kali
