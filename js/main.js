@@ -63,6 +63,24 @@ document.addEventListener('click', function(e) {
     }
 });
 
+function switchDatabaseTab(evt, tabId) {
+            // Sembunyikan semua blok tab content
+            const contents = document.getElementsByClassName("db-tab-content");
+            for (let i = 0; i < contents.length; i++) {
+                contents[i].classList.remove("active-content");
+            }
+
+            // Matikan warna aktif di tombol lama
+            const buttons = document.getElementsByClassName("db-tab-btn");
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+
+            // Aktifkan tab dan tombol yang baru di-klik
+            document.getElementById(tabId).classList.add("active-content");
+            evt.currentTarget.classList.add("active");
+        }
+
 /**
  * AUTO-INJECT LANDSCAPE OVERLAY
  * Berfungsi di semua halaman yang memanggil main.js
