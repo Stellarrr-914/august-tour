@@ -139,7 +139,6 @@ function renderLiveBracket() {
     });
 }
 
-// --- 3. RENDER LEADERBOARD (PAS LAGI SEPI) ---
 function renderLeaderboard(container, title) {
     title.innerHTML = `🏆 KLASEMEN POIN TERTINGGI`;
     container.innerHTML = ""; 
@@ -165,7 +164,7 @@ function renderLeaderboard(container, title) {
 
         const statusLama = trackLombaPerOrang[nama][keyLomba] || "";
 
-        // HIERARKI BARU (Bebas Masalah Semifinal Gaib): Juara > Gugur Final > Lolos Semifinal > Gugur Semifinal > Lolos Penyisihan > Gugur Penyisihan
+        // HIERARKI BARU
         if (status.includes("juara")) {
             trackLombaPerOrang[nama][keyLomba] = status; 
             statusJuaraGlobal[nama] = true;
@@ -174,7 +173,6 @@ function renderLeaderboard(container, title) {
             trackLombaPerOrang[nama][keyLomba] = "final_gugur";
         } 
         else if (status === "lolos - semifinal" && !statusLama.includes("juara") && statusLama !== "final_gugur") {
-            // Lolos semifinal artinya dia berhak tanding di final
             trackLombaPerOrang[nama][keyLomba] = "semifinal_lolos";
         } 
         else if (status === "gugur - semifinal" && !statusLama.includes("juara") && statusLama !== "final_gugur" && statusLama !== "semifinal_lolos") {
@@ -199,37 +197,37 @@ function renderLeaderboard(container, title) {
 
             // HITUNG POIN DENGAN MATEMATIKA PAKET FLAT BARU
             if (statusTertinggi.includes("juara 1")) {
-                poinPerOrang[nama] += (20 + 500); // Lolos Penyisihan (20) + Juara 1 (500) = 520
+                poinPerOrang[nama] += (20 + 500);
             } 
             else if (statusTertinggi.includes("juara 2")) {
-                poinPerOrang[nama] += (20 + 300); // Lolos Penyisihan (20) + Juara 2 (300) = 320
+                poinPerOrang[nama] += (20 + 300);
             } 
             else if (statusTertinggi.includes("juara 3")) {
-                poinPerOrang[nama] += (20 + 150); // Lolos Penyisihan (20) + Juara 3 (150) = 170
+                poinPerOrang[nama] += (20 + 150);
             } 
             else if (statusTertinggi === "final_gugur" || statusTertinggi === "semifinal_lolos") {
-                poinPerOrang[nama] += 20;  // Masuk final tapi gak podium (Peringkat 4) cuma dapet poin kelolosan Penyisihan
+                poinPerOrang[nama] += 20; 
             } 
             else if (statusTertinggi === "semifinal_gugur") {
-                poinPerOrang[nama] += 20;  // Gugur di semifinal, dapet poin kelolosan Penyisihan
+                poinPerOrang[nama] += 20; 
             } 
             else if (statusTertinggi === "penyisihan_lolos") {
-                poinPerOrang[nama] += 20;  // Lolos penyisihan dasar
+                poinPerOrang[nama] += 20; 
             } 
             else if (statusTertinggi === "penyisihan_gugur") {
-                poinPerOrang[nama] += 0;   // Kalah di awal beneran 0 Poin
+                poinPerOrang[nama] += 0; 
             }
         });
     });
 
-    // SISA KODE MAPPING & RENDERING TABEL (SAMA PERSIS)
+    // 3. MAPPING DAN SORTING (FILTER POIN 0 SUDAH DIHAPUS)
     const sortedData = Object.keys(poinPerOrang)
         .map(nama => ({
             nama: nama,
             poin: poinPerOrang[nama],
             isWinner: statusJuaraGlobal[nama]
         }))
-        .filter(item => item.poin > 0)
+        // Filter item.poin > 0 dihapus total di sini biar yang poin 0 tetep lolos tanding
         .sort((a, b) => b.poin - a.poin);
 
     let html = `<div class="leaderboard-container"><table class="lboard-table">
