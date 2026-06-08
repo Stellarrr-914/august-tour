@@ -148,23 +148,32 @@ function renderLeaderboard(container, title) {
 
     // 1. KUMPULKAN STATUS TERTINGGI PER PESERTA PER LOMBA
     dataSheet3.forEach(p => {
-        const nama = p.nama;
+        const nama = p.nama ? p.nama.trim() : ""; // Bersihkan spasi gaib di nama
         const lomba = p.lomba || "";
         const kategori = p.kategori || "";
         const status = (p.status_babak || "").toLowerCase().trim(); 
         
-        if (!nama) return;
+        if (!nama) return; // Lewati hanya jika kolom nama di sheet bener-bener kosong
 
         const keyLomba = `${lomba}_${kategori}`;
 
+        // PASTIKAN SEMUA NAMA YANG ADA DI DATABASE TERDAFTAR DULUAN
         if (!trackLombaPerOrang[nama]) {
             trackLombaPerOrang[nama] = {};
             statusJuaraGlobal[nama] = false;
         }
 
+        // Jika baris database ada namanya tapi status_babak kosong/belum main, daftarkan status default
+        if (!status) {
+            if (!trackLombaPerOrang[nama]["default_key"]) {
+                trackLombaPerOrang[nama]["default_key"] = "belum_tanding";
+            }
+            return;
+        }
+
         const statusLama = trackLombaPerOrang[nama][keyLomba] || "";
 
-        // HIERARKI BARU
+        // HIERARKI STATUS LOMBA
         if (status.includes("juara")) {
             trackLombaPerOrang[nama][keyLomba] = status; 
             statusJuaraGlobal[nama] = true;
@@ -195,7 +204,7 @@ function renderLeaderboard(container, title) {
         Object.keys(trackLombaPerOrang[nama]).forEach(keyLomba => {
             const statusTertinggi = trackLombaPerOrang[nama][keyLomba];
 
-            // HITUNG POIN DENGAN MATEMATIKA PAKET FLAT BARU
+            // HITUNG POIN DENGAN MATEMATIKA PAKET FLAT
             if (statusTertinggi.includes("juara 1")) {
                 poinPerOrang[nama] += (20 + 500);
             } 
@@ -214,20 +223,19 @@ function renderLeaderboard(container, title) {
             else if (statusTertinggi === "penyisihan_lolos") {
                 poinPerOrang[nama] += 20; 
             } 
-            else if (statusTertinggi === "penyisihan_gugur") {
-                poinPerOrang[nama] += 0; 
+            else if (statusTertinggi === "penyisihan_gugur" || statusTertinggi === "belum_tanding") {
+                poinPerOrang[nama] += 0; // Dipaksa masuk klasemen dengan 0 poin
             }
         });
     });
 
-    // 3. MAPPING DAN SORTING (FILTER POIN 0 SUDAH DIHAPUS)
+    // 3. MAPPING DAN SORTING (TOTAL ALL OUT DATA)
     const sortedData = Object.keys(poinPerOrang)
         .map(nama => ({
             nama: nama,
             poin: poinPerOrang[nama],
             isWinner: statusJuaraGlobal[nama]
         }))
-        // Filter item.poin > 0 dihapus total di sini biar yang poin 0 tetep lolos tanding
         .sort((a, b) => b.poin - a.poin);
 
     let html = `<div class="leaderboard-container"><table class="lboard-table">
@@ -235,7 +243,7 @@ function renderLeaderboard(container, title) {
 
     sortedData.forEach((item, index) => {
         const rowClass = item.isWinner ? "row-winner" : "";
-        const label = item.isWinner ? "🏅 PODIUM" : "🔥 ACTIVE";
+        const label = item.isWinner ? "🏅 PODIUM" : ""; // Kosongkan label default agar CSS display:none bekerja bersih
         html += `<tr class="${rowClass}">
                     <td>${index + 1}</td>
                     <td class="name-cell">${item.nama}</td>
