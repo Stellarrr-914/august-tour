@@ -315,102 +315,90 @@ body {
 
 
 /* ==========================================================================
-   🔥 REVISI TOTAL: ATURAN BARU TEMA CRIMSON BLACK (SINKRON LOGIN PAGE)
+   🔥 REVISI: TEMA CRIMSON MUTED & PLATINUM (BIAR GAK KELIHATAN MARAH)
    ========================================================================== */
 
-/* 1. Aturan Baris Winner */
+/* 1. Aturan Baris Winner - Kasih bias merah maroon super soft */
 .lboard-table tr.row-winner {
-    background: linear-gradient(90deg, rgba(220, 38, 38, 0.05), transparent) !important; /* Highlight merah transparan tipis */
-    border-left: 4px solid var(--primary) !important;
+    background: linear-gradient(90deg, rgba(153, 27, 27, 0.03), transparent) !important; 
+    border-left: 4px solid #991b1b !important; /* Merah maroon kalem */
 }
 
-/* 🔥 REVISI BADGE: Berubah dari Kuning jadi Gradasi Merah Crimson gahar (Match Tombol Login) */
+/* 🏷️ TAG TOMBOL "PODIUM": Diubah jadi Merah Maroon Dof Matte (Lebih Premium & Calm) */
 .lboard-table tr.row-winner .status-tag {
-    background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%) !important;
-    color: #ffffff !important; /* Teks di dalemnya jadi Putih bersih */
+    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%) !important; /* Maroon teduh */
+    color: #f1f5f9 !important; /* Teks putih abu soft */
     
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     
-    padding: 6px 14px !important;    
+    padding: 5px 12px !important;    
     font-size: 11px !important;      
-    font-weight: 900 !important;
+    font-weight: 700 !important;
     letter-spacing: 0.5px !important; 
     border-radius: 6px !important;
-    border: 1px solid #ef4444 !important;
+    border: 1px solid #b91c1c !important;
     
     min-width: 75px !important;      
     text-align: center !important;
-    box-shadow: 0 2px 10px rgba(220, 38, 38, 0.3) !important; /* Efek glow merah soft */
+    box-shadow: 0 2px 8px rgba(153, 27, 27, 0.2) !important;
 }
 
-/* 2. PAKSA TOTAL WARNA KHUSUS TOP 3 BESAR KLASEMEN UMUM BIAR GAK KUNING LAGI */
+/* 2. REDUKSI WARNA TOP 3 BESAR: Dominan Putih & Silver Premium biar Gak Merah Semua */
 
-/* --- RANK 1 UMUM (CRIMSON RED SUPREME) --- */
+/* --- RANK 1 UMUM (CRIMSON MATTE ELEGAN) --- */
 .lboard-table tr:nth-child(1) {
-    background: linear-gradient(90deg, rgba(220, 38, 38, 0.1), transparent) !important;
+    background: linear-gradient(90deg, rgba(153, 27, 27, 0.05), transparent) !important;
 }
 .lboard-table tr:nth-child(1) td,
 .lboard-table tr:nth-child(1) .rank-cell,
-.lboard-table tr:nth-child(1) .name-cell,
 .lboard-table tr:nth-child(1) .points-cell {
-    color: #ef4444 !important; /* Mengubah warna kuning emas jadi Merah Terang */
-    font-weight: 900 !important;
+    color: #f87171 !important; /* Merah rose lembut, gak neon nembak mata */
+    font-weight: 800 !important;
 }
 .lboard-table tr:nth-child(1) .name-cell {
+    color: #ffffff !important; /* Nama tetep Putih Bersih biar ramah di mata */
     font-size: 1.1rem !important;
-    text-shadow: 0 0 12px rgba(239, 68, 68, 0.5) !important; /* Efek Glow Merah gahar */
+    text-shadow: 0 0 8px rgba(248, 113, 113, 0.2) !important; 
 }
 
-/* --- RANK 2 UMUM (PURE WHITE PREMIUM) --- */
-.lboard-table tr:nth-child(2) {
-    background: linear-gradient(90deg, rgba(248, 250, 252, 0.05), transparent) !important;
-}
+/* --- RANK 2 UMUM (SILVER PLATINUM NETRAL) --- */
 .lboard-table tr:nth-child(2) td,
 .lboard-table tr:nth-child(2) .rank-cell,
 .lboard-table tr:nth-child(2) .name-cell,
 .lboard-table tr:nth-child(2) .points-cell {
-    color: #ffffff !important; /* Biar netral kontras */
-    font-weight: 800 !important;
+    color: #e2e8f0 !important; /* Putih perak kalem */
+    font-weight: 700 !important;
 }
 .lboard-table tr:nth-child(2) .name-cell {
     font-size: 1.05rem !important;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3) !important;
 }
 
-/* --- RANK 3 UMUM (CRIMSON MAROON) --- */
-.lboard-table tr:nth-child(3) {
-    background: linear-gradient(90deg, rgba(153, 27, 27, 0.06), transparent) !important;
-}
+/* --- RANK 3 UMUM (DARK SILVER / SLATE) --- */
 .lboard-table tr:nth-child(3) td,
 .lboard-table tr:nth-child(3) .rank-cell,
 .lboard-table tr:nth-child(3) .name-cell,
 .lboard-table tr:nth-child(3) .points-cell {
-    color: #b91c1c !important; /* Merah agak gelap elegan */
-    font-weight: 800 !important;
-}
-.lboard-table tr:nth-child(3) .name-cell {
-    font-size: 1rem !important;
-    text-shadow: 0 0 10px rgba(185, 28, 28, 0.3) !important;
+    color: #94a3b8 !important; /* Abu-abu metalik kalem */
+    font-weight: 700 !important;
 }
 
-/* 3. ATURAN NON-PODIUM: Tetap bersih tanpa tag */
+/* 3. ATURAN NON-PODIUM: Tetap Putih Netral Standard */
 .lboard-table tr:not(.row-winner) .status-tag {
     display: none !important;
 }
 
-/* Warna text nama standar yang rapi untuk semua peserta non-podium (PUTIH BERSIH/NETRAL) */
 .lboard-table tr:not(.row-winner) .name-cell,
 .name-cell {
     cursor: pointer;
-    color: #f8fafc !important; /* FIX: Default nama peserta lain dibikin putih bersih/abu terang, ga ada biru-biruan */
+    color: #e2e8f0 !important; /* Putih soft netral */
     font-weight: 500 !important;
     transition: color 0.2s;
 }
 
 /* Efek hover pas nama dideketin kursor */
 .name-cell:hover {
-    color: #ef4444 !important; /* Pas di-hover menyala merah crimson */
+    color: #f87171 !important; /* Nyala rose soft pas disentuh kursor */
     text-decoration: underline !important;
 }
