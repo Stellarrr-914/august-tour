@@ -367,8 +367,6 @@ for (const namaLombaUnique in babakTertinggiPerLomba) {
 
         <div class="profile-header" style="text-align:center; padding-bottom:15px; border-bottom:2px dashed #222;">
 
-            <div style="font-size:55px; margin-bottom:5px;">👦</div>
-
             <h2 style="margin:5px 0; font-size:22px; color:#ffffff; font-weight:800;">${namaClean}</h2>
 
             <div class="total-poin-box">
