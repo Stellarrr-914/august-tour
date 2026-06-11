@@ -410,3 +410,27 @@ body {
     color: #cbd5e1 !important;
     font-weight: 500 !important;
 }
+
+/* Warna default font nama untuk semua peserta (Biar Putih/Terang) */
+.name-cell {
+    cursor: pointer;
+    color: #cbd5e1 !important; /* Warna abu-abu terang menuju putih, gak biru lagi */
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+/* Efek hover pas nama dideketin kursor (biar tahu kalau bisa diklik) */
+.name-cell:hover {
+    color: #60a5fa !important; /* Berubah biru soft pas di-hover aja */
+    text-decoration: underline;
+}
+
+/* 🔥 KHUSUS BARIS YANG BERSTATUS WINNER / PODIUM (Rank 1, 2, 3) */
+.row-winner .name-cell {
+    color: #facc15 !important; /* Font nama khusus pemenang otomatis berubah jadi Kuning Emas */
+    font-weight: bold;
+}
+
+.row-winner .name-cell:hover {
+    color: #fef08a !important; /* Pas di-hover emasnya makin terang */
+}
