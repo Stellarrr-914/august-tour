@@ -326,9 +326,9 @@ function bukaPopUpLive(nama, logBuktiMentah, totalPoin) {
         });
 
         // 3. Render baris-baris data tertinggi yang sudah difilter tadi ke HTML
-        for (const namaLomba Unique in babakTertinggiPerLomba) {
-            const row = babakTertinggiPerLomba[namaLombaUnique].data;
-            const s = String(row.status_babak || "").toLowerCase().trim();
+for (const namaLombaUnique in babakTertinggiPerLomba) {
+    const row = babakTertinggiPerLomba[namaLombaUnique].data;
+    const s = String(row.status_babak || "").toLowerCase().trim();
             
             let badgeStyle = "badge-process-modal";
             let labelPoin = "+20 Poin";
