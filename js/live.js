@@ -294,73 +294,89 @@ function bukaPopUpLive(nama, logBuktiMentah, totalPoin) {
     const namaClean = String(nama).trim();
     let htmlRiwayat = "";
     
-    // 🔍 WADAH LOGIKA ANTI DOUBLE COUNTING
-    const poinPerLomba = {}; 
-
     if (typeof dataSheet3 !== "undefined" && dataSheet3.length > 0) {
+        // 1. Ambil semua riwayat milik si anak
         const riwayatAnak = dataSheet3.filter(p => String(p.nama || "").trim() === namaClean);
         
+        // 🧠 2. LOGIKA FILTER: Cari babak tertinggi untuk setiap lomba unik
+        const babakTertinggiPerLomba = {};
+
         riwayatAnak.forEach(row => {
             const s = String(row.status_babak || "").toLowerCase().trim();
             if(!s || s.includes("belum_tanding")) return;
-            
+
             const lombaNama = `${row.lomba || ""} (${row.kategori || ""})`;
+            
+            // Tentukan tingkatan bobot babak (semakin tinggi angkanya, semakin final babaknya)
+            let bobotBabak = 1; // Default penyisihan / lolos biasa
+            if (s.includes("gugur")) bobotBabak = 0;
+            if (s.includes("diskualifikasi")) bobotBabak = -1;
+            if (s.includes("semifinal")) bobotBabak = 2;
+            if (s.includes("juara 3")) bobotBabak = 3;
+            if (s.includes("juara 2")) bobotBabak = 4;
+            if (s.includes("juara 1")) bobotBabak = 5;
+
+            // Simpan baris data yang memiliki bobot tertinggi saja untuk lomba tersebut
+            if (!babakTertinggiPerLomba[lombaNama] || bobotBabak > babakTertinggiPerLomba[lombaNama].bobot) {
+                babakTertinggiPerLomba[lombaNama] = {
+                    data: row,
+                    bobot: bobotBabak
+                };
+            }
+        });
+
+        // 3. Render baris-baris data tertinggi yang sudah difilter tadi ke HTML
+        for (const namaLomba Unique in babakTertinggiPerLomba) {
+            const row = babakTertinggiPerLomba[namaLombaUnique].data;
+            const s = String(row.status_babak || "").toLowerCase().trim();
+            
             let badgeStyle = "badge-process-modal";
-            let nilaiPoinAnak = 20; // Default lolos babak = 20 poin
             let labelPoin = "+20 Poin";
             let labelStatus = row.status_babak;
 
             if (s.includes("diskualifikasi")) {
-                badgeStyle = "badge-dq-modal"; nilaiPoinAnak = 0; labelPoin = "+0 Poin"; labelStatus = "Diskualifikasi ❌";
+                badgeStyle = "badge-dq-modal"; labelPoin = "+0 Poin"; labelStatus = "Diskualifikasi ❌";
             } else if (s.includes("juara 1")) {
-                badgeStyle = "badge-win-modal"; nilaiPoinAnak = 520; labelPoin = "+520 Poin"; labelStatus = "Juara 1 🥇";
+                badgeStyle = "badge-win-modal"; labelPoin = "+520 Poin"; labelStatus = "Juara 1 🥇";
             } else if (s.includes("juara 2")) {
-                badgeStyle = "badge-win-modal"; nilaiPoinAnak = 320; labelPoin = "+320 Poin"; labelStatus = "Juara 2 🥈";
+                badgeStyle = "badge-win-modal"; labelPoin = "+320 Poin"; labelStatus = "Juara 2 🥈";
             } else if (s.includes("juara 3")) {
-                badgeStyle = "badge-win-modal"; nilaiPoinAnak = 170; labelPoin = "+170 Poin"; labelStatus = "Juara 3 🥉";
+                badgeStyle = "badge-win-modal"; labelPoin = "+170 Poin"; labelStatus = "Juara 3 🥉";
             } else if (s.includes("gugur - penyisihan")) {
-                badgeStyle = "badge-lose"; nilaiPoinAnak = 0; labelPoin = "+0 Poin"; labelStatus = "Gugur Penyisihan 🍂";
+                badgeStyle = "badge-lose"; labelPoin = "+0 Poin"; labelStatus = "Gugur Penyisihan 🍂";
+            } else if (s.includes("semifinal")) {
+                // Jika di database lu status babaknya tertulis "Lolos - Semifinal" dengan poin tetap +20
+                badgeStyle = "badge-process-modal"; labelPoin = "+20 Poin";
             }
 
-            // 🧠 LOGIKA UTAMA: Cek jika poin babak ini lebih tinggi dari record sebelumnya di lomba yang sama
-            if (!poinPerLomba[lombaNama] || nilaiPoinAnak > poinPerLomba[lombaNama]) {
-                poinPerLomba[lombaNama] = nilaiPoinAnak;
-            }
-
-            // Render list riwayat (Warna text disesuaikan abu terang agar masuk tema gelap)
             htmlRiwayat += `
                 <div class="log-item" style="display:flex; justify-content:space-between; align-items:center; padding:12px 5px; border-bottom:1px solid #222; font-size:14px;">
-                    <span style="font-weight:500; color:#e2e8f0;">${lombaNama}</span>
+                    <span style="font-weight:500; color:#e2e8f0;">${namaLombaUnique}</span>
                     <span class="badge ${badgeStyle}" style="font-size:11px; padding:4px 8px; border-radius:6px; font-weight:bold;">${labelStatus.toUpperCase()}</span>
                     <span style="color:#10b981; font-weight:bold; text-shadow: 0 0 8px rgba(16,185,129,0.3);">${labelPoin}</span>
                 </div>`;
-        });
-    }
-
-    // 🧮 HITUNG ULANG TOTAL POIN MURNI (Hanya menjumlahkan poin tertinggi per cabang lomba)
-    let totalPoinMurni = 0;
-    for (const lomba in poinPerLomba) {
-        totalPoinMurni += poinPerLomba[lomba];
+        }
     }
 
     if (htmlRiwayat === "") {
         htmlRiwayat = `<p style="color:#6b7280; text-align:center; padding: 15px 0;">Belum ada riwayat tanding aktif.</p>`;
     }
 
-    // Render struktur modal dengan variabel totalPoinMurni baru + inline style warna teks netral putih
+    // 4. Render output ke dalam modal popup (Total Poin Live bawaan tetap utuh & benar)
     container.innerHTML = `
         <div class="profile-header" style="text-align:center; padding-bottom:15px; border-bottom:2px dashed #222;">
             <div style="font-size:55px; margin-bottom:5px;">👦</div>
             <h2 style="margin:5px 0; font-size:22px; color:#ffffff; font-weight:800;">${namaClean}</h2>
             <div class="total-poin-box">
-                ${totalPoinMurni} <span style="font-size:11px; color:#f8fafc; display:block; font-weight:normal; margin-top:2px; opacity:0.8;">TOTAL POIN LIVE</span>
+                ${totalPoin} <span style="font-size:11px; color:#f8fafc; display:block; font-weight:normal; margin-top:2px; opacity:0.8;">TOTAL POIN LIVE</span>
             </div>
         </div>
-        <h3 style="margin-top:20px; font-size:13px; color:#94a3b8; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">📊 PROGRES & BUKTI RIWAYAT</h3>
+        <h3 style="margin-top:20px; font-size:13px; color:#94a3b8; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">📊 PROGRES & BUKTI RIWAYAT (PENCAPAIAN TERTINGGI)</h3>
         <div class="log-container" style="max-height:220px; overflow-y:auto; margin-top:10px;">${htmlRiwayat}</div>
     `;
     modal.style.display = "flex";
 }
+
 // Jalankan Fetch Pertama Kali
 fetchLiveReport();
 // Auto Refresh Tiap 10 Detik
