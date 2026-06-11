@@ -363,11 +363,30 @@ for (const namaLombaUnique in babakTertinggiPerLomba) {
     }
 
     // 4. Render output ke dalam modal popup (Total Poin Live bawaan tetap utuh & benar)
-    document.getElementById("modal-nama").innerText = namaClean;
-    document.getElementById("modal-total-poin").innerText = totalPoinMurni;
-    document.getElementById("modal-log-container").innerHTML = htmlRiwayat;
+    container.innerHTML = `
+
+        <div class="profile-header" style="text-align:center; padding-bottom:15px; border-bottom:2px dashed #222;">
+
+            <div style="font-size:55px; margin-bottom:5px;">👦</div>
+
+            <h2 style="margin:5px 0; font-size:22px; color:#ffffff; font-weight:800;">${namaClean}</h2>
+
+            <div class="total-poin-box">
+
+                ${totalPoin} <span style="font-size:11px; color:#f8fafc; display:block; font-weight:normal; margin-top:2px; opacity:0.8;">TOTAL POIN LIVE</span>
+
+            </div>
+
+        </div>
+
+        <h3 style="margin-top:20px; font-size:13px; color:#94a3b8; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">📊 PROGRES & BUKTI RIWAYAT (PENCAPAIAN TERTINGGI)</h3>
+
+        <div class="log-container" style="max-height:220px; overflow-y:auto; margin-top:10px;">${htmlRiwayat}</div>
+
+    `;
 
     modal.style.display = "flex";
+
 }
 
 // Jalankan Fetch Pertama Kali
