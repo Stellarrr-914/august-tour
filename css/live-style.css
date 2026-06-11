@@ -1,5 +1,5 @@
 /* ==========================================================================
-   LIVE-STYLE.CSS: EDISI PREMIUM CYBERPUNK CRIMSON & GOLD PODIUM
+   LIVE-STYLE.CSS: EDISI PREMIUM BLACK & CRIMSON THEME (SINKRON LOGIN PAGE)
    ========================================================================== */
 
 :root {
@@ -8,7 +8,7 @@
     --border: #262626;           /* Border tipis gelap elegan */
     --text-main: #f8fafc;
     --text-dim: #888888;         /* Abu-abu soft */
-    --accent: #ffca28;           /* Emas Mewah untuk Podium/Juara */
+    --accent: #dc2626;           /* 🔥 REVISI: Berubah jadi Merah Crimson biar sinkron halaman login */
     --success: #22c55e;
     --danger: #ef4444;
     --primary: #c92222;          /* Merah Crimson khas Panitia */
@@ -215,19 +215,19 @@ body {
     padding: 10px;
 }
 
-/* Kotak Box per Lomba (REVISI ANTI-NGEJRENG) */
+/* Kotak Box per Lomba */
 .box-juara {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-    border-top: 4px solid var(--primary); /* Gantian dikasih aksen top border merah */
+    border-top: 4px solid var(--primary);
 }
 
 .box-header {
-    background: #1c1c1c; /* Ganti dari kuning silau jadi hitam elegan */
-    color: #ffffff;      /* Teks jadi putih bersih */
+    background: #1c1c1c;
+    color: #ffffff;
     padding: 18px;
     font-weight: 900;
     font-size: 1.2rem;
@@ -257,18 +257,18 @@ body {
     font-size: 0.95rem;
 }
 
-/* Pewarnaan Khusus Juara 1, 2, 3 di Box Rekap */
+/* 🔥 REVISI: Pewarnaan Juara di Box Rekap Bawah biar bernuansa Merah-Putih Solid gahar */
 .winner-row:nth-child(1) .winner-rank,
 .winner-row:nth-child(1) .winner-name {
-    color: var(--accent) !important; /* Juara 1 EMAS */
+    color: #ef4444 !important; /* Juara 1 jadi Merah Terang */
 }
 .winner-row:nth-child(2) .winner-rank,
 .winner-row:nth-child(2) .winner-name {
-    color: #eceff1 !important;        /* Juara 2 PERAK */
+    color: #f8fafc !important; /* Juara 2 jadi Putih Bersih */
 }
 .winner-row:nth-child(3) .winner-rank,
 .winner-row:nth-child(3) .winner-name {
-    color: #ff8f00 !important;        /* Juara 3 PERUNGGU */
+    color: #b91c1c !important; /* Juara 3 jadi Merah Maroon Gelap */
 }
 
 .winner-name {
@@ -315,122 +315,102 @@ body {
 
 
 /* ==========================================================================
-   PERBAIKAN TOTAL: SELECTOR SUPER SPESIFIK UNTUK TOP 3 BESAR (ANTI-GAGAL)
+   🔥 REVISI TOTAL: ATURAN BARU TEMA CRIMSON BLACK (SINKRON LOGIN PAGE)
    ========================================================================== */
 
-/* 1. ATURAN UTMA UNTUK SEMUA PEMENANG LOMBA (BADGE EMAS TETEP NYALA) */
+/* 1. Aturan Baris Winner */
 .lboard-table tr.row-winner {
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.02), transparent) !important;
-    border-left: 4px solid #475569 !important;
+    background: linear-gradient(90deg, rgba(220, 38, 38, 0.05), transparent) !important; /* Highlight merah transparan tipis */
+    border-left: 4px solid var(--primary) !important;
 }
 
-/* ==========================================================================
-   PERBAIKAN BADGE: MERAPIKAN KOTAK KUNING PODIUM BIAR PROPORSIONAL
-   ========================================================================== */
-
+/* 🔥 REVISI BADGE: Berubah dari Kuning jadi Gradasi Merah Crimson gahar (Match Tombol Login) */
 .lboard-table tr.row-winner .status-tag {
-    background: linear-gradient(135deg, #ffca28 0%, #ff8f00 100%) !important;
-    color: #000000 !important;
+    background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%) !important;
+    color: #ffffff !important; /* Teks di dalemnya jadi Putih bersih */
     
-    /* Perbaikan Struktur Kotak & Teks */
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     
-    padding: 6px 14px !important;    /* Ditambah biar kotak punya ruang napas atas-bawah & kiri-kanan */
-    font-size: 11px !important;      /* Ukuran font disesuaikan sedikit */
+    padding: 6px 14px !important;    
+    font-size: 11px !important;      
     font-weight: 900 !important;
-    letter-spacing: 0.5px !important; /* Kasih jarak antar-huruf biar rapi gak dempet */
+    letter-spacing: 0.5px !important; 
     border-radius: 6px !important;
+    border: 1px solid #ef4444 !important;
     
-    min-width: 75px !important;      /* Jaga lebar minimal kotak biar seragam rapi */
+    min-width: 75px !important;      
     text-align: center !important;
-    box-shadow: 0 2px 10px rgba(255, 202, 40, 0.2) !important;
+    box-shadow: 0 2px 10px rgba(220, 38, 38, 0.3) !important; /* Efek glow merah soft */
 }
 
+/* 2. PAKSA TOTAL WARNA KHUSUS TOP 3 BESAR KLASEMEN UMUM BIAR GAK KUNING LAGI */
 
-/* 2. PAKSA TOTAL WARNA KHUSUS TOP 3 BESAR KLASEMEN UMUM */
-
-/* --- RANK 1 UMUM (EMAS SUPREME) --- */
+/* --- RANK 1 UMUM (CRIMSON RED SUPREME) --- */
 .lboard-table tr:nth-child(1) {
-    background: linear-gradient(90deg, rgba(255, 202, 40, 0.08), transparent) !important;
+    background: linear-gradient(90deg, rgba(220, 38, 38, 0.1), transparent) !important;
 }
 .lboard-table tr:nth-child(1) td,
 .lboard-table tr:nth-child(1) .rank-cell,
 .lboard-table tr:nth-child(1) .name-cell,
 .lboard-table tr:nth-child(1) .points-cell {
-    color: #ffca28 !important; /* Paksa semua text di baris 1 jadi Emas */
+    color: #ef4444 !important; /* Mengubah warna kuning emas jadi Merah Terang */
     font-weight: 900 !important;
 }
 .lboard-table tr:nth-child(1) .name-cell {
     font-size: 1.1rem !important;
-    text-shadow: 0 0 12px rgba(255, 202, 40, 0.5) !important; /* Efek Glow Emas */
+    text-shadow: 0 0 12px rgba(239, 68, 68, 0.5) !important; /* Efek Glow Merah gahar */
 }
 
-/* --- RANK 2 UMUM (PERAK PLATINUM) --- */
+/* --- RANK 2 UMUM (PURE WHITE PREMIUM) --- */
 .lboard-table tr:nth-child(2) {
-    background: linear-gradient(90deg, rgba(236, 239, 241, 0.06), transparent) !important;
+    background: linear-gradient(90deg, rgba(248, 250, 252, 0.05), transparent) !important;
 }
 .lboard-table tr:nth-child(2) td,
 .lboard-table tr:nth-child(2) .rank-cell,
 .lboard-table tr:nth-child(2) .name-cell,
 .lboard-table tr:nth-child(2) .points-cell {
-    color: #eceff1 !important; /* Paksa semua text di baris 2 jadi Perak */
+    color: #ffffff !important; /* Biar netral kontras */
     font-weight: 800 !important;
 }
 .lboard-table tr:nth-child(2) .name-cell {
     font-size: 1.05rem !important;
-    text-shadow: 0 0 10px rgba(236, 239, 241, 0.4) !important; /* Efek Glow Perak */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3) !important;
 }
 
-/* --- RANK 3 UMUM (PERUNGGU PREMIUM) --- */
+/* --- RANK 3 UMUM (CRIMSON MAROON) --- */
 .lboard-table tr:nth-child(3) {
-    background: linear-gradient(90deg, rgba(255, 143, 0, 0.06), transparent) !important;
+    background: linear-gradient(90deg, rgba(153, 27, 27, 0.06), transparent) !important;
 }
 .lboard-table tr:nth-child(3) td,
 .lboard-table tr:nth-child(3) .rank-cell,
 .lboard-table tr:nth-child(3) .name-cell,
 .lboard-table tr:nth-child(3) .points-cell {
-    color: #ff8f00 !important; /* Paksa semua text di baris 3 jadi Perunggu */
+    color: #b91c1c !important; /* Merah agak gelap elegan */
     font-weight: 800 !important;
 }
 .lboard-table tr:nth-child(3) .name-cell {
     font-size: 1rem !important;
-    text-shadow: 0 0 10px rgba(255, 143, 0, 0.4) !important; /* Efek Glow Perunggu */
+    text-shadow: 0 0 10px rgba(185, 28, 28, 0.3) !important;
 }
 
-
-/* 2. ATURAN NON-PODIUM: Kosong bersih total tanpa tulisan atau kotak abu-abu */
+/* 3. ATURAN NON-PODIUM: Tetap bersih tanpa tag */
 .lboard-table tr:not(.row-winner) .status-tag {
-    display: none !important; /* Hilangkan total dari element tabel */
+    display: none !important;
 }
 
-/* Warna text nama standar yang rapi untuk peserta non-podium */
-.lboard-table tr:not(.row-winner) .name-cell {
-    color: #cbd5e1 !important;
-    font-weight: 500 !important;
-}
-
-/* Warna default font nama untuk semua peserta (Biar Putih/Terang) */
+/* Warna text nama standar yang rapi untuk semua peserta non-podium (PUTIH BERSIH/NETRAL) */
+.lboard-table tr:not(.row-winner) .name-cell,
 .name-cell {
     cursor: pointer;
-    color: #cbd5e1 !important; /* Warna abu-abu terang menuju putih, gak biru lagi */
-    font-weight: 500;
+    color: #f8fafc !important; /* FIX: Default nama peserta lain dibikin putih bersih/abu terang, ga ada biru-biruan */
+    font-weight: 500 !important;
     transition: color 0.2s;
 }
 
-/* Efek hover pas nama dideketin kursor (biar tahu kalau bisa diklik) */
+/* Efek hover pas nama dideketin kursor */
 .name-cell:hover {
-    color: #60a5fa !important; /* Berubah biru soft pas di-hover aja */
-    text-decoration: underline;
-}
-
-/* 🔥 KHUSUS BARIS YANG BERSTATUS WINNER / PODIUM (Rank 1, 2, 3) */
-.row-winner .name-cell {
-    color: #facc15 !important; /* Font nama khusus pemenang otomatis berubah jadi Kuning Emas */
-    font-weight: bold;
-}
-
-.row-winner .name-cell:hover {
-    color: #fef08a !important; /* Pas di-hover emasnya makin terang */
+    color: #ef4444 !important; /* Pas di-hover menyala merah crimson */
+    text-decoration: underline !important;
 }
