@@ -224,18 +224,19 @@ function renderLeaderboard(container, title) {
                 <thead><tr><th>RANK</th><th>NAMA</th><th>STATUS</th><th>POIN</th></tr></thead><tbody>`;
 
     sortedData.forEach((item, index) => {
-        const rowClass = item.isWinner ? "row-winner" : "";
-        const label = item.isWinner ? "🏅 PODIUM" : ""; 
-        
-        html += `<tr class="${rowClass}">
-                    <td>${index + 1}</td>
-                    <td class="name-cell" onclick="bukaPopUpLive('${item.nama}', '', '${item.poin}')" style="cursor:pointer; color:#2563eb; font-weight:bold;">
-                        ${item.nama} 🔍
-                    </td>
-                    <td><span class="status-tag">${label}</span></td>
-                    <td class="points-cell">${item.poin}</td>
-                </tr>`;
-    });
+    const rowClass = item.isWinner ? "row-winner" : "";
+    const label = item.isWinner ? "🏅 PODIUM" : ""; 
+    
+    // 🔥 Inline style warna biru dihapus, sekarang murni dikontrol class 'name-cell' lewat CSS di atas
+    html += `<tr class="${rowClass}">
+                <td>${index + 1}</td>
+                <td class="name-cell" onclick="bukaPopUpLive('${item.nama}', '', '${item.poin}', ${item.isWinner})">
+                    ${item.nama}
+                </td>
+                <td><span class="status-tag">${label}</span></td>
+                <td class="points-cell">${item.poin}</td>
+            </tr>`;
+});
 
     html += `</tbody></table></div>`;
     container.innerHTML = html;
