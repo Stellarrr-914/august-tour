@@ -79,4 +79,4 @@ function switchDatabaseTab(evt, tabId) {
             // Aktifkan tab dan tombol yang baru di-klik
             document.getElementById(tabId).classList.add("active-content");
             evt.currentTarget.classList.add("active");
-        });
+        }
