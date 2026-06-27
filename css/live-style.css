@@ -414,3 +414,24 @@ body {
     color: #ef4444 !important; /* Pas di-hover menyala merah crimson */
     text-decoration: underline !important;
 }
+
+/* Khusus Layar HP Pas Posisi Tegak (Portrait) */
+@media screen and (max-width: 480px) {
+    /* Turunin ukuran judul biar gak makan tempat */
+    .myut-brand-text h2 {
+        font-size: 1.4rem !important; 
+    }
+    
+    .myut-welcome-text h1 {
+        font-size: 1.8rem !important;
+    }
+
+    .myut-app-title {
+        font-size: 2.2rem !important;
+    }
+
+    /* Kurangin padding kontainer biar ruangnya lebih lega */
+    .myut-form-content {
+        padding: 20px 15px !important; /* Atas-bawah 20px, kanan-kiri 15px */
+    }
+}
