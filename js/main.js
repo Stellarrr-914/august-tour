@@ -79,7 +79,4 @@ function switchDatabaseTab(evt, tabId) {
             // Aktifkan tab dan tombol yang baru di-klik
             document.getElementById(tabId).classList.add("active-content");
             evt.currentTarget.classList.add("active");
-        }
-    // 5. Opsi: Tambahin log buat debugging
-    console.log("Landscape Overlay Active 🔄");
-})();
+        });
